@@ -1,0 +1,21 @@
+{include file='head.tpl.html' title='head'}
+<header class="container-f bg-black z-index-5">{include file='header.tpl.html' title='header'}</header>
+<main class="literature-video-page">
+ {include file='breadcrumb.tpl.html' title='breadcrumb'}
+ <section class="literature-video-hero container-padding"><div class="container-l">
+  <div class="literature-video-heading"><span>NGHE &amp; NHÌN</span><h1>Video</h1><p>{$editorialIntro|escape:'html'}</p></div>
+  {if $items}
+   {assign var=featuredVideo value=$items[0]}{assign var=featuredAvatar value=$featuredVideo->getAvatarImage($uploads)}
+   <a class="literature-video-featured" href="{$featuredVideo->getUrl($lang)|escape:'html'}">
+    {if $featuredAvatar}<img src="/{$featuredAvatar->getPath()}/{$featuredAvatar->getUrlL()}" alt="{$featuredVideo->getTitle($lang)|escape:'html'}">{else}<img src="/{$templatePath}/{$userTemplate}/img/literature/video/video-1.jpg" alt="{$featuredVideo->getTitle($lang)|escape:'html'}">{/if}
+    <span class="literature-video-play" aria-hidden="true">▶</span><div><small>VIDEO NỔI BẬT</small><h2>{$featuredVideo->getTitle($lang)|escape:'html'}</h2><p>{$featuredVideo->getDescription($lang)|strip_tags}</p></div>
+   </a>
+  {else}<div class="editorial-empty"><h2>Nội dung video đang được cập nhật</h2><p>Thêm bài viết vào danh mục Video trong Admin để xuất bản tại đây.</p></div>{/if}
+ </div></section>
+ {if $items}<section class="literature-video-library container-padding bg-white-secondary"><div class="container-l"><div class="literature-video-heading"><span>CHUYÊN MỤC</span><h2>Video &amp; Đối thoại nghệ thuật</h2></div><div class="literature-video-grid">
+  {foreach from=$items item=videoArticle name=videoLoop}{if !$smarty.foreach.videoLoop.first}{assign var=videoAvatar value=$videoArticle->getAvatarImage($uploads)}<article class="literature-video-card"><a href="{$videoArticle->getUrl($lang)|escape:'html'}"><div class="literature-video-card__image">{if $videoAvatar}<img src="/{$videoAvatar->getPath()}/{$videoAvatar->getUrlL()}" alt="{$videoArticle->getTitle($lang)|escape:'html'}" loading="lazy">{else}<img src="/{$templatePath}/{$userTemplate}/img/logo/no-image.webp" alt="{$videoArticle->getTitle($lang)|escape:'html'}" loading="lazy">{/if}<span>▶</span></div><div class="literature-video-card__body"><small>VIDEO</small><h3>{$videoArticle->getTitle($lang)|escape:'html'}</h3><p>{$videoArticle->getDescription($lang)|strip_tags}</p></div></a></article>{/if}{/foreach}
+ </div></div></section>{/if}
+</main>
+<footer class="container-f bg-black center-ver flex flex-col">{include file='footer.tpl.html' title='footer'}</footer>
+<div class="btntotop__container pos-fixed bg-white" id="btnToTop">{include file='rolltotop.tpl.html' title='rolltotop'}</div>{include file='script.tpl.html' title='script'}
+</body></html>

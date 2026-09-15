@@ -1,0 +1,13 @@
+{include file='head.tpl.html' title='head'}
+<header class="container-f bg-black z-index-5">{include file='header.tpl.html' title='header'}</header>
+<main class="editorial-home">
+ <section class="editorial-home-hero"><div class="container-l"><div><span>VĂN HỌC &amp; NGHỆ THUẬT</span><h1>Không gian của<br>văn chương và cái đẹp</h1><p>Nơi lưu giữ tác phẩm, kết nối những câu chuyện văn hóa và lan tỏa giá trị nhân văn.</p><a href="/van-tho">Khám phá tác phẩm</a></div><img src="/{$templatePath}/{$userTemplate}/img/literature/author.jpg" alt="Văn học và nghệ thuật"></div></section>
+ {include file='editorial-home-section.tpl.html' sectionTitle='Văn thơ' sectionIntro='Tác phẩm mới' sectionRoute='/van-tho' sectionItems=$homeLiterature}
+ {include file='editorial-home-section.tpl.html' sectionTitle='Nghệ thuật' sectionIntro='Dòng chảy văn hóa' sectionRoute='/nghe-thuat' sectionItems=$homeArt sectionAlt=true}
+ {include file='editorial-home-section.tpl.html' sectionTitle='Tin tức' sectionIntro='Thông tin mới' sectionRoute='/tin-tuc' sectionItems=$homeNews}
+ {include file='editorial-home-section.tpl.html' sectionTitle='Video' sectionIntro='Nghe và nhìn' sectionRoute='/video' sectionItems=$homeVideos sectionAlt=true}
+</main>
+<footer class="container-f bg-black center-ver flex flex-col">{include file='footer.tpl.html' title='footer'}</footer>
+<div class="btntotop__container pos-fixed bg-white" id="btnToTop">{include file='rolltotop.tpl.html' title='rolltotop'}</div>{include file='script.tpl.html' title='script'}
+</body></html>
+

@@ -1,0 +1,12 @@
+{include file='head.tpl.html' title='head'}
+<header class="container-f bg-black z-index-5">{include file='header.tpl.html' title='header'}</header>
+<main class="editorial-page">
+ {include file='breadcrumb.tpl.html' title='breadcrumb'}
+ <section class="editorial-hero container-padding"><div class="container-l"><span class="editorial-kicker">TUYỂN TẬP</span><h1>{$editorialTitle|escape:'html'}</h1><p>{$editorialIntro|escape:'html'}</p>
+ {if $categoryNav}<nav class="editorial-tabs" aria-label="Chuyên mục"><a href="{$editorialRoute}" class="{if !$smarty.get.category}active{/if}">Tất cả</a>{foreach from=$categoryNav item=category}<a href="{$editorialRoute}?category={$category.slug|escape:'url'}" class="{if $smarty.get.category == $category.slug}active{/if}">{$category.name|escape:'html'}</a>{/foreach}</nav>{/if}
+ </div></section>
+ <section class="editorial-content container-padding bg-white-secondary"><div class="container-l">{if $items}<div class="editorial-grid">{include file='listarticlesfromsearch.tpl.html' title='articles'}</div>{else}<div class="editorial-empty"><h2>Nội dung đang được cập nhật</h2><p>Các bài viết mới sẽ sớm được xuất bản tại chuyên mục này.</p></div>{/if}</div></section>
+</main>
+<footer class="container-f bg-black center-ver flex flex-col">{include file='footer.tpl.html' title='footer'}</footer>
+<div class="btntotop__container pos-fixed bg-white" id="btnToTop">{include file='rolltotop.tpl.html' title='rolltotop'}</div>{include file='script.tpl.html' title='script'}
+</body></html>

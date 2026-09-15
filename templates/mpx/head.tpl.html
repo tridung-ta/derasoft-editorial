@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="{if $currentLang == 'en'}en{else}vi{/if}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+
+    <!-- ═══ SEO / Meta ═══ -->
+    {if !empty($pageTitle)}
+        {assign var="metaTitle" value=$pageTitle|strip_tags|escape:'html'}
+    {else}
+        {assign var="metaTitle" value=$estore->getProperty('custom_meta_title')|strip_tags|escape:'html'}
+    {/if}
+
+    {if !empty($pageDescription)}
+        {assign var="metaDescription" value=$pageDescription|strip_tags|escape:'html'}
+    {else}
+        {assign var="metaDescription" value=$estore->getProperty('custom_meta_description')|strip_tags|escape:'html'}
+    {/if}
+
+    {if !empty($pageKeywords)}
+        {assign var="metaKeywords" value=$pageKeywords|strip_tags|escape:'html'}
+    {else}
+        {assign var="metaKeywords" value=$estore->getProperty('custom_meta_keyword')|strip_tags|escape:'html'}
+    {/if}
+
+    {if !empty($pageTitle)}
+        {assign var="ogSiteName" value=$pageTitle|strip_tags|escape:'html'}
+    {else}
+        {assign var="ogSiteName" value=$estore->getName()|strip_tags|escape:'html'}
+    {/if}
+
+    <title>{$metaTitle}</title>
+    <meta name="description" content="{$metaDescription}">
+    <meta name="robots" content="max-image-preview:large">
+    <meta name="keywords"    content="{$metaKeywords}">
+    {if $currentUrlx1}<link rel="canonical" href="{$currentUrlx1|escape:'html'}">{/if}
+
+    <!-- ═══ Open Graph ═══ -->
+    <meta property="og:type"         content="{$typeweb|default:'website'}">
+    <meta property="og:title"        content="{$metaTitle}">
+    <meta property="og:description"  content="{$metaDescription}">
+    <meta property="og:image"        content="{$logoimg1|default:$logoimg}">
+    <meta property="og:image:alt"    content="{$metaTitle}">
+    <meta property="og:image:width"  content="384">
+    <meta property="og:image:height" content="384">
+    <meta property="og:site_name"    content="{$ogSiteName}">
+    {if $currentUrlx1}<meta property="og:url" content="{$currentUrlx1|escape:'html'}">{/if}
+
+    <!-- ═══ Favicon ═══ -->
+    <link rel="icon" type="image/png" href="/{$templatePath}/{$userTemplate}/img/logo/favicon.png">
+
+    <!-- ═══ Fonts ═══ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"  href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Roboto:wght@400;500;700&display=swap">
+
+    <!-- ═══ Vendor CSS ═══ -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css">
+
+    <!-- ═══ Theme CSS ═══ -->
+    {assign var="cssBase" value="/{$templatePath}/{$userTemplate}/css"}
+    <link rel="stylesheet" href="{$cssBase}/base.css">
+    <link rel="stylesheet" href="{$cssBase}/font.css">
+    <link rel="stylesheet" href="{$cssBase}/custom.css">
+    <link rel="stylesheet" href="{$cssBase}/utility.css">
+    <link rel="stylesheet" href="{$cssBase}/responsive.css">
+    <link rel="stylesheet" href="{$cssBase}/swiper-custom.css">
+    <link rel="stylesheet" href="{$cssBase}/literature-redesign.css">
+    
+    <!-- ═══ Google Site Verification ═══ -->
+    <meta name="google-site-verification" content="KLrl7JXZNDVP8epy8qIT9DD2sblUmeQoG3C1hdl-RjY" />
+
+    <!-- ═══ Inline Scripts ═══ -->
+    <script>window.csrfToken = '{$csrf_token}';</script>
+
+    <!-- ═══ Structured Data ═══ -->
+    {if $breadcrumbJson}
+    <script type="application/ld+json">{$breadcrumbJson nofilter}</script>
+    {/if}
+</head>
+<body>

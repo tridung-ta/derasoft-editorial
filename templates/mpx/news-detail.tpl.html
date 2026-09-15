@@ -1,0 +1,257 @@
+{include file='head.tpl.html' title='head'}
+
+    <header class="container-f bg-black z-index-5">
+        {include file='header.tpl.html' title='header'}
+    </header>
+    <main class="container-f flex flex-col center-hor pos-rel">
+        {include file='breadcrumb.tpl.html' title='breadcrumb'}
+        <section class="archive-section container-f container-padding bg-white-secondary">
+            <div class="container-l flex  flex-wrap gap-20">
+                <div class="detail-header flex-1 flex flex-col gap-20">
+                    <div class="flex flex-col gap-20 detail-header__content bg-white border-radius-5 item-padding-30">
+                        <h1 class="bold">{$objectInfo->getTitle($lang)}</h1>
+                        <div class="flex gap-10 center-ver">
+                            <div class="metal-avatar border-radius-5">
+                                <img class="img-content" src="/templates/mpx/img/icon/avatar.svg" alt="">
+                            </div>
+                            <div class="meta-info flex flex-col gap-5">
+                                <span class="bold">{$userInfo->getFullName()}</span>
+                              <span class="text-xs text-color-deactive">
+                                    Senior Editorial Lead - &#128197;&#xFE0E; Ngày đăng: {if $objectInfo->getPublishAt() != ''}{$objectInfo->getPublishAt()|date_format:"%d/%m/%Y"}{else}{$objectInfo->getDateCreated()|date_format:"%d/%m/%Y"}{/if}
+
+                                    {if $objectInfo->getDateUpdated() != '' && $objectInfo->getDateUpdated() != null}
+                                        &#128197;&#xFE0E; Ngày cập nhật: {$objectInfo->getDateUpdated()|date_format:"%d/%m/%Y"}
+                                    {/if}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="meta-action flex gap-10 center-ver">
+                            <div class="share-group flex gap-10 ">
+                                <div class="pos-rel icon-box-sm cursor-pointer border-radius-5">
+                                    <img src="/{$templatePath}/{$userTemplate}/img/icon/fb.svg" class="img-icon">
+                                    <a href="{$estore->getProperty('custom_link_facebook')}" target="_blank" class="widget-posts__link pos-abs" data-type="facebook"
+                                        title="Chia sẻ Facebook" onclick="count('fanpage')">
+                                    </a>
+                                </div>
+
+                                <button type="button"
+                                    class="icon-box-sm bg-white-secondary border-radius-5 js-share-btn" data-type="copy"
+                                    title="Sao chép liên kết">
+                                    <img src="/{$templatePath}/{$userTemplate}/img/icon/link.svg" class="img-icon">
+                                </button>
+
+                                <div type="button"
+                                    class="icon-box-sm pos-rel bg-white-secondary border-radius-5 js-share-btn"
+                                    data-type="share" title="Chia sẻ khác">
+                                    <img src="/{$templatePath}/{$userTemplate}/img/icon/share-arrow.svg"
+                                        class="img-icon">
+                                    <div class=" gap-20 share-popup__container pos-abs z-index-2 flex-col  item-padding-20 custom-item shadow overflow-hidden bg-white">
+                                        <div class="share-popup__top flex gap-20 jus-sb">
+                                            <p>Chia sẻ thông tin hữu ích</p>
+                                            <div class="share-popup__close cursor-pointer ratio-1x1">
+                                                <img src="/templates/mpx/img/icon/icon-close.svg" class="img-icon" alt="Close icon">
+                                            </div>
+                                        </div>
+                                        <div class="share-popup__bottom flex gap-20">
+                                            <div class="share-popup__item center-ver center-hor flex flex-col gap-10 pos-rel">
+                                                <div class="share-popup__avatar ratio-1x1">
+                                                    <img src="/templates/mpx/img/icon/icon-facebook.svg" alt="Facebook">
+                                                </div>
+                                                <p>Facebook</p>
+                                                <a href="{$estore->getProperty('custom_link_facebook')}" target="_blank" class="widget-posts__link" aria-label="Share on Facebook" onclick="count('fanpage')"></a>
+                                            </div>
+
+                                            <div class="share-popup__item center-ver center-hor flex flex-col gap-10 pos-rel">
+                                                <div class="share-popup__avatar ratio-1x1">
+                                                    <img src="/templates/mpx/img/icon/icon-messenger.svg" alt="Messenger">
+                                                </div>
+                                                <p>Messenger</p>
+                                                <a href="{$estore->getProperty('custom_link_messenger')}" target="_blank" class="widget-posts__link" aria-label="Share on Messenger" onclick="count('mess')"></a>
+                                            </div>
+
+                                            <div class="share-popup__item center-ver center-hor flex flex-col gap-10 pos-rel">
+                                                <div class="share-popup__avatar ratio-1x1">
+                                                    <img src="/templates/mpx/img/icon/icon-twitter.svg" alt="Twitter">
+                                                </div>
+                                                <p>Twitter</p>
+                                                <a href="{$estore->getProperty('custom_link_twitter')}" target="_blank" class="widget-posts__link" aria-label="Share on Twitter" onclick="count('twitter')"></a>
+                                            </div>
+
+                                            <div class="share-popup__item center-ver center-hor flex flex-col gap-10 pos-rel">
+                                                <div class="share-popup__avatar ratio-1x1">
+                                                    <img src="/templates/mpx/img/icon/icon-skype.svg" alt="Skype">
+                                                </div>
+                                                <p>Skype</p>
+                                                <a href="{$estore->getProperty('custom_link_skype')}" target="_blank" class="widget-posts__link" aria-label="Share on Skype" onclick="count('skype')"></a>
+                                            </div>
+
+                                            <div class="share-popup__item center-ver center-hor flex flex-col gap-10 pos-rel">
+                                                <div class="share-popup__avatar ratio-1x1">
+                                                    <img src="/templates/mpx/img/icon/icon-telegram.svg" alt="Telegram">
+                                                </div>
+                                                <p>Telegram</p>
+                                                <a href="{$estore->getProperty('custom_link_telegram')}"  target="_blank" class="widget-posts__link" aria-label="Share on Telegram" onclick="count('telegram')"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="pos-rel icon-box-sm cursor-pointer border-radius-5">
+                                    <img src="/{$templatePath}/{$userTemplate}/img/icon/zalo.svg" class="img-icon">
+                                    <a href="{$estore->getProperty('custom_link_zalo')}" target="_blank" class="widget-posts__link pos-abs" data-type="zalo"
+                                        title="Chia sẻ Zalo" onclick ="count('zalo')">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="detail-meta flex flex-col flex-wrap gap-10">
+                            <div class="detail-cover border-radius-10 overflow-hidden">
+                                {assign var="avatar" value=$objectInfo->getAvatarImage($uploads)}
+                                {if $avatar}
+                                <img src="/{$avatar->getPath()}/{$avatar->getUrlL()}" class="img-content"
+                                    alt="{$objectInfo->getTitle()}">
+                                {else}
+                                <img src="/{$templatePath}/{$userTemplate}/img/logo/no-image.webp" class="img-content"
+                                    alt="No image">
+                                {/if}
+                            </div>
+                            <div class="container-ts flex flex-col gap-20">
+                                <p>{$objectInfo->getDescription($lang)}</p>
+                            </div>
+                            <div class="container-ts">
+                                <div class="table-heading index-position pos-rel">
+                                    <div class="table-heading__top border-radius-5">
+                                        Nội dung chính
+                                        <img src="/templates/mpx/img/icon/chevron-down.svg" alt="Chevron down icon">
+                                    </div>
+                                    <div class="table-heading__body pos-abs z-index-3 border-radius-5">
+                                        <ul>
+                                            <li><a href="#dummy">Trống</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="container-ts detail-content flex flex-col gap-20">
+                                <p>{$objectInfo->getDetail($lang)}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {if $userInfo}
+                    <div class="expert bg-white item-padding-20 border-radius-5 flex flex-col gap-10">
+                        <div class="expert__header flex center-ver gap-20">
+                            <div class="expert__image border-radius-5 overflow-hidden">
+                                {assign var="avatar" value=$userInfo->getAvatarImage($uploads)}
+                                {if $avatar}
+                                <img src="/{$avatar->getPath()}/{$avatar->getUrlL()}" alt="MPX user" class="img-content">
+                                {else}
+                                <img src="/templates/mpx/img/icon/avatar.svg" alt="MPX user" class="img-content">
+                                {/if}
+                            </div>
+                            <h3 class="expert__name bold uppercase">{$userInfo->getFullName()}</h3>
+                        </div>
+
+                        <div class="expert__body">
+                            <p class="expert__desc text-color-gray">
+                                {if $lang eq 'en'}
+                                {$userInfo->getProperty('custom_intro_en') != ''} Connect with me on
+                                        <a href="{$estore->getProperty('custom_link_facebook')}" onclick="count('fanpage')">Facebook</a>,
+                                        <a href="{$estore->getProperty('custom_link_youtube')}" onclick="count('youtube')">Youtube</a>
+                                {elseif $lang eq 'zh'}
+                                    {$userInfo->getProperty('custom_intro_zh') != ''} 与我联系
+                                            <a href="{$estore->getProperty('custom_link_facebook')}" onclick="count('fanpage')">Facebook</a>,
+                                            <a href="{$estore->getProperty('custom_link_youtube')}" onclick="count('youtube')">Youtube</a>
+                                {else}
+                                    {if $userInfo->getProperty('custom_intro')}
+                                        {$userInfo->getProperty('custom_intro')} Kết nối với tôi trên 
+                                            <a href="{$estore->getProperty('custom_link_facebook')}" onclick="count('fanpage')">Facebook</a>,
+                                            <a href="{$estore->getProperty('custom_link_youtube')}" onclick="count('youtube')">Youtube</a>
+                                    {else}
+                                        MPX là đơn vị chuyên tư vấn, thiết kế và cung cấp giải pháp kỹ thuật về kết cấu, dàn dựng sân khấu và cơ khí chuyển động 
+                                        trong sân khấu ca nhạc. Với vai trò là công ty thành viên của Lữ Nhạc Group, MPX ra đời với sứ mệnh cải tiến và ứng dụng 
+                                        các công nghệ hiện đại vào chuyển động cơ khí chính xác – biểu diễn nghệ thuật – hệ thống lắp đặt modular để phục vụ trong
+                                        ngành tổ chức sự kiện, triển lãm và quảng cáo.
+                                    {/if}
+                                {/if}
+                            </p>
+                        </div>
+                    </div>  
+                    {/if}
+                    <div class="review-section flex bg-white border-radius-5">
+                        {include file='component/comment.tpl.html' title='comment'}
+                    </div>
+                    {if $recentArticlesBlock}
+                    <section class="container-f container-padding flex center-hor bg-white-secondary">
+                        <div class="container-l flex flex-col gap-30">
+                            <div class=" flex flex-col center-hor  guest-comment__title">
+                                <!-- <p class="text-color-black">{$messages['related_articles']}</p> -->
+                                <h2 class="section-title bold uppercase text-color-black">{$messages['related_articles']}</h2>
+                                <div class="title-border-bottom__left"></div>
+                            </div>
+                            {include file='recent_news.tpl.html' title='recent_news'}
+                        </div>
+                    </section>
+                    {/if}
+                </div>
+                <aside class="archive-sidebar bg-white item-padding-20 border-radius-5 flex flex-col gap-20">
+                    {include file='component/sidebar.tpl.html' title='sidebar'}
+                </aside>
+            </div>
+        </section>
+    </main>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        {if $isCaseStudy == true}
+        "@type": "Article",
+        {else}
+        "@type": "NewsArticle",
+        {/if}
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "{$rootUrl}/{$objectInfo->getSlug()}"
+        },
+        "headline": "{$objectInfo->getTitle()}",
+        "image": [
+            {assign var="avatar" value=$objectInfo->getAvatarImage($uploads)}
+            {if $avatar}
+            "{$rootUrl}/{$avatar->getPath()}/{$avatar->getUrlL()}"
+            {else}
+            "{$rootUrl}/templates/mpx/img/logo/no-image.webp"
+            {/if}
+        ],
+        "datePublished": "{$objectInfo->getDisplayDate()}", 
+        "dateModified": "{if $objectInfo->getDateUpdated() != '' || $objectInfo->getDateUpdated() != null}{$objectInfo->getDateUpdated()|date_format:"%d/%m/%Y"} {/if}",
+        "author": {
+            "@type": "Person",
+            "name": "{$userInfo->getFullName()}",
+            "url": "{$rootUrl|escape:'javascript'}/"
+        },
+        "publisher": {
+            "@id": "{$rootUrl|escape:'javascript'}/#organization"
+        },
+        "description": "{$descriptionSchema|strip_tags}"
+    }
+    </script>
+    {if $objectInfo->getProperty('custom_schema_faq') != ''}
+        <script type="application/ld+json">
+            {$objectInfo->getProperty('custom_schema_faq')}
+        </script>
+    {/if}
+    <footer class="container-f bg-black center-ver flex flex-col item-padding-80-0 gap-30">
+        {include file='footer.tpl.html' title='footer'}
+    </footer>
+    {include file='CTA.tpl.html' title='call to action contact'}
+    <div class="btntotop__container pos-fixed bg-white" id="btnToTop">
+        {include file='rolltotop.tpl.html' title='rolltotop'}
+    </div>
+    <div class="popup-register__container pos-fixed z-index-2 center-ver center-hor container-f">
+        {include file='popup.tpl.html' title='popup'}
+    </div>
+    <div class="popup-comment__container pos-fixed z-index-2 center-ver center-hor container-f">
+        {include file='popup-comment.tpl.html' title='popup-comment'}
+    </div>
+    {include file='script.tpl.html' title='script'}
+</body>
+
+</html>
