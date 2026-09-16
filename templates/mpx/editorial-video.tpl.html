@@ -1,21 +1,39 @@
 {include file='head.tpl.html' title='head'}
-<header class="container-f bg-black z-index-5">{include file='header.tpl.html' title='header'}</header>
-<main class="literature-video-page">
- {include file='breadcrumb.tpl.html' title='breadcrumb'}
- <section class="literature-video-hero container-padding"><div class="container-l">
-  <div class="literature-video-heading"><span>NGHE &amp; NHÌN</span><h1>Video</h1><p>{$editorialIntro|escape:'html'}</p></div>
-  {if $items}
-   {assign var=featuredVideo value=$items[0]}{assign var=featuredAvatar value=$featuredVideo->getAvatarImage($uploads)}
-   <a class="literature-video-featured" href="{$featuredVideo->getUrl($lang)|escape:'html'}">
-    {if $featuredAvatar}<img src="/{$featuredAvatar->getPath()}/{$featuredAvatar->getUrlL()}" alt="{$featuredVideo->getTitle($lang)|escape:'html'}">{else}<img src="/{$templatePath}/{$userTemplate}/img/literature/video/video-1.jpg" alt="{$featuredVideo->getTitle($lang)|escape:'html'}">{/if}
-    <span class="literature-video-play" aria-hidden="true">▶</span><div><small>VIDEO NỔI BẬT</small><h2>{$featuredVideo->getTitle($lang)|escape:'html'}</h2><p>{$featuredVideo->getDescription($lang)|strip_tags}</p></div>
-   </a>
-  {else}<div class="editorial-empty"><h2>Nội dung video đang được cập nhật</h2><p>Thêm bài viết vào danh mục Video trong Admin để xuất bản tại đây.</p></div>{/if}
- </div></section>
- {if $items}<section class="literature-video-library container-padding bg-white-secondary"><div class="container-l"><div class="literature-video-heading"><span>CHUYÊN MỤC</span><h2>Video &amp; Đối thoại nghệ thuật</h2></div><div class="literature-video-grid">
-  {foreach from=$items item=videoArticle name=videoLoop}{if !$smarty.foreach.videoLoop.first}{assign var=videoAvatar value=$videoArticle->getAvatarImage($uploads)}<article class="literature-video-card"><a href="{$videoArticle->getUrl($lang)|escape:'html'}"><div class="literature-video-card__image">{if $videoAvatar}<img src="/{$videoAvatar->getPath()}/{$videoAvatar->getUrlL()}" alt="{$videoArticle->getTitle($lang)|escape:'html'}" loading="lazy">{else}<img src="/{$templatePath}/{$userTemplate}/img/logo/no-image.webp" alt="{$videoArticle->getTitle($lang)|escape:'html'}" loading="lazy">{/if}<span>▶</span></div><div class="literature-video-card__body"><small>VIDEO</small><h3>{$videoArticle->getTitle($lang)|escape:'html'}</h3><p>{$videoArticle->getDescription($lang)|strip_tags}</p></div></a></article>{/if}{/foreach}
- </div></div></section>{/if}
+<header>{include file='header.tpl.html' title='header'}</header>
+<main class="ed-video-page">
+    {include file='editorial-breadcrumb.tpl.html'}
+    <section class="ed-page-hero ed-page-hero--dark"><div class="ed-shell ed-page-hero__inner">
+        <span class="ed-kicker">{if $lang == 'en'}WATCH &amp; LISTEN{elseif $lang == 'zh'}视听空间{else}NGHE &amp; NHÌN{/if}</span>
+        <h1>{if $lang == 'zh'}视频{else}Video{/if}</h1>
+        <p>{if $lang == 'en'}Documentaries, conversations and visual stories about Vietnamese arts and culture.{elseif $lang == 'zh'}关于越南文学、艺术与文化的纪录片、访谈和影像故事。{else}Phim tài liệu, cuộc đối thoại và những câu chuyện bằng hình ảnh về văn học, nghệ thuật và văn hóa Việt Nam.{/if}</p>
+    </div></section>
+    {if $curatedVideos}
+    {assign var="featuredVideo" value=$curatedVideos[0]}
+    <section class="ed-watch"><div class="ed-shell"><div class="ed-watch__layout">
+        <div class="ed-watch__player"><iframe id="editorialVideoPlayer" src="https://www.youtube-nocookie.com/embed/{$featuredVideo.id|escape:'url'}?rel=0" title="{$featuredVideo.title|escape:'html'}" loading="eager" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+        <div class="ed-watch__info">
+            <span class="ed-kicker">{if $lang == 'en'}NOW PLAYING{elseif $lang == 'zh'}正在播放{else}ĐANG PHÁT{/if}</span>
+            <h2 id="editorialVideoTitle">{if $lang == 'en'}{$featuredVideo.title_en|escape:'html'}{elseif $lang == 'zh'}{$featuredVideo.title_zh|escape:'html'}{else}{$featuredVideo.title|escape:'html'}{/if}</h2>
+            <p id="editorialVideoDescription">{$featuredVideo.description|escape:'html'}</p>
+            <div class="ed-watch__source"><span>{if $lang == 'en'}Source{elseif $lang == 'zh'}来源{else}Nguồn{/if}</span><strong id="editorialVideoSource">{$featuredVideo.source|escape:'html'}</strong></div>
+            <a id="editorialVideoExternal" href="https://www.youtube.com/watch?v={$featuredVideo.id|escape:'url'}" target="_blank" rel="noopener noreferrer">{if $lang == 'en'}Open on YouTube{elseif $lang == 'zh'}在 YouTube 上观看{else}Mở trên YouTube{/if} ↗</a>
+        </div>
+    </div></div></section>
+    <section class="ed-video-library"><div class="ed-shell">
+        <header class="ed-section__head"><div><span class="ed-kicker">{if $lang == 'en'}VIDEO LIBRARY{elseif $lang == 'zh'}视频库{else}THƯ VIỆN VIDEO{/if}</span><h2>{if $lang == 'en'}Explore the collection{elseif $lang == 'zh'}探索影像收藏{else}Khám phá bằng hình ảnh{/if}</h2></div></header>
+        <div class="ed-video-grid ed-video-grid--selectable">
+        {foreach from=$curatedVideos item=video name=curatedVideoLoop}
+            <article class="ed-video-choice {if $smarty.foreach.curatedVideoLoop.first}is-active{/if}"><button type="button" class="ed-video-choice__button" data-video-select data-video-id="{$video.id|escape:'html'}" data-video-title="{if $lang == 'en'}{$video.title_en|escape:'html'}{elseif $lang == 'zh'}{$video.title_zh|escape:'html'}{else}{$video.title|escape:'html'}{/if}" data-video-description="{$video.description|escape:'html'}" data-video-source="{$video.source|escape:'html'}" aria-pressed="{if $smarty.foreach.curatedVideoLoop.first}true{else}false{/if}">
+                <figure><img src="https://i.ytimg.com/vi/{$video.id|escape:'url'}/hqdefault.jpg" alt="{if $lang == 'en'}{$video.title_en|escape:'html'}{elseif $lang == 'zh'}{$video.title_zh|escape:'html'}{else}{$video.title|escape:'html'}{/if}" loading="lazy"><span class="ed-play">▶</span></figure>
+                <div><small>{$video.source|escape:'html'}</small><h3>{if $lang == 'en'}{$video.title_en|escape:'html'}{elseif $lang == 'zh'}{$video.title_zh|escape:'html'}{else}{$video.title|escape:'html'}{/if}</h3><p>{$video.description|escape:'html'}</p></div>
+            </button></article>
+        {/foreach}
+        </div>
+    </div></section>
+    {else}<section class="ed-archive__content"><div class="ed-shell"><div class="ed-empty"><h2>{if $lang == 'en'}Video content is being updated{elseif $lang == 'zh'}视频内容正在更新{else}Nội dung video đang được cập nhật{/if}</h2></div></div></section>{/if}
 </main>
-<footer class="container-f bg-black center-ver flex flex-col">{include file='footer.tpl.html' title='footer'}</footer>
-<div class="btntotop__container pos-fixed bg-white" id="btnToTop">{include file='rolltotop.tpl.html' title='rolltotop'}</div>{include file='script.tpl.html' title='script'}
+<footer>{include file='footer.tpl.html' title='footer'}</footer>
+<button class="ed-back-top" id="btnToTop" type="button" aria-label="{if $lang == 'en'}Back to top{elseif $lang == 'zh'}返回顶部{else}Về đầu trang{/if}">↑</button>
+{include file='script.tpl.html' title='script'}
+<script defer src="/{$templatePath}/{$userTemplate}/js/editorial-video.js?v=20260916-3"></script>
 </body></html>

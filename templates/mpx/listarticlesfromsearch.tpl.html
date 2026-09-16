@@ -1,83 +1,27 @@
 <div id="search-results-wrapper">
     {if !empty($items)}
-        <div class="archive-container flex flex-wrap gap-20">
-            {foreach from=$items item=article}
-            <article class="col-3 literature-article-card">
-                <div class="news-item hover-border-primary bg-white flex flex-col pos-rel border-radius-5 shadow-sm">
-                    <div class="news-item__img">
-                        {assign var=avatar value=$article->getAvatarImage($uploads)}
-                        {if $avatar}
-                        <img src="/{$avatar->getPath()}/{$avatar->getUrlL()}" alt="{$article->getTitle($lang)|escape:'html'}" class="img-content" loading="lazy"/>
-                        {else}
-                        <img src="/{$templatePath}/{$userTemplate}/img/logo/no-image.webp" alt="No image" class="img-content"/>
-                        {/if}
-                    </div>
-                    <div class="news-item__content item-padding-20 flex flex-col gap-10 jus-sb flex-1">
-                        <div class="flex flex-col gap-10  ">
-                            <div class="flex gap-20">
-                            <div class="news-item__date flex gap-10">
-                                <img class="img-icon" src="/{$templatePath}/{$userTemplate}/img/icon/clock.svg" alt="Thời gian"/>
-                               <p>{$article->getDisplayDate()}</p>
-                            </div>
-                            <div class="news-item__view flex gap-10">
-                                <img class="img-icon" src="/{$templatePath}/{$userTemplate}/img/icon/eye.svg" alt="Lượt xem"/>
-                                <p>{$article->getViewed()}</p>
-                            </div>
-                        </div>
-                        <h4 class="news-item__title clamp-text bold">{$article->getTitle($lang)|escape:'html'}</h4>
-                        <p class="news-item__desc clamp-text">{$article->getDescription($lang)|strip_tags}</p>
-                        </div>
-                        <button type="button" class="news-btn btn-padding flex gap-10 center-hor center-ver text-color-white border-radius-5 cursor-point bg-primary uppercase">
-                            <p class="text-color-white">{$messages['view_details']}</p>
-                            <p class="text-color-white">➔</p>
-                        </button>
-                    </div>
-                    <a href="{$article->getUrl($lang)|escape:'html'}" class="pos-abs cover-all" aria-label="{$article->getTitle($lang)|escape:'html'}"></a>
+    <div class="ed-archive-grid">
+        {foreach from=$items item=article name=archiveArticles}
+        {assign var=avatar value=$article->getAvatarImage($uploads)}
+        <article class="ed-card {if $smarty.foreach.archiveArticles.first && $page <= 1}ed-card--feature{/if}">
+            <a class="ed-card__link" href="{$article->getUrl($lang)|escape:'html'}">
+                <figure class="ed-card__media">{include file='editorial-card-media.tpl.html' article=$article avatar=$avatar lazy=true}{if $smarty.foreach.archiveArticles.first && $page <= 1}<span class="ed-card__badge">{if $lang == 'en'}NEWEST{elseif $lang == 'zh'}最新{else}MỚI NHẤT{/if}</span>{/if}</figure>
+                <div class="ed-card__body">
+                    <div class="ed-card__meta"><span>{include file='editorial-category-label.tpl.html' article=$article}</span><time>{$article->getDisplayDate()}</time></div>
+                    <h2>{$article->getTitle($lang)|escape:'html'}</h2>
+                    <p>{$article->getDescription($lang)|strip_tags}</p>
+                    <b>{if $lang == 'en'}Read article{elseif $lang == 'zh'}阅读全文{else}Đọc bài{/if} →</b>
                 </div>
-            </article>
-            {/foreach}
-        </div>
-    {else}
-        <p class="text-center">{$messages['no_data']}</p>
+            </a>
+        </article>
+        {/foreach}
+    </div>
     {/if}
-
     {if $totalPages > 1}
-        <div class="archive-pagination flex center-hor gap-10 item-padding-20" data-ajax="1">
-            {if $page > 1}
-                <a href="?page={$page - 1}" class="pagination-btn border-radius-5 prev">&lt;</a>
-            {else}
-                <button type="button" class="pagination-btn border-radius-5 prev" disabled>&lt;</button>
-            {/if}
-
-            {if $page > 3}
-                <a href="?page=1" class="pagination-btn border-radius-5">1</a>
-                {if $page > 4}
-                    <span class="pagination-btn border-radius-5 dots">...</span>
-                {/if}
-            {/if}
-
-            {for $i = 1 to $totalPages}
-                {if $i >= $page - 2 && $i <= $page + 2}
-                    {if $i == $page}
-                        <button type="button" class="pagination-btn border-radius-5 active">{$i}</button>
-                    {else}
-                        <a href="?page={$i}" class="pagination-btn border-radius-5">{$i}</a>
-                    {/if}
-                {/if}
-            {/for}
-
-            {if $page < $totalPages - 2}
-                {if $page < $totalPages - 3}
-                    <span class="pagination-btn border-radius-5 dots">...</span>
-                {/if}
-                <a href="?page={$totalPages}" class="pagination-btn border-radius-5">{$totalPages}</a>
-            {/if}
-
-            {if $page < $totalPages}
-                <a href="?page={$page + 1}" class="pagination-btn border-radius-5 next">&gt;</a>
-            {else}
-                <button type="button" class="pagination-btn border-radius-5 next" disabled>&gt;</button>
-            {/if}
-        </div>
+    <nav class="ed-pagination" aria-label="{if $lang == 'en'}Pagination{elseif $lang == 'zh'}分页{else}Phân trang{/if}">
+        {if $page > 1}<a href="?page={$page - 1}" aria-label="{if $lang == 'en'}Previous page{elseif $lang == 'zh'}上一页{else}Trang trước{/if}">←</a>{else}<span class="is-disabled">←</span>{/if}
+        {for $i = 1 to $totalPages}{if $i >= $page - 2 && $i <= $page + 2}{if $i == $page}<span class="is-active" aria-current="page">{$i}</span>{else}<a href="?page={$i}">{$i}</a>{/if}{/if}{/for}
+        {if $page < $totalPages}<a href="?page={$page + 1}" aria-label="{if $lang == 'en'}Next page{elseif $lang == 'zh'}下一页{else}Trang sau{/if}">→</a>{else}<span class="is-disabled">→</span>{/if}
+    </nav>
     {/if}
 </div>

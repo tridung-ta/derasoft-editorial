@@ -34,6 +34,7 @@ $lang = $request->element('lang');
 if (empty($lang) || !in_array($lang, ['vn', 'en', 'zh'])) {
     $lang = 'vn';
 }
+$langCondition = $lang === 'en' ? " AND a.slug_en <> '' AND a.lang LIKE '%en%'" : ($lang === 'zh' ? " AND a.slug_zh <> '' AND a.lang LIKE '%zh%'" : '');
 
 switch ($lang) {
     case 'en':
@@ -174,7 +175,7 @@ $childCate = $menus->getObjects(1, "parent_id = 3 AND `status` = '1'", [], 999);
 $template->assign('childCate', $childCate);
 
 // Bài viết nhiều lượt xem nhất
-$recentArticles = $articles->getObjects(1, "a.`status` = '1' AND a.`id` != '" . $objectInfo->getId() . "'", ['a.`viewed`' => 'DESC'], 4);
+$recentArticles = $articles->getObjects(1, "a.`status` = '1' AND a.`id` != '" . $objectInfo->getId() . "'" . $langCondition, ['a.`viewed`' => 'DESC'], 4);
 $template->assign('recentArticles', $recentArticles);
 
 // Dịch vụ phổ biến
@@ -182,7 +183,7 @@ $template->assign('recentArticles', $recentArticles);
 // $template->assign('listPopularServices', $listPopularServices);
 
 // Bài viết CaseStudy mới nhất
-$recentCaseStudies = $articles->getObjects(1, "a.`status` = '1' AND a.`id` != '" . $objectInfo->getId() . "' AND a.`category_id` IN (71, 77, 78)", ['COALESCE(a.`publish_at`, a.`date_created`)' => 'DESC'], 4);
+$recentCaseStudies = $articles->getObjects(1, "a.`status` = '1' AND a.`id` != '" . $objectInfo->getId() . "' AND a.`category_id` IN (71, 77, 78)" . $langCondition, ['COALESCE(a.`publish_at`, a.`date_created`)' => 'DESC'], 4);
 $template->assign('recentCaseStudies', $recentCaseStudies);
 
 // Thống kê đánh giá
@@ -225,7 +226,7 @@ if ($objectInfo->getAvatarImage($uploads) != null) {
 }
 
 #related articles
-$recentArticlesBlock = $articles->getObjects(1, "a.`status` = '1' AND a.id != " . $objectInfo->getId() . " AND a.category_id = " . $objectInfo->getCategoryId(), ['COALESCE(a.`publish_at`, a.`date_created`)' => 'DESC'], 10);
+$recentArticlesBlock = $articles->getObjects(1, "a.`status` = '1' AND a.id != " . $objectInfo->getId() . " AND a.category_id = " . $objectInfo->getCategoryId() . $langCondition, ['COALESCE(a.`publish_at`, a.`date_created`)' => 'DESC'], 10);
 $template->assign('recentArticlesBlock', $recentArticlesBlock);
 
 //Schema
@@ -237,6 +238,10 @@ if ($lang === 'en') {
     $pageTitle       = $objectInfo->getProperty('custom_en_titleSeo')     ?: $objectInfo->getProperty('custom_titleSeo')    ?: $objectInfo->title;
     $pageKeywords    = $objectInfo->getProperty('custom_en_meta_keyword') ?: $objectInfo->getProperty('custom_meta_keyword');
     $pageDescription = $objectInfo->getProperty('custom_en_captionSeo')        ?: $objectInfo->getProperty('custom_captionSeo');
+} elseif ($lang === 'zh') {
+    $pageTitle       = $objectInfo->getProperty('custom_zh_titleSeo') ?: $objectInfo->getTitle('zh');
+    $pageKeywords    = $objectInfo->getProperty('custom_zh_meta_keyword');
+    $pageDescription = $objectInfo->getProperty('custom_zh_captionSeo') ?: $objectInfo->getDescription('zh');
 } else {
     $pageTitle       = $objectInfo->getProperty('custom_titleSeo') ?: $objectInfo->title;
     $pageKeywords    = $objectInfo->getProperty('custom_meta_keyword');

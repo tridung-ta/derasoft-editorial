@@ -1,12 +1,23 @@
 {include file='head.tpl.html' title='head'}
-<header class="container-f bg-black z-index-5">{include file='header.tpl.html' title='header'}</header>
-<main class="editorial-page">
- {include file='breadcrumb.tpl.html' title='breadcrumb'}
- <section class="editorial-hero container-padding"><div class="container-l"><span class="editorial-kicker">TUYỂN TẬP</span><h1>{$editorialTitle|escape:'html'}</h1><p>{$editorialIntro|escape:'html'}</p>
- {if $categoryNav}<nav class="editorial-tabs" aria-label="Chuyên mục"><a href="{$editorialRoute}" class="{if !$smarty.get.category}active{/if}">Tất cả</a>{foreach from=$categoryNav item=category}<a href="{$editorialRoute}?category={$category.slug|escape:'url'}" class="{if $smarty.get.category == $category.slug}active{/if}">{$category.name|escape:'html'}</a>{/foreach}</nav>{/if}
+<header>{include file='header.tpl.html' title='header'}</header>
+<main class="ed-archive">
+ {include file='editorial-breadcrumb.tpl.html'}
+ <section class="ed-page-hero"><div class="ed-shell ed-page-hero__inner">
+  <span class="ed-kicker">{if $lang == 'en'}COLLECTION{elseif $lang == 'zh'}精选内容{else}TUYỂN TẬP{/if}</span>
+  <h1>{$editorialTitle|escape:'html'}</h1>
+  <p>{$editorialIntro|escape:'html'}</p>
  </div></section>
- <section class="editorial-content container-padding bg-white-secondary"><div class="container-l">{if $items}<div class="editorial-grid">{include file='listarticlesfromsearch.tpl.html' title='articles'}</div>{else}<div class="editorial-empty"><h2>Nội dung đang được cập nhật</h2><p>Các bài viết mới sẽ sớm được xuất bản tại chuyên mục này.</p></div>{/if}</div></section>
+ {if $categoryNav}
+ <div class="ed-tabs-wrap"><nav class="ed-shell ed-tabs" aria-label="{if $lang == 'en'}Categories{elseif $lang == 'zh'}分类{else}Chuyên mục{/if}">
+  <a href="{$editorialRoute}" class="{if !$smarty.get.category}is-active{/if}">{if $lang == 'en'}All{elseif $lang == 'zh'}全部{else}Tất cả{/if}</a>
+  {foreach from=$categoryNav item=category}<a href="{$editorialRoute}?category={$category.slug|escape:'url'}" class="{if $smarty.get.category == $category.slug}is-active{/if}">{if $lang == 'en'}{if $category.slug == 'tho'}Poetry{elseif $category.slug == 'van-xuoi'}Prose{elseif $category.slug == 'am-nhac'}Music{elseif $category.slug == 'my-thuat'}Visual Arts{elseif $category.slug == 'san-khau-nghe-thuat'}Theatre{elseif $category.slug == 'van-hoa'}Culture{else}{$category.name|escape:'html'}{/if}{elseif $lang == 'zh'}{if $category.slug == 'tho'}诗歌{elseif $category.slug == 'van-xuoi'}散文{elseif $category.slug == 'am-nhac'}音乐{elseif $category.slug == 'my-thuat'}美术{elseif $category.slug == 'san-khau-nghe-thuat'}戏剧{elseif $category.slug == 'van-hoa'}文化{else}{$category.name|escape:'html'}{/if}{else}{if $category.slug == 'tho'}Thơ{elseif $category.slug == 'van-xuoi'}Văn xuôi{elseif $category.slug == 'am-nhac'}Âm nhạc{elseif $category.slug == 'my-thuat'}Mỹ thuật{elseif $category.slug == 'san-khau-nghe-thuat'}Sân khấu{elseif $category.slug == 'van-hoa'}Văn hóa{else}{$category.name|escape:'html'}{/if}{/if}</a>{/foreach}
+ </nav></div>
+ {/if}
+ <section class="ed-archive__content"><div class="ed-shell">
+  {if $items}{include file='listarticlesfromsearch.tpl.html' title='articles'}{else}<div class="ed-empty"><h2>{if $lang == 'en'}No content is available{elseif $lang == 'zh'}暂无内容{else}Nội dung đang được cập nhật{/if}</h2><p>{if $lang == 'en'}New articles will be published in this section soon.{elseif $lang == 'zh'}新文章将很快在此栏目发布。{else}Các bài viết mới sẽ sớm được xuất bản tại chuyên mục này.{/if}</p></div>{/if}
+ </div></section>
 </main>
-<footer class="container-f bg-black center-ver flex flex-col">{include file='footer.tpl.html' title='footer'}</footer>
-<div class="btntotop__container pos-fixed bg-white" id="btnToTop">{include file='rolltotop.tpl.html' title='rolltotop'}</div>{include file='script.tpl.html' title='script'}
+<footer>{include file='footer.tpl.html' title='footer'}</footer>
+<button class="ed-back-top" id="btnToTop" type="button" aria-label="{if $lang == 'en'}Back to top{elseif $lang == 'zh'}返回顶部{else}Về đầu trang{/if}">↑</button>
+{include file='script.tpl.html' title='script'}
 </body></html>

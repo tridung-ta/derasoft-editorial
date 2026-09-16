@@ -100,6 +100,21 @@ $template->assign('currentUrlx', $currentUrlx);
 $template->assign('isHome', $isHome);
 $template->assign('currentUrlx1', $currentUrlx1);
 $template->assign('rootUrl', PROTOCOL . DOMAIN);
+$publicBase = $lang === 'en' ? '/en' : ($lang === 'zh' ? '/zh' : '');
+$publicHome = $publicBase !== '' ? $publicBase . '/' : '/';
+$template->assign('publicBase', $publicBase);
+$template->assign('publicHome', $publicHome);
+
+// Default language switch URLs for home and public section pages.
+// Detail modules may override these later with translated object slugs.
+$languagePath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+$languagePath = preg_replace('#^/(en|zh)(?=/|$)#', '', $languagePath);
+$languagePath = '/' . ltrim((string) $languagePath, '/');
+if ($languagePath === '//') $languagePath = '/';
+$languageSuffix = $languagePath === '/' ? '' : $languagePath;
+$template->assign('urlVi', $languagePath);
+$template->assign('urlEn', '/en' . $languageSuffix);
+$template->assign('urlZh', '/zh' . $languageSuffix);
 
 /* ===================== ORDER ===================== */
 $orderOn = $estore->getProperty('order_on');
