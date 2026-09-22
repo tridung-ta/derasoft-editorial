@@ -416,105 +416,108 @@ function buildBreadcrumb($module, $categoryTree = [], $item = []) {
     return $breadcrumb;
 }
 
-// function sendMail($recipients, $subject, $htmlContent, $fromName = '', $fromEmail = ''): bool {
-//     $recipientList = is_array($recipients) ? $recipients : [$recipients];
+function sendMail($recipients, $subject, $htmlContent, $fromName = '', $fromEmail = '') {
+    $recipientList = is_array($recipients) ? $recipients : array($recipients);
+    $validRecipients = array();
+    foreach ($recipientList as $email) {
+        if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $validRecipients[] = $email;
+        }
+    }
+    if (empty($validRecipients)) return false;
 
-//     if (!$fromEmail) {
-//         $fromEmail = defined('SMTP_USER') && SMTP_USER ? SMTP_USER : (defined('ADMIN_EMAIL') ? ADMIN_EMAIL : 'no-reply@localhost');
-//     }
+    if (!$fromEmail) {
+        $fromEmail = (defined('SMTP_USER') && SMTP_USER) ? SMTP_USER : (defined('ADMIN_EMAIL') ? ADMIN_EMAIL : 'no-reply@localhost');
+    }
+    if (!$fromName) {
+        $fromName = defined('DOMAIN') ? DOMAIN : 'Website';
+    }
 
-// 	if (!$fromName) {
-// 		$fromName = 'System';
-// 	}
+    $lastMailError = '';
 
-//     // Nếu không dùng SMTP, fallback PHP mail()
-//     if (!defined('SMTP_MAIL') || !SMTP_MAIL) {
-//         // $headers  = "From: $fromName <$fromEmail>\r\n";
-// 		$headers  = "From: =?UTF-8?B?".base64_encode($fromName)."?= <$fromEmail>\r\n";
-//         $headers .= "Reply-To: " . (defined('ADMIN_EMAIL') ? ADMIN_EMAIL : $fromEmail) . "\r\n";
-//         $headers .= "MIME-Version: 1.0\r\n";
-//         $headers .= "Content-Type: text/html; charset=utf-8\r\n";
+    // SMTP compatibility mode for the legacy DeraCMS mail server.
+    // Try authenticated SMTP first, then the legacy no-auth relay mode that
+    // older DeraCMS deployments commonly used on port 25.
+    if (defined('SMTP_MAIL') && SMTP_MAIL) {
+        $autoload = ROOT_PATH . 'classes/PHPMailer/PHPMailerAutoload.php';
+        if (!class_exists('PHPMailer', false) && is_file($autoload)) {
+            require_once($autoload);
+        }
 
-//         $allSent = true;
-//         foreach ($recipientList as $recipient) {
-//             if (!mail($recipient, '=?UTF-8?B?'.base64_encode($subject).'?=', $htmlContent, $headers)) {
-//                 $allSent = false;
-//             }
-//         }
-//         return $allSent;
-//     }
+        if (class_exists('PHPMailer')) {
+            $authModes = array(true, false);
 
-//     // Dùng SMTP
-//     $host = SMTP_HOST;
-//     $port = SMTP_PORT ?: 25;
-//     $user = SMTP_USER;
-//     $pass = SMTP_PASSWORD;
+            foreach ($authModes as $useAuth) {
+                try {
+                    $mail = new PHPMailer();
+                    $mail->IsSMTP();
+                    $mail->Host = defined('SMTP_HOST') ? SMTP_HOST : 'localhost';
+                    $mail->Port = defined('SMTP_PORT') ? (int)SMTP_PORT : 25;
+                    $mail->Timeout = 15;
+                    $mail->SMTPAuth = $useAuth && defined('SMTP_USER') && SMTP_USER !== '';
 
-//     $fp = fsockopen($host, $port, $errno, $errstr, 10);
-//     if (!$fp) return false;
+                    if ($mail->SMTPAuth) {
+                        $mail->Username = SMTP_USER;
+                        $smtpPassword = getenv('DERACMS_SMTP_PASSWORD');
+                        if ($smtpPassword === false && defined('SMTP_PASSWORD')) {
+                            $smtpPassword = constant('SMTP_PASSWORD');
+                        }
+                        $mail->Password = is_string($smtpPassword) ? $smtpPassword : '';
+                    }
 
-//     $read = function() use ($fp) {
-//         $data = '';
-//         while ($line = fgets($fp, 515)) {
-//             $data .= $line;
-//             if (substr($line, 3, 1) == ' ') break;
-//         }
-//         return $data;
-//     };
+                    if (defined('SMTP_SSL') && SMTP_SSL) {
+                        $mail->SMTPSecure = 'ssl';
+                    }
 
-//     $write = function($cmd) use ($fp) { fputs($fp, $cmd."\r\n"); };
+                    $mail->CharSet = 'UTF-8';
+                    $mail->IsHTML(true);
+                    $mail->SetFrom($fromEmail, $fromName);
 
-//     $read(); // banner
-//     $write("EHLO $host");
-//     $read();
+                    foreach ($validRecipients as $recipient) {
+                        $mail->AddAddress($recipient);
+                    }
 
-//     // $write("AUTH LOGIN");
-//     // $read();
-//     // $write(base64_encode($user));
-//     // $read();
-//     // $write(base64_encode($pass));
-//     // if (strpos($read(), '235') !== 0) { fclose($fp); return false; }
+                    $mail->Subject = $subject;
+                    $mail->Body = $htmlContent;
+                    $mail->AltBody = trim(preg_replace('/\s+/', ' ', strip_tags($htmlContent)));
 
-//     $write("MAIL FROM:<$fromEmail>");
-//     $read();
+                    if ($mail->Send()) {
+                        return true;
+                    }
 
-//     foreach ($recipientList as $recipient) {
-//         $write("RCPT TO:<$recipient>");
-//         $read();
-//     }
+                    $lastMailError = $mail->ErrorInfo;
+                    @error_log('[sendMail][SMTP][' . ($mail->SMTPAuth ? 'auth' : 'relay') . '] ' . $mail->ErrorInfo);
+                } catch (Exception $e) {
+                    $lastMailError = $e->getMessage();
+                    @error_log('[sendMail][SMTP exception][' . ($useAuth ? 'auth' : 'relay') . '] ' . $e->getMessage());
+                }
+            }
+        } else {
+            $lastMailError = 'PHPMailer class not found';
+            @error_log('[sendMail][SMTP] PHPMailer class not found');
+        }
+    }
 
-//     $write("DATA");
-//     $read();
-
-//     $headers  = "From: =?UTF-8?B?".base64_encode($fromName)."?= <$fromEmail>\r\n";
-//     $headers .= "MIME-Version: 1.0\r\n";
-//     $headers .= "Content-Type: text/html; charset=utf-8\r\n";
-//     $headers .= "Subject: =?UTF-8?B?".base64_encode($subject)."?=\r\n";
-
-//     $message = $headers . "\r\n" . $htmlContent . "\r\n.\r\n";
-//     fputs($fp, $message);
-//     $read();
-
-//     $write("QUIT");
-//     fclose($fp);
-
-//     return true;
-// }
-
-
-function sendMail(array|string $recipients, string $subject, string $htmlContent, string $fromName = DOMAIN, string $fromEmail = SMTP_USER): bool {
-    // Chuẩn hóa danh sách email
-    $recipientList = array_filter(
-        is_array($recipients) ? $recipients : [$recipients],
-        fn($email) => !empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL)
-    );
-
-    if (empty($recipientList)) return false;
-
-    $headers = "From: $fromName <$fromEmail>\r\n";
+    // Final fallback: PHP mail(). Some shared hosts disable SMTP sockets but
+    // still provide a local sendmail transport.
+    $headers = "From: =?UTF-8?B?" . base64_encode($fromName) . "?= <" . $fromEmail . ">\r\n";
+    $headers .= "Reply-To: " . $fromEmail . "\r\n";
+    $headers .= "MIME-Version: 1.0\r\n";
     $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+    $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
 
-    return mail(implode(',', $recipientList), $subject, $htmlContent, $headers);
+    $allSent = true;
+    foreach ($validRecipients as $recipient) {
+        if (!@mail($recipient, $encodedSubject, $htmlContent, $headers)) {
+            $allSent = false;
+        }
+    }
+
+    if (!$allSent) {
+        @error_log('[sendMail][mail()] PHP mail() returned false; SMTP error: ' . $lastMailError);
+    }
+
+    return $allSent;
 }
 
 // Hạn chế request theo IP để tránh spam form

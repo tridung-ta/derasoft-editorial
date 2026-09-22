@@ -1,0 +1,19 @@
+V48 - EDITORIAL CONTROL CENTER
+================================
+
+1. Sao luu website va database tren hosting.
+2. Giai nen file ZIP tren may tinh.
+3. Upload cac thu muc classes, includes, modules, templates len thu muc goc
+   cua website bang FileZilla. Chon ghi de (overwrite) khi duoc hoi.
+4. Khong upload thu muc templates_c trong goi cu hoac xoa code nguon cu.
+5. Mo phpMyAdmin, chon database cua website va import:
+   database/20260921_v48_editorial_control_center.sql
+6. Dang nhap Admin va mo:
+   /admin.php?op=editorial
+7. Chon Cover Story, Featured, Trending Override va Video noi bat, sau do luu.
+8. Kiem tra trang chu, trang Video va mot trang chi tiet bai viet.
+
+Rollback database (chi dung khi can go bo V48):
+database/20260921_v48_editorial_control_center_rollback.sql
+
+Luu y: rollback se xoa cau hinh noi dung noi bat va lich su luot doc theo ngay.

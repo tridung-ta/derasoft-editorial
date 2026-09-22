@@ -17,6 +17,7 @@ include_once(ROOT_PATH.'classes/dao/wards.class.php');
 include_once(ROOT_PATH.'classes/dao/carts.class.php');
 include_once(ROOT_PATH.'classes/dao/cartitems.class.php');
 include_once(ROOT_PATH.'includes/functions.inc.php');
+include_once(ROOT_PATH.'includes/editorial_mail.inc.php');
 
 $customers = new Customers(1);
 $customerGroups = new CustomerGroups(1);
@@ -26,7 +27,13 @@ $wards = new Wards(1);
 $carts = new Carts(1);
 $cartItems = new CartItems();
 
-if ($_POST['op'] === 'resend_verify') {
+if (!editorialEmailVerificationRequired()) {
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['success' => false, 'message' => 'Xác thực email đang tạm tắt. Bạn có thể đăng nhập trực tiếp.']);
+    exit;
+}
+
+if (($_POST['op'] ?? '') === 'resend_verify') {
 
     $email = trim($_POST['email'] ?? '');
 

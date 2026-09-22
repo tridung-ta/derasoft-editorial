@@ -326,9 +326,23 @@ class Articles extends Model {
 
 	function increaseViewed($pId)
 	{
-		$sql = "UPDATE `" . $this->table . "` SET viewed = viewed + 1 WHERE store_id = '" . $this->store_id . "' AND id = '" . addslashes($pId) . "'";
+		$articleId = (int)$pId;
+		$sql = "UPDATE `" . $this->table . "` SET viewed = viewed + 1 WHERE store_id = '" . (int)$this->store_id . "' AND id = '" . $articleId . "'";
 		if (SHOW_QUERY) echo $sql;
-		if ($this->_db->query($sql)) return 1;
+		if ($this->_db->query($sql)) {
+			$table = DB_PREFIX . 'article_view_daily';
+			$check = $this->_db->query("SHOW TABLES LIKE '" . addslashes($table) . "'");
+			$hasDailyTable = $check && $this->_db->numRows($check) > 0;
+			if ($check) $this->_db->freeResult($check);
+			if ($hasDailyTable) {
+				$this->_db->query(
+					"INSERT INTO `" . $table . "` (store_id, article_id, view_date, views) " .
+					"VALUES (" . (int)$this->store_id . ", " . $articleId . ", CURDATE(), 1) " .
+					"ON DUPLICATE KEY UPDATE views = views + 1, updated_at = NOW()"
+				);
+			}
+			return 1;
+		}
 		return 0;
 	}
 

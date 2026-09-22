@@ -11,16 +11,16 @@
         <div class="ed-home-grid {if !$isLatest}ed-home-grid--earlier{/if}">
             {foreach from=$sectionItems item=article name=timelineArticles}
             {assign var="avatar" value=$article->getAvatarImage($uploads)}
-            <article class="ed-card {if $isLatest && $smarty.foreach.timelineArticles.first}ed-card--feature ed-card--newest{/if}">
+            <article class="ed-card">
                 <a class="ed-card__link" href="{$article->getUrl($lang)|escape:'html'}">
                     <figure class="ed-card__media">
                         {include file='editorial-card-media.tpl.html' article=$article avatar=$avatar lazy=true}
-                        {if $isLatest}<span class="ed-card__badge">{if $smarty.foreach.timelineArticles.first}{if $lang == 'en'}NEWEST{elseif $lang == 'zh'}最新{else}MỚI NHẤT{/if}{else}{if $lang == 'en'}NEW{elseif $lang == 'zh'}新{else}MỚI{/if}{/if}</span>{/if}
+                        {if $isLatest}<span class="ed-card__badge">{if $lang == 'en'}NEW{elseif $lang == 'zh'}新{else}MỚI{/if}</span>{/if}
                     </figure>
                     <div class="ed-card__body">
                         <div class="ed-card__meta"><span>{include file='editorial-category-label.tpl.html' article=$article}</span><time>{$article->getDisplayDate()}</time></div>
                         <h3>{$article->getTitle($lang)|escape:'html'}</h3>
-                        <p>{$article->getDescription($lang)|strip_tags}</p>
+                        <p>{$article->getDescription($lang)|strip_tags|escape:'html'}</p>
                         <b>{if $lang == 'en'}Read article{elseif $lang == 'zh'}阅读全文{else}Đọc bài{/if} →</b>
                     </div>
                 </a>

@@ -1,64 +1,35 @@
 {include file='head.tpl.html' title='head'}
-{assign var="publicBase" value=""}
-{if $lang == 'en'}{assign var="publicBase" value="/en"}{elseif $lang == 'zh'}{assign var="publicBase" value="/zh"}{/if}
 {assign var="categoryRoute" value="/tin-tuc"}
 {if $categoryObj}
-    {assign var="categorySlug" value=$categoryObj->getSlug()}
-    {if $categorySlug == 'tho' || $categorySlug == 'van-xuoi' || $categorySlug == 'van-tho'}
-        {assign var="categoryRoute" value="/van-tho"}
-    {elseif $categorySlug == 'am-nhac' || $categorySlug == 'my-thuat' || $categorySlug == 'san-khau-nghe-thuat' || $categorySlug == 'van-hoa' || $categorySlug == 'nghe-thuat'}
-        {assign var="categoryRoute" value="/nghe-thuat"}
-    {elseif $categorySlug == 'video'}
-        {assign var="categoryRoute" value="/video"}
-    {/if}
+ {assign var="categorySlug" value=$categoryObj->getSlug()}
+ {if $categorySlug == 'tho' || $categorySlug == 'van-xuoi' || $categorySlug == 'van-tho'}{assign var="categoryRoute" value="/van-tho"}{elseif $categorySlug == 'am-nhac' || $categorySlug == 'my-thuat' || $categorySlug == 'san-khau-nghe-thuat' || $categorySlug == 'van-hoa' || $categorySlug == 'nghe-thuat'}{assign var="categoryRoute" value="/nghe-thuat"}{elseif $categorySlug == 'video'}{assign var="categoryRoute" value="/video"}{/if}
 {/if}
-
+<div class="ed-reading-progress" aria-hidden="true"><span id="articleReadingProgress"></span></div>
 <header>{include file='header.tpl.html' title='header'}</header>
-
-<main class="ed-detail-page">
-    <nav class="ed-breadcrumb" aria-label="Breadcrumb">
-        <div class="ed-shell">
-            <a href="{if $publicBase}{$publicBase}{else}/{/if}">{if $lang == 'en'}Home{elseif $lang == 'zh'}首页{else}Trang chủ{/if}</a>
-            <span>›</span>
-            <a href="{$publicBase}{$categoryRoute}">{if $lang == 'en'}Category{elseif $lang == 'zh'}分类{else}Chuyên mục{/if}</a>
-            <span>›</span>
-            <span aria-current="page">{$objectInfo->getTitle($lang)|escape:'html'}</span>
-        </div>
-    </nav>
-
-    <article class="ed-article">
-        <header class="ed-article__header ed-reading-width">
-            {if $categoryObj}
-                <a class="ed-article__category" href="{$publicBase}{$categoryRoute}">{include file='editorial-category-label.tpl.html' article=$objectInfo}</a>
-            {/if}
-            <h1>{$objectInfo->getTitle($lang)|escape:'html'}</h1>
-            {if $objectInfo->getDescription($lang)}
-                <p class="ed-article__lead">{$objectInfo->getDescription($lang)|strip_tags}</p>
-            {/if}
-            <div class="ed-article__meta">
-                <span>{if $lang == 'en'}Editorial Board{elseif $lang == 'zh'}编辑部{else}Ban biên tập{/if}</span>
-                <i aria-hidden="true"></i>
-                <time datetime="{$objectInfo->getDisplayDate()|escape:'html'}">{if $objectInfo->getPublishAt()}{$objectInfo->getPublishAt()|date_format:"%d/%m/%Y"}{else}{$objectInfo->getDateCreated()|date_format:"%d/%m/%Y"}{/if}</time>
-            </div>
-        </header>
-
-        <figure class="ed-article__cover ed-wide-width">
-            {assign var="avatar" value=$objectInfo->getAvatarImage($uploads)}
-            {include file='editorial-card-media.tpl.html' article=$objectInfo avatar=$avatar imageClass='img-content'}
-        </figure>
-
-        <div class="ed-article__content ed-reading-width">
-            {$objectInfo->getDetail($lang)}
-        </div>
-
-        <footer class="ed-article__footer ed-reading-width">
-            <a href="{$publicBase}{$categoryRoute}">← {if $lang == 'en'}Back to category{elseif $lang == 'zh'}返回分类{else}Trở lại chuyên mục{/if}</a>
-        </footer>
-    </article>
+<main class="ed-detail-page ed-journal">
+ <nav class="ed-breadcrumb" aria-label="Breadcrumb"><div class="ed-shell"><a href="{$publicHome}">{if $lang == 'en'}Home{elseif $lang == 'zh'}首页{else}Trang chủ{/if}</a><span>›</span><a href="{$publicBase}{$categoryRoute}">{if $lang == 'en'}Category{elseif $lang == 'zh'}分类{else}Chuyên mục{/if}</a><span>›</span><span aria-current="page">{$objectInfo->getTitle($lang)|escape:'html'}</span></div></nav>
+ <article class="ed-article" data-reader-article data-library-key="{$objectInfo->getId()}" data-library-title="{$objectInfo->getTitle($lang)|escape:'html'}">
+  <header class="ed-article__header ed-reading-width">
+   {if $categoryObj}<a class="ed-article__category" href="{$publicBase}{$categoryRoute}">{include file='editorial-category-label.tpl.html' article=$objectInfo}</a>{/if}
+   <h1>{$objectInfo->getTitle($lang)|escape:'html'}</h1>
+   {if $objectInfo->getDescription($lang)}<p class="ed-article__lead">{$objectInfo->getDescription($lang)|strip_tags}</p>{/if}
+   <div class="ed-article__meta"><span>{if $lang == 'en'}Editorial Board{elseif $lang == 'zh'}编辑部{else}Ban biên tập{/if}</span><i aria-hidden="true"></i><time>{if $objectInfo->getPublishAt()}{$objectInfo->getPublishAt()|date_format:"%d/%m/%Y"}{else}{$objectInfo->getDateCreated()|date_format:"%d/%m/%Y"}{/if}</time><i aria-hidden="true"></i><span id="articleReadingTime">{if $lang == 'en'}Calculating read time…{elseif $lang == 'zh'}正在计算阅读时间…{else}Đang tính thời gian đọc…{/if}</span></div>
+  </header>
+  <figure class="ed-article__cover ed-wide-width">{assign var="avatar" value=$objectInfo->getAvatarImage($uploads)}{include file='editorial-card-media.tpl.html' article=$objectInfo avatar=$avatar imageClass='img-content' lazy=false}</figure>
+  <div class="ed-reader-layout ed-wide-width">
+   <aside class="ed-reader-tools" id="articleReaderTools">
+    <div class="ed-reader-tools__inner"><span class="ed-kicker">{if $lang == 'en'}IN THIS ARTICLE{elseif $lang == 'zh'}本文目录{else}TRONG BÀI VIẾT{/if}</span><nav id="articleTableOfContents" aria-label="{if $lang == 'en'}Table of contents{elseif $lang == 'zh'}目录{else}Mục lục{/if}"></nav><div class="ed-share"><span>{if $lang == 'en'}Share{elseif $lang == 'zh'}分享{else}Chia sẻ{/if}</span><button type="button" data-library-save data-library-type="saved" data-library-key="{$objectInfo->getId()}" data-library-title="{$objectInfo->getTitle($lang)|escape:'html'}" data-library-url="{$objectInfo->getUrl($lang)|escape:'html'}" data-saved-label="{if $lang == 'en'}Saved{elseif $lang == 'zh'}已收藏{else}Đã lưu{/if}">{if $lang == 'en'}Save article{elseif $lang == 'zh'}收藏文章{else}Lưu bài viết{/if}</button><button type="button" data-share-native>{if $lang == 'en'}Share article{elseif $lang == 'zh'}分享文章{else}Chia sẻ bài viết{/if}</button><button type="button" data-copy-link data-copy-label="{if $lang == 'en'}Copy link{elseif $lang == 'zh'}复制链接{else}Sao chép liên kết{/if}" data-copied-label="{if $lang == 'en'}Copied{elseif $lang == 'zh'}已复制{else}Đã sao chép{/if}">{if $lang == 'en'}Copy link{elseif $lang == 'zh'}复制链接{else}Sao chép liên kết{/if}</button></div></div>
+   </aside>
+   <div class="ed-article__content" id="articleContent">{$objectInfo->getDetail($lang)}
+    <div class="ed-article-save"><span>{if $lang == 'en'}Keep this story in your personal reading space.{elseif $lang == 'zh'}&#23558;&#36825;&#31687;&#25991;&#31456;&#20445;&#23384;&#21040;&#24744;&#30340;&#20010;&#20154;&#38405;&#35835;&#31354;&#38388;&#12290;{else}Gi&#7919; b&#224;i vi&#7871;t n&#224;y trong Kh&#244;ng gian &#273;&#7885;c c&#225; nh&#226;n c&#7911;a b&#7841;n.{/if}</span><button class="ed-library-action" type="button" data-library-save data-library-type="saved" data-library-key="{$objectInfo->getId()}" data-library-title="{$objectInfo->getTitle($lang)|escape:'html'}" data-library-url="{$objectInfo->getUrl($lang)|escape:'html'}" data-default-label="{if $lang == 'en'}Save article{elseif $lang == 'zh'}&#25910;&#34255;&#25991;&#31456;{else}L&#432;u b&#224;i vi&#7871;t{/if}" data-saved-label="{if $lang == 'en'}Saved to Reading Space{elseif $lang == 'zh'}&#24050;&#20445;&#23384;&#21040;&#38405;&#35835;&#31354;&#38388;{else}&#272;&#227; l&#432;u v&#224;o Kh&#244;ng gian &#273;&#7885;c{/if}" data-login-label="{if $lang == 'en'}Sign in to save{elseif $lang == 'zh'}&#30331;&#24405;&#21518;&#20445;&#23384;{else}&#272;&#259;ng nh&#7853;p &#273;&#7875; l&#432;u{/if}">{if $lang == 'en'}Save article{elseif $lang == 'zh'}&#25910;&#34255;&#25991;&#31456;{else}L&#432;u b&#224;i vi&#7871;t{/if}</button></div>
+   </div>
+  </div>
+  <footer class="ed-article__footer ed-reading-width"><a href="{$publicBase}{$categoryRoute}">← {if $lang == 'en'}Back to category{elseif $lang == 'zh'}返回分类{else}Trở lại chuyên mục{/if}</a></footer>
+ </article>
+ {if $recentArticlesBlock}<section class="ed-related"><div class="ed-shell"><header class="ed-section__head"><div><span class="ed-kicker">{if $lang == 'en'}KEEP READING{elseif $lang == 'zh'}继续阅读{else}ĐỌC TIẾP{/if}</span><h2>{if $lang == 'en'}Related articles{elseif $lang == 'zh'}相关文章{else}Bài viết liên quan{/if}</h2></div></header><div class="ed-related__grid">{foreach from=$recentArticlesBlock item=related name=relatedLoop}{if $smarty.foreach.relatedLoop.iteration <= 3}{assign var="relatedAvatar" value=$related->getAvatarImage($uploads)}<article class="ed-card"><a class="ed-card__link" href="{$related->getUrl($lang)|escape:'html'}"><figure class="ed-card__media">{include file='editorial-card-media.tpl.html' article=$related avatar=$relatedAvatar lazy=true}</figure><div class="ed-card__body"><div class="ed-card__meta"><span>{include file='editorial-category-label.tpl.html' article=$related}</span><time>{$related->getDisplayDate()}</time></div><h3>{$related->getTitle($lang)|escape:'html'}</h3><p>{$related->getDescription($lang)|strip_tags}</p><b>{if $lang == 'en'}Read article{elseif $lang == 'zh'}阅读全文{else}Đọc bài{/if} →</b></div></a></article>{/if}{/foreach}</div></div></section>{/if}
 </main>
-
 <footer>{include file='footer.tpl.html' title='footer'}</footer>
 <button class="ed-back-top" id="btnToTop" type="button" aria-label="{if $lang == 'en'}Back to top{elseif $lang == 'zh'}返回顶部{else}Về đầu trang{/if}">↑</button>
-{include file='script.tpl.html' title='script'}
-</body>
-</html>
+{include file='editorial-script.tpl.html'}
+<script defer src="/{$templatePath}/{$userTemplate}/js/editorial-reader.js?v=20260922-1"></script>
+</body></html>

@@ -1,0 +1,79 @@
+{include file="$userTemplate/coreheader.tpl.html" title="site-header"}
+{literal}
+<style type="text/css">
+.ecc{padding:20px;color:#273142}.ecc *{box-sizing:border-box}.ecc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:20px}.ecc-head h2{margin:0 0 6px;font-size:26px}.ecc-head p{margin:0;color:#67758a}.ecc-badge{padding:7px 11px;border-radius:20px;background:#efe9ff;color:#5b3cc4;font-weight:bold}.ecc-alert{margin:0 0 16px;padding:13px 16px;border-radius:8px;background:#fff4dc;border:1px solid #efcf8a}.ecc-alert--ok{background:#e9f8ef;border-color:#9bd5ad;color:#176837}.ecc-alert--error{background:#fff0f0;border-color:#e9a2a2;color:#9e2626}.ecc-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}.ecc-stat,.ecc-panel{background:#fff;border:1px solid #dce2ea;border-radius:10px;box-shadow:0 2px 8px rgba(31,45,61,.05)}.ecc-stat{padding:18px}.ecc-stat span{display:block;color:#718096;font-size:12px;text-transform:uppercase;letter-spacing:.05em}.ecc-stat strong{display:block;margin-top:8px;font-size:28px;color:#263238}.ecc-panel{margin-bottom:20px;padding:20px}.ecc-panel h3{margin:0 0 5px;font-size:18px}.ecc-panel__intro{margin:0 0 18px;color:#718096}.ecc-feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.ecc-field{padding:14px;background:#f7f9fc;border-radius:8px}.ecc-field label{display:block;margin-bottom:8px;font-weight:bold}.ecc-field small{display:block;margin-top:7px;color:#718096}.ecc select{width:100%;min-height:38px;padding:7px;border:1px solid #bfc9d6;border-radius:5px;background:#fff}.ecc select[multiple]{min-height:145px}.ecc-submit{margin-top:16px;padding:10px 18px;border:0;border-radius:5px;background:#5b3cc4;color:#fff;font-weight:bold;cursor:pointer}.ecc-summary{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}.ecc-language{padding:7px 10px;border-radius:6px;background:#f1f4f8}.ecc-table{width:100%;border-collapse:collapse}.ecc-table th,.ecc-table td{padding:10px;border-bottom:1px solid #e5e9ef;text-align:left;vertical-align:top}.ecc-table th{background:#f5f7fa;color:#52606d}.ecc-dot{display:inline-block;padding:4px 7px;border-radius:12px;font-size:11px;font-weight:bold}.ecc-dot--ok{background:#dff5e5;color:#17723a}.ecc-dot--missing{background:#fde7e7;color:#a72b2b}.ecc-issues{display:flex;gap:5px;flex-wrap:wrap}.ecc-issue{padding:3px 7px;border-radius:4px;background:#fff0dd;color:#8b4b00;font-size:11px}.ecc-actions a{white-space:nowrap}.ecc-empty{padding:18px;text-align:center;color:#718096}.ecc-top{margin:12px 0 0;padding-left:20px}.ecc-top li{margin:5px 0}.ecc-install code{font-weight:bold}@media(max-width:900px){.ecc-grid{grid-template-columns:repeat(2,1fr)}.ecc-feature-grid{grid-template-columns:1fr}}@media(max-width:560px){.ecc-grid{grid-template-columns:1fr}.ecc-head{display:block}.ecc-badge{display:inline-block;margin-top:10px}.ecc-panel{padding:13px}.ecc-table{display:block;overflow-x:auto}}
+.ecc-schedule{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.ecc-schedule input{width:100%;padding:7px;border:1px solid #ccd4df;border-radius:4px}@media(max-width:560px){.ecc-schedule{grid-template-columns:1fr}}
+</style>
+{/literal}
+<div id="main">
+{include file="$userTemplate/coreleft.tpl.html" title="site-top-menu"}
+<div id="content">
+{include file="$userTemplate/corenavigation.tpl.html" title="navigation-bar"}
+<div class="ecc">
+  <div class="ecc-head">
+    <div><h2>Editorial Control Center</h2><p>Điều phối nội dung nổi bật, theo dõi đa ngôn ngữ và chất lượng bài viết tại một nơi.</p></div>
+    <span class="ecc-badge">V48</span>
+  </div>
+
+  {if !$featureTableReady || !$viewTableReady}
+  <div class="ecc-alert ecc-install">Cần chạy <code>database/20260921_v48_editorial_control_center.sql</code> trong phpMyAdmin để bật đầy đủ V48. Trang vẫn an toàn ở chế độ chỉ đọc cho tới khi cài bảng.</div>
+  {/if}
+  {if isset($editorialSaved)}<div class="ecc-alert ecc-alert--ok">Đã lưu cấu hình nội dung nổi bật.</div>{/if}
+  {if isset($editorialError)}<div class="ecc-alert ecc-alert--error">{$editorialError|escape:'html'}</div>{/if}
+
+  <div class="ecc-grid">
+    <div class="ecc-stat"><span>Lượt đọc hôm nay</span><strong>{$editorialAnalytics.today|number_format}</strong></div>
+    <div class="ecc-stat"><span>7 ngày gần nhất</span><strong>{$editorialAnalytics.days7|number_format}</strong></div>
+    <div class="ecc-stat"><span>30 ngày gần nhất</span><strong>{$editorialAnalytics.days30|number_format}</strong></div>
+    <div class="ecc-stat"><span>Bài được đọc / 30 ngày</span><strong>{$editorialAnalytics.read_articles|number_format}</strong></div>
+  </div>
+
+  <section class="ecc-panel">
+    <h3>Nội dung tăng nhanh</h3>
+    <p class="ecc-panel__intro">Xếp theo lượt đọc trong 7 ngày gần nhất.</p>
+    {if $topGrowth}
+    <ol class="ecc-top">{foreach from=$topGrowth item=item}<li><a href="/{$aScript}?op=manage&amp;act=article&amp;mod=edit&amp;id={$item.id}">{$item.title|escape:'html'}</a> — <strong>{$item.views|number_format}</strong> lượt</li>{/foreach}</ol>
+    {else}<div class="ecc-empty">Chưa có dữ liệu theo ngày. Số liệu sẽ xuất hiện khi độc giả mở bài sau khi cài migration.</div>{/if}
+    {if $topCategory}<p><strong>Chuyên mục được quan tâm nhất / 30 ngày:</strong> {$topCategory.name|default:'Chưa phân loại'|escape:'html'} ({$topCategory.views|number_format} lượt)</p>{/if}
+  </section>
+
+  <section class="ecc-panel">
+    <h3>Quản lý nội dung nổi bật</h3>
+    <p class="ecc-panel__intro">Giữ Ctrl/Cmd để chọn nhiều bài. Thứ tự chọn trong danh sách là thứ tự ưu tiên.</p>
+    <form action="/{$aScript}" method="post">
+      <input type="hidden" name="op" value="editorial" />
+      <input type="hidden" name="doo" value="save_features" />
+      <input type="hidden" name="csrf_token" value="{$editorialCsrf|escape:'html'}" />
+      <div class="ecc-feature-grid">
+        <div class="ecc-field"><label for="feature_cover">Cover Story</label><select id="feature_cover" name="feature_cover"><option value="0">— Tự động dùng bài mới nhất —</option>{foreach from=$editorialArticles item=item}<option value="{$item.id}"{if in_array($item.id,$activeFeatures.cover)} selected="selected"{/if}>#{$item.id} {$item.title|escape:'html'}</option>{/foreach}</select><div class="ecc-schedule"><input type="datetime-local" name="schedule_cover_start" value="{$featureSchedules.cover.start|default:''}" title="Bắt đầu" /><input type="datetime-local" name="schedule_cover_end" value="{$featureSchedules.cover.end|default:''}" title="Kết thúc" /></div><small>Tối đa 1 bài · có thể đặt lịch.</small></div>
+        <div class="ecc-field"><label for="feature_featured">Featured</label><select id="feature_featured" name="feature_featured[]" multiple="multiple">{foreach from=$editorialArticles item=item}<option value="{$item.id}"{if in_array($item.id,$activeFeatures.featured)} selected="selected"{/if}>#{$item.id} {$item.title|escape:'html'}</option>{/foreach}</select><div class="ecc-schedule"><input type="datetime-local" name="schedule_featured_start" value="{$featureSchedules.featured.start|default:''}" title="Bắt đầu" /><input type="datetime-local" name="schedule_featured_end" value="{$featureSchedules.featured.end|default:''}" title="Kết thúc" /></div><small>Tối đa 6 bài · dùng chung một lịch.</small></div>
+        <div class="ecc-field"><label for="feature_trending">Trending Override</label><select id="feature_trending" name="feature_trending_override[]" multiple="multiple">{foreach from=$editorialArticles item=item}<option value="{$item.id}"{if in_array($item.id,$activeFeatures.trending_override)} selected="selected"{/if}>#{$item.id} {$item.title|escape:'html'}</option>{/foreach}</select><div class="ecc-schedule"><input type="datetime-local" name="schedule_trending_override_start" value="{$featureSchedules.trending_override.start|default:''}" title="Bắt đầu" /><input type="datetime-local" name="schedule_trending_override_end" value="{$featureSchedules.trending_override.end|default:''}" title="Kết thúc" /></div><small>Tối đa 3 bài được ghim.</small></div>
+        <div class="ecc-field"><label for="feature_video">Video nổi bật</label><select id="feature_video" name="feature_video_featured"><option value="">— Tự động dùng video đầu tiên —</option>{foreach from=$editorialVideoChoices key=videoId item=videoTitle}<option value="{$videoId|escape:'html'}"{if $videoId eq $activeVideoFeature} selected="selected"{/if}>{$videoTitle|escape:'html'}</option>{/foreach}</select><div class="ecc-schedule"><input type="datetime-local" name="schedule_video_featured_start" value="{$featureSchedules.video_featured.start|default:''}" title="Bắt đầu" /><input type="datetime-local" name="schedule_video_featured_end" value="{$featureSchedules.video_featured.end|default:''}" title="Kết thúc" /></div><small>Chọn video mở đầu thư viện · có thể đặt lịch.</small></div>
+      </div>
+      <button class="ecc-submit" type="submit"{if !$featureTableReady} disabled="disabled"{/if}>Lưu cấu hình nổi bật</button>
+    </form>
+  </section>
+
+  <section class="ecc-panel">
+    <h3>Trung tâm đa ngôn ngữ</h3>
+    <div class="ecc-summary"><span class="ecc-language">VI: <strong>{$languageSummary.vn}/{$languageSummary.total}</strong></span><span class="ecc-language">EN: <strong>{$languageSummary.en}/{$languageSummary.total}</strong></span><span class="ecc-language">中文: <strong>{$languageSummary.zh}/{$languageSummary.total}</strong></span></div>
+    <table class="ecc-table"><thead><tr><th>Bài viết</th><th>Chuyên mục</th><th>VI</th><th>EN</th><th>中文</th><th></th></tr></thead><tbody>
+    {foreach from=$editorialArticles item=item}
+      <tr><td><strong>#{$item.id}</strong> {$item.title|escape:'html'}</td><td>{$item.category_name|default:'—'|escape:'html'}</td><td>{if $item.has_vn}<span class="ecc-dot ecc-dot--ok">✓</span>{else}<span class="ecc-dot ecc-dot--missing">Thiếu</span>{/if}</td><td>{if $item.has_en}<span class="ecc-dot ecc-dot--ok">✓</span>{else}<span class="ecc-dot ecc-dot--missing">Thiếu</span>{/if}</td><td>{if $item.has_zh}<span class="ecc-dot ecc-dot--ok">✓</span>{else}<span class="ecc-dot ecc-dot--missing">Thiếu</span>{/if}</td><td class="ecc-actions"><a href="/{$aScript}?op=manage&amp;act=article&amp;mod=edit&amp;id={$item.id}">Sửa bài</a></td></tr>
+    {/foreach}
+    </tbody></table>
+  </section>
+
+  <section class="ecc-panel">
+    <h3>Health Check nội dung <span class="ecc-badge">{$healthCount}</span></h3>
+    <p class="ecc-panel__intro">Ảnh lớn được cảnh báo từ 2 MB. Danh sách hiển thị tối đa 100 bài cần xử lý.</p>
+    {if $healthRows}
+    <table class="ecc-table"><thead><tr><th>Bài viết</th><th>Trạng thái</th><th>Cảnh báo</th><th></th></tr></thead><tbody>
+    {foreach from=$healthRows item=item}<tr><td><strong>#{$item.id}</strong> {$item.title|escape:'html'}</td><td>{if $item.status eq 1}Đang bật{else}Đã tắt{/if}</td><td><div class="ecc-issues">{foreach from=$item.issues item=issue}<span class="ecc-issue">{$issue|escape:'html'}</span>{/foreach}</div></td><td class="ecc-actions"><a href="/{$aScript}?op=manage&amp;act=article&amp;mod=edit&amp;id={$item.id}">Xử lý</a></td></tr>{/foreach}
+    </tbody></table>
+    {else}<div class="ecc-empty">Không phát hiện vấn đề nội dung.</div>{/if}
+  </section>
+</div>
+</div>
+</div>
+{include file="$userTemplate/corefooter.tpl.html" title="site-footer"}

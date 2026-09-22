@@ -16,6 +16,7 @@ if (!defined('ROOT_PATH')) {
 include_once(ROOT_PATH.'classes/security/boot.class.php');
 $boots = new Boot();
 include_once(ROOT_PATH.'includes/config.inc.php');
+$aops[] = 'editorial'; // V48 Editorial Control Center
 include_once(ROOT_PATH.'includes/constant.inc.php');
 include_once(ROOT_PATH.'classes/data/translator.class.php');
 include_once(ROOT_PATH.'includes/admin/functions.inc.php');

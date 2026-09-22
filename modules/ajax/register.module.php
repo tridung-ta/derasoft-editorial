@@ -1,8 +1,8 @@
 <?php
-header('Content-Type: application/json');
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+header('Content-Type: application/json; charset=utf-8');
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+error_reporting(0);
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -14,6 +14,7 @@ include_once(ROOT_PATH.'classes/dao/countries.class.php');
 include_once(ROOT_PATH.'classes/dao/areas.class.php');
 include_once(ROOT_PATH.'classes/dao/wards.class.php');
 include_once(ROOT_PATH.'includes/functions.inc.php');
+include_once(ROOT_PATH.'includes/editorial_mail.inc.php');
 
 $customers = new Customers(1);
 $customerGroups = new CustomerGroups(1);
@@ -121,13 +122,18 @@ if (isset($_POST['op']) && $_POST['op'] === 'register') {
 
     if ($user) {
 
+        if (!editorialEmailVerificationRequired()) {
+            echo json_encode(['success' => false, 'field' => 'email', 'message' => 'Email đã tồn tại. Bạn có thể đăng nhập ngay.']);
+            exit;
+        }
+
         if (!$user->getStatus()) {
 
             $token = bin2hex(random_bytes(32));
 
             $customers->updateData(
                 [
-                    "verify_token" => $token,
+                    "verify_token" => editorialEmailVerificationRequired() ? $token : null,
                     "verify_expired_at" => date("Y-m-d H:i:s", strtotime("+1 day"))
                 ],
                 $user->getId()
@@ -142,7 +148,7 @@ if (isset($_POST['op']) && $_POST['op'] === 'register') {
                 <p><a href='{$link}'>Click để xác nhận tài khoản</a></p>
             ";
 
-            sendMail($email, $subject, $html, 'Digitrust');
+            if (editorialEmailVerificationRequired()) { sendMail($email, $subject, $html, 'Digitrust'); }
 
             echo json_encode(["success" => false, "field" => "email", "message" => "Email đã đăng ký nhưng chưa xác thực. Chúng tôi đã gửi lại email."]); exit;
         }
@@ -186,39 +192,33 @@ if (isset($_POST['op']) && $_POST['op'] === 'register') {
         exit;
     }
 
-    // ===== reCAPTCHA =====
-    $recaptchaSecret = "YwsAAAAAGpg4AGtDNaLGeo499Xaxa3edVZl";
-    $recaptchaResponse = $_POST['g-recaptcha-response'] ?? '';
-
-    if (!$recaptchaResponse) {
-        echo json_encode(["success" => false,"field" => "recaptcha", "message" => "Vui lòng xác nhận RECAPTCHA"]);
+    // ===== Lightweight anti-bot protection (domain-independent) =====
+    // Honeypot must stay empty. Legitimate users never see this field.
+    $websiteTrap = trim($_POST['website'] ?? '');
+    if ($websiteTrap !== '') {
+        echo json_encode(["success" => false, "field" => "form", "message" => "Yêu cầu không hợp lệ"]);
         exit;
     }
 
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "https://www.google.com/recaptcha/api/siteverify");
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
-        'secret' => $recaptchaSecret,
-        'response' => $recaptchaResponse,
-        'remoteip' => $_SERVER['REMOTE_ADDR']
-    ]));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-    $verify = curl_exec($ch);
-    curl_close($ch);
-
-    $responseData = json_decode($verify);
-
-    if (!$responseData || !$responseData->success) {
-        echo json_encode([
-            "success" => false,
-            "field" => "recaptcha",
-            "message" => "Captcha không hợp lệ",
-        ]);
+    // Reject unrealistically fast submissions and basic session bursts.
+    $started = isset($_SESSION['editorial_register_started']) ? (int)$_SESSION['editorial_register_started'] : 0;
+    if (!$started || (time() - $started) < 2) {
+        echo json_encode(["success" => false, "field" => "form", "message" => "Vui lòng kiểm tra lại thông tin rồi thử lại sau vài giây."]);
         exit;
     }
-    
+    $window = isset($_SESSION['editorial_register_window']) ? (int)$_SESSION['editorial_register_window'] : 0;
+    $attempts = isset($_SESSION['editorial_register_attempts']) ? (int)$_SESSION['editorial_register_attempts'] : 0;
+    if (!$window || (time() - $window) > 300) {
+        $window = time();
+        $attempts = 0;
+    }
+    $attempts++;
+    $_SESSION['editorial_register_window'] = $window;
+    $_SESSION['editorial_register_attempts'] = $attempts;
+    if ($attempts > 8) {
+        echo json_encode(["success" => false, "field" => "form", "message" => "Bạn đã thử quá nhiều lần. Vui lòng chờ vài phút rồi thử lại."]);
+        exit;
+    }
 
     // ===== INSERT =====
 
@@ -229,9 +229,9 @@ if (isset($_POST['op']) && $_POST['op'] === 'register') {
         "password" => password_hash($password, PASSWORD_DEFAULT),
         "email" => $email,
         "tel" => $phone,
-        "status" => 0,
-        "verify_token" => $token,
-        "verify_expired_at" => date("Y-m-d H:i:s", strtotime("+1 day")),
+        "status" => editorialEmailVerificationRequired() ? 0 : 1,
+        "verify_token" => editorialEmailVerificationRequired() ? $token : null,
+        "verify_expired_at" => editorialEmailVerificationRequired() ? date("Y-m-d H:i:s", strtotime("+1 day")) : null,
         "store_id" => 1,
         "date_created" => date("Y-m-d H:i:s")
     ];
@@ -249,14 +249,15 @@ if (isset($_POST['op']) && $_POST['op'] === 'register') {
             ";
             // var_dump($html);die;
 
-            sendMail($email, $subject, $html, 'Digitrust');
+            if (editorialEmailVerificationRequired()) { sendMail($email, $subject, $html, 'Digitrust'); }
     }
 
     if ($customerId) {
+        $next = isset($_POST['next']) && is_scalar($_POST['next']) ? trim((string)$_POST['next']) : '/';
+        if ($next === '' || $next[0] !== '/' || strpos($next, '//') === 0 || preg_match('#^[a-z][a-z0-9+.-]*:#i', $next)) $next = '/';
         echo json_encode([
             "success" => true,
-            // "message" => "Đăng ký thành công, vui lòng đăng nhập",
-            "redirect" => "/dang-nhap"
+            "redirect" => "/dang-nhap?next=" . rawurlencode($next)
         ]);
         exit;
     }

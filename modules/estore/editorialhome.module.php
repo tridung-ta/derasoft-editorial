@@ -41,8 +41,126 @@ $orderedArticles = $articles->getObjects(
     13
 ) ?: array();
 
-$template->assign('homeLatest', array_slice($orderedArticles, 0, 7));
-$template->assign('homeEarlier', array_slice($orderedArticles, 7, 6));
+$homeCover = isset($orderedArticles[0]) ? $orderedArticles[0] : null;
+$homeLatest = array_slice($orderedArticles, 1, 6);
+$homeEarlier = array_slice($orderedArticles, 7, 6);
+
+// V48 editorial assignments override the automatic newest-first selection.
+// The table check keeps the public homepage working before the migration is run.
+$featureTable = DB_PREFIX . 'editorial_features';
+$featureCheck = $db->query("SHOW TABLES LIKE '" . addslashes($featureTable) . "'");
+$hasFeatureTable = $featureCheck && $db->numRows($featureCheck) > 0;
+if ($featureCheck) $db->freeResult($featureCheck);
+if ($hasFeatureTable) {
+    $featureResult = $db->query(
+        "SELECT article_id, feature_type FROM `" . $featureTable . "` " .
+        "WHERE store_id = " . (int)$storeId . " AND status = 1 " .
+        "AND (start_at IS NULL OR start_at <= NOW()) " .
+        "AND (end_at IS NULL OR end_at >= NOW()) " .
+        "AND feature_type IN ('cover','featured','trending_override') ORDER BY feature_type, position, id"
+    );
+    $curatedCoverId = 0;
+    $curatedFeaturedIds = array();
+    $curatedTrendingIds = array();
+    if ($featureResult) {
+        while ($feature = $db->fetchArray($featureResult, 1)) {
+            if ($feature['feature_type'] === 'cover' && !$curatedCoverId) $curatedCoverId = (int)$feature['article_id'];
+            if ($feature['feature_type'] === 'featured') $curatedFeaturedIds[] = (int)$feature['article_id'];
+            if ($feature['feature_type'] === 'trending_override') $curatedTrendingIds[] = (int)$feature['article_id'];
+        }
+        $db->freeResult($featureResult);
+    }
+
+    $isAvailableForLanguage = function ($article) use ($lang) {
+        if (!$article || (int)$article->getStatus() !== 1) return false;
+        if ($lang === 'en') return $article->hasLang('en') && $article->getSlugEn() !== '';
+        if ($lang === 'zh') return $article->hasLang('zh') && $article->getSlugZh() !== '';
+        return true;
+    };
+    if ($curatedCoverId) {
+        $candidate = $articles->getObject($curatedCoverId);
+        if ($isAvailableForLanguage($candidate)) $homeCover = $candidate;
+    }
+    if ($curatedFeaturedIds) {
+        $selected = array();
+        $usedIds = array($homeCover ? (int)$homeCover->getId() : 0);
+        foreach ($curatedFeaturedIds as $articleId) {
+            $candidate = $articles->getObject($articleId);
+            if ($isAvailableForLanguage($candidate) && !in_array($articleId, $usedIds, true)) {
+                $selected[] = $candidate;
+                $usedIds[] = $articleId;
+            }
+        }
+        foreach ($orderedArticles as $candidate) {
+            if (count($selected) >= 6) break;
+            if (!in_array((int)$candidate->getId(), $usedIds, true)) {
+                $selected[] = $candidate;
+                $usedIds[] = (int)$candidate->getId();
+            }
+        }
+        $homeLatest = $selected;
+        $homeEarlier = array();
+        foreach ($orderedArticles as $candidate) {
+            if (count($homeEarlier) >= 6) break;
+            if (!in_array((int)$candidate->getId(), $usedIds, true)) $homeEarlier[] = $candidate;
+        }
+    }
+
+    $homeTrending = array();
+    $trendingIds = array();
+    foreach ($curatedTrendingIds as $articleId) {
+        $candidate = $articles->getObject($articleId);
+        if ($isAvailableForLanguage($candidate) && !in_array($articleId, $trendingIds, true)) {
+            $homeTrending[] = $candidate;
+            $trendingIds[] = $articleId;
+        }
+    }
+    $dailyTable = DB_PREFIX . 'article_view_daily';
+    $dailyCheck = $db->query("SHOW TABLES LIKE '" . addslashes($dailyTable) . "'");
+    $hasDailyTable = $dailyCheck && $db->numRows($dailyCheck) > 0;
+    if ($dailyCheck) $db->freeResult($dailyCheck);
+    if ($hasDailyTable && count($homeTrending) < 4) {
+        $dailyResult = $db->query(
+            "SELECT article_id, SUM(views) AS total_views FROM `" . $dailyTable . "` " .
+            "WHERE store_id = " . (int)$storeId . " AND view_date >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) " .
+            "GROUP BY article_id ORDER BY total_views DESC LIMIT 12"
+        );
+        if ($dailyResult) {
+            while ($daily = $db->fetchArray($dailyResult, 1)) {
+                $articleId = (int)$daily['article_id'];
+                if (in_array($articleId, $trendingIds, true)) continue;
+                $candidate = $articles->getObject($articleId);
+                if ($isAvailableForLanguage($candidate)) {
+                    $homeTrending[] = $candidate;
+                    $trendingIds[] = $articleId;
+                    if (count($homeTrending) >= 4) break;
+                }
+            }
+            $db->freeResult($dailyResult);
+        }
+    }
+    if (count($homeTrending) < 4) {
+        $fallbackTrending = $articles->getObjects(1, $condition, array('a.viewed' => 'DESC'), 8) ?: array();
+        foreach ($fallbackTrending as $candidate) {
+            $articleId = (int)$candidate->getId();
+            if (!in_array($articleId, $trendingIds, true)) {
+                $homeTrending[] = $candidate;
+                $trendingIds[] = $articleId;
+                if (count($homeTrending) >= 4) break;
+            }
+        }
+    }
+    $template->assign('homeTrending', $homeTrending);
+}
+
+if (!isset($homeTrending)) {
+    $homeTrending = $articles->getObjects(1, $condition, array('a.viewed' => 'DESC'), 4) ?: array();
+    $template->assign('homeTrending', $homeTrending);
+}
+
+$template->assign('homeCover', $homeCover);
+$template->assign('homeLatest', $homeLatest);
+$template->assign('homeEarlier', $homeEarlier);
 $templateFile = 'editorial-home.tpl.html';
 $slugActive = '';
 $template->assign('slugActive', $slugActive);

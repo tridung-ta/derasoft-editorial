@@ -1,89 +1,24 @@
 <?php
-
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
-// error_reporting(E_ALL);
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-
+header('Content-Type: application/json; charset=utf-8');
+ini_set('display_errors',0); ini_set('display_startup_errors',0); error_reporting(0);
+if(session_status()===PHP_SESSION_NONE)session_start();
 include_once(ROOT_PATH.'classes/dao/customers.class.php');
-include_once(ROOT_PATH.'classes/dao/customergroups.class.php');
-include_once(ROOT_PATH.'classes/dao/countries.class.php');
-include_once(ROOT_PATH.'classes/dao/areas.class.php');
-include_once(ROOT_PATH.'classes/dao/wards.class.php');
 include_once(ROOT_PATH.'classes/dao/carts.class.php');
-include_once(ROOT_PATH.'classes/dao/cartitems.class.php');
-include_once(ROOT_PATH.'includes/functions.inc.php');
-
-$customers = new Customers(1);
-$customerGroups = new CustomerGroups(1);
-$countries = new Countries(1);
-$areas = new Areas(1);
-$wards = new Wards(1);
-$carts = new Carts(1);
-$cartItems = new CartItems();
-
-if (isset($_POST['op']) && $_POST['op'] === 'login') {
-
-    $username = trim($_POST['username'] ?? '');
-    $password = trim($_POST['password'] ?? '');
-
-    if (!$username || !$password) {
-        echo json_encode([
-            "success" => false,
-            "message" => "Vui lòng nhập đầy đủ thông tin"
-        ]);
-        exit;
-    }
-
-    $user = $customers->getObject($username, 'username');
-    
-    if (!$user) {
-        $user = $customers->getObject($username, 'email');
-    }
-
-    if (!$user) {
-        echo json_encode([
-            "success" => false,"field" => "username", "message" => "Tài khoản không tồn tại"
-        ]);
-        exit;
-    }
-
-    if ($user->getStatus() == 0) {
-        echo json_encode([
-            "success" => false,
-            "field" => "not_verified",   // dùng field
-            "email" => $user->getEmail(), // cần cho resend
-            "message" => "Tài khoản chưa xác thực email. Bạn có muốn gửi lại email xác nhận?"
-        ]);
-        exit;
-    }
-
-    if (!$user || !password_verify($password, $user->getPassword())) {
-        echo json_encode([
-            "success" => false,"field" => "password", "message" => "Sai mật khẩu"
-        ]);
-        exit;
-    }
-
-    // merge TRƯỚC (dùng session guest hiện tại)
-    $carts->mergeCart($user->getId());
-
-    // set session user
-    $_SESSION['store_customerId'] = $user->getId();
-    $_SESSION['username'] = $user->getUsername();
-
-    // regenerate session SAU CÙNG
-    session_regenerate_id(true);
-
-
-    echo json_encode([
-        "success" => true,
-        "message" => "Đăng nhập thành công",
-        "redirect" => "/"
-    ]);
-    exit;
-}
+include_once(ROOT_PATH.'includes/editorial_mail.inc.php');
+function editorialLoginResponse($success,$message,$field='form',$extra=array()){echo json_encode(array_merge(array('success'=>(bool)$success,'field'=>$field,'message'=>$message),$extra),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;}
+if($_SERVER['REQUEST_METHOD']!=='POST'||($_POST['op']??'')!=='login')editorialLoginResponse(false,'Yêu cầu không hợp lệ.');
+if(empty($_SESSION['csrf_token'])||!hash_equals($_SESSION['csrf_token'],(string)($_POST['csrf_token']??'')))editorialLoginResponse(false,'Phiên đăng nhập đã hết hạn. Vui lòng tải lại trang.');
+$username=trim((string)($_POST['username']??''));$password=(string)($_POST['password']??'');
+if($username===''||$password==='')editorialLoginResponse(false,'Vui lòng nhập đầy đủ tài khoản và mật khẩu.');
+$customers=new Customers(1);$user=$customers->getObject($username,'username');if(!$user)$user=$customers->getObject(strtolower($username),'email');
+if(!$user||!password_verify($password,$user->getPassword()))editorialLoginResponse(false,'Tài khoản hoặc mật khẩu không đúng.','password');
+if(editorialEmailVerificationRequired()&&$user->getStatus()==0)editorialLoginResponse(false,'Tài khoản chưa xác thực email.','not_verified',array('email'=>$user->getEmail()));
+session_regenerate_id(true);
+$carts=new Carts(1);$carts->mergeCart($user->getId());
+$customers->updateData(array('last_login'=>date('Y-m-d H:i:s')),$user->getId());
+$_SESSION['store_customerId']=$user->getId();$_SESSION['username']=$user->getUsername();
+$redirect=isset($_POST['next'])&&is_scalar($_POST['next'])?trim((string)$_POST['next']):'/';
+if($redirect===''||$redirect[0]!=='/'||strpos($redirect,'//')===0||preg_match('#^[a-z][a-z0-9+.-]*:#i',$redirect))$redirect='/';
+$redirectPath=parse_url($redirect,PHP_URL_PATH);if(in_array($redirectPath,array('/404.html','/dang-nhap','/dang-ky','/en/login','/en/register','/zh/login','/zh/register','/ajax.php'),true))$redirect='/';
+session_write_close();
+editorialLoginResponse(true,'Đăng nhập thành công.','form',array('redirect'=>$redirect));

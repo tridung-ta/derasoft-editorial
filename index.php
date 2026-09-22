@@ -89,14 +89,66 @@ $userTemplate = 'standard';
 $templateFile = 'index.tpl.html';
 
 # HTTP Request manager
-$publicPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-if (in_array(rtrim($publicPath, '/'), ['/video', '/en/video', '/zh/video'], true)) {
-	$_GET['act'] = 'video';
-	$_GET['slug'] = 'video';
+$editorialRouterVersion = '20260922-stable-routes';
+if (!headers_sent()) header('X-Dera-Editorial-Router: '.$editorialRouterVersion);
+$publicPath = '/' . trim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH), '/');
+$editorialRoutes = [
+	'/dang-nhap' => ['act' => 'login', 'slug' => 'dang-nhap'],
+	'/dang-ky' => ['act' => 'signin', 'slug' => 'dang-ky'],
+	'/login' => ['act' => 'login', 'slug' => 'login'],
+	'/register' => ['act' => 'signin', 'slug' => 'register'],
+	'/verify-user' => ['act' => 'verifyuser', 'slug' => 'verify-user'],
+	'/logout' => ['act' => 'logout', 'slug' => 'logout'],
+	'/khong-gian-doc' => ['act' => 'readinghub', 'slug' => 'reading-space'],
+	'/reading-space' => ['act' => 'readinghub', 'slug' => 'reading-space'],
+	'/van-tho' => ['act' => 'vantho', 'slug' => 'van-tho'],
+	'/van-tho/tho' => ['act' => 'vantho', 'slug' => 'van-tho', 'category' => 'tho'],
+	'/van-tho/van-xuoi' => ['act' => 'vantho', 'slug' => 'van-tho', 'category' => 'van-xuoi'],
+	'/nghe-thuat' => ['act' => 'nghethuat', 'slug' => 'nghe-thuat'],
+	'/nghe-thuat/am-nhac' => ['act' => 'nghethuat', 'slug' => 'nghe-thuat', 'category' => 'am-nhac'],
+	'/nghe-thuat/my-thuat' => ['act' => 'nghethuat', 'slug' => 'nghe-thuat', 'category' => 'my-thuat'],
+	'/nghe-thuat/san-khau-nghe-thuat' => ['act' => 'nghethuat', 'slug' => 'nghe-thuat', 'category' => 'san-khau-nghe-thuat'],
+	'/nghe-thuat/van-hoa' => ['act' => 'nghethuat', 'slug' => 'nghe-thuat', 'category' => 'van-hoa'],
+	'/tin-tuc' => ['act' => 'editorialnews', 'slug' => 'tin-tuc-moi'],
+	'/video' => ['act' => 'video', 'slug' => 'video'],
+	'/tim-kiem' => ['act' => 'editorialsearchv49', 'slug' => 'search'],
+	'/mot-khoang-troi-trong-trang-sach' => ['act' => 'news_detail', 'slug' => 'mot-khoang-troi-trong-trang-sach'],
+	'/cau-chuyen-ben-hien-nha' => ['act' => 'news_detail', 'slug' => 'cau-chuyen-ben-hien-nha'],
+	'/a-story-by-the-veranda' => ['act' => 'news_detail', 'slug' => 'a-story-by-the-veranda'],
+	'/wu-yan-xia-de-gu-shi' => ['act' => 'news_detail', 'slug' => 'wu-yan-xia-de-gu-shi'],
+	'/am-nhac-va-nhip-dieu-cuoc-song' => ['act' => 'news_detail', 'slug' => 'am-nhac-va-nhip-dieu-cuoc-song'],
+	'/sac-mau-trong-doi-song-duong-dai' => ['act' => 'news_detail', 'slug' => 'sac-mau-trong-doi-song-duong-dai'],
+	'/san-khau-noi-cau-chuyen-duoc-thap-sang' => ['act' => 'news_detail', 'slug' => 'san-khau-noi-cau-chuyen-duoc-thap-sang'],
+	'/giu-gin-gia-tri-van-hoa-trong-doi-song-moi' => ['act' => 'news_detail', 'slug' => 'giu-gin-gia-tri-van-hoa-trong-doi-song-moi'],
+	'/khong-gian-van-hoa-nghe-thuat-chinh-thuc-ra-mat' => ['act' => 'news_detail', 'slug' => 'khong-gian-van-hoa-nghe-thuat-chinh-thuc-ra-mat'],
+	'/doi-thoai-ve-van-hoc-nghe-thuat-va-doi-song' => ['act' => 'news_detail', 'slug' => 'doi-thoai-ve-van-hoc-nghe-thuat-va-doi-song'],
+	'/video-gioi-thieu-khong-gian-van-hoa-nghe-thuat' => ['act' => 'news_detail', 'slug' => 'video-gioi-thieu-khong-gian-van-hoa-nghe-thuat'],
+];
+$routeWithoutLang = preg_replace('#^/(en|zh)(?=/|$)#', '', $publicPath);
+$publicQuery = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_QUERY);
+if ($publicQuery) {
+	$publicParams = [];
+	parse_str($publicQuery, $publicParams);
+	foreach (['category', 'page', 'q', 'type', 'from', 'to'] as $allowedPublicParam) {
+		if (isset($publicParams[$allowedPublicParam]) && is_scalar($publicParams[$allowedPublicParam])) {
+			$_GET[$allowedPublicParam] = trim((string)$publicParams[$allowedPublicParam]);
+		}
+	}
+}
+if (isset($editorialRoutes[$routeWithoutLang])) {
+	$_GET['act'] = $editorialRoutes[$routeWithoutLang]['act'];
+	$_GET['slug'] = $editorialRoutes[$routeWithoutLang]['slug'];
+	if (isset($editorialRoutes[$routeWithoutLang]['category'])) {
+		$_GET['category'] = $editorialRoutes[$routeWithoutLang]['category'];
+	}
 }
 $request = new Request;
 $op = $request->element('op'); 
 $act = $request->element('act');
+if (isset($editorialRoutes[$routeWithoutLang])) {
+	$op = 'estore';
+	$act = $editorialRoutes[$routeWithoutLang]['act'];
+}
 
 # Bootstrap
 $sId = $boots->checkBootstrap();

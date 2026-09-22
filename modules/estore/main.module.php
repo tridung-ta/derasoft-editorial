@@ -48,6 +48,21 @@ $template->assign('messages', $messages);
 /* ===================== CUSTOMER ===================== */
 $CustomerId = $_SESSION["store_customerId"] ?? 0;
 $template->assign('CustomerId', $CustomerId);
+/* Member gateway: public editorial content requires a signed-in customer. */
+$memberPublicActs = array('login', 'signin', 'logout', 'verifyuser', 'forgotpassword', 'resetpassword');
+if (!$CustomerId && !in_array(strtolower((string)$act), $memberPublicActs, true)) {
+    $requestedPath = isset($_SERVER['REQUEST_URI']) ? (string)$_SERVER['REQUEST_URI'] : '/';
+    $requestedPath = str_replace(array("\r", "\n"), '', $requestedPath);
+    if ($requestedPath === '' || $requestedPath[0] !== '/' || strpos($requestedPath, '//') === 0) {
+        $requestedPath = '/';
+    }
+    if (strlen($requestedPath) > 1500) {
+        $requestedPath = '/';
+    }
+    $memberLoginPath = $lang === 'en' ? '/en/login' : ($lang === 'zh' ? '/zh/login' : '/dang-nhap');
+    header('Location: ' . $memberLoginPath . '?next=' . rawurlencode($requestedPath), true, 302);
+    exit;
+}
 
 /* ===================== ESTORE ===================== */
 $estore = $estores->getObject(1);
@@ -104,6 +119,8 @@ $publicBase = $lang === 'en' ? '/en' : ($lang === 'zh' ? '/zh' : '');
 $publicHome = $publicBase !== '' ? $publicBase . '/' : '/';
 $template->assign('publicBase', $publicBase);
 $template->assign('publicHome', $publicHome);
+$readingHubPath = $lang === 'en' ? '/en/reading-space' : ($lang === 'zh' ? '/zh/reading-space' : '/khong-gian-doc');
+$template->assign('readingHubPath', $readingHubPath);
 
 // Default language switch URLs for home and public section pages.
 // Detail modules may override these later with translated object slugs.

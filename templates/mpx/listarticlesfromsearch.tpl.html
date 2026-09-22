@@ -19,9 +19,9 @@
     {/if}
     {if $totalPages > 1}
     <nav class="ed-pagination" aria-label="{if $lang == 'en'}Pagination{elseif $lang == 'zh'}分页{else}Phân trang{/if}">
-        {if $page > 1}<a href="?page={$page - 1}" aria-label="{if $lang == 'en'}Previous page{elseif $lang == 'zh'}上一页{else}Trang trước{/if}">←</a>{else}<span class="is-disabled">←</span>{/if}
-        {for $i = 1 to $totalPages}{if $i >= $page - 2 && $i <= $page + 2}{if $i == $page}<span class="is-active" aria-current="page">{$i}</span>{else}<a href="?page={$i}">{$i}</a>{/if}{/if}{/for}
-        {if $page < $totalPages}<a href="?page={$page + 1}" aria-label="{if $lang == 'en'}Next page{elseif $lang == 'zh'}下一页{else}Trang sau{/if}">→</a>{else}<span class="is-disabled">→</span>{/if}
+        {if $page > 1}<a href="?{if $smarty.get.category}category={$smarty.get.category|escape:'url'}&amp;{/if}page={$page - 1}" aria-label="{if $lang == 'en'}Previous page{elseif $lang == 'zh'}上一页{else}Trang trước{/if}">←</a>{else}<span class="is-disabled">←</span>{/if}
+        {for $i = 1 to $totalPages}{if $i >= $page - 2 && $i <= $page + 2}{if $i == $page}<span class="is-active" aria-current="page">{$i}</span>{else}<a href="?{if $smarty.get.category}category={$smarty.get.category|escape:'url'}&amp;{/if}page={$i}">{$i}</a>{/if}{/if}{/for}
+        {if $page < $totalPages}<a href="?{if $smarty.get.category}category={$smarty.get.category|escape:'url'}&amp;{/if}page={$page + 1}" aria-label="{if $lang == 'en'}Next page{elseif $lang == 'zh'}下一页{else}Trang sau{/if}">→</a>{else}<span class="is-disabled">→</span>{/if}
     </nav>
     {/if}
 </div>
