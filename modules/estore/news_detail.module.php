@@ -10,9 +10,9 @@ include_once(ROOT_PATH . 'classes/dao/products.class.php');
 include_once(ROOT_PATH . 'classes/dao/articles.class.php');
 include_once(ROOT_PATH . 'classes/dao/menus.class.php');
 include_once(ROOT_PATH . 'classes/dao/productcategories.class.php');
-include_once(ROOT_PATH . 'classes/dao/comments.class.php');
 include_once(ROOT_PATH . 'classes/dao/articlecategories.class.php');
 include_once(ROOT_PATH . 'classes/dao/users.class.php');
+include_once(ROOT_PATH . 'classes/dao/editorialarticleratings.class.php');
 
 $uploadAlbums      = new UploadAlbums($storeId);
 $uploads           = new Uploads($storeId);
@@ -22,9 +22,9 @@ $products          = new Products($storeId);
 $articles          = new Articles($storeId);
 $menus             = new Menus($storeId);
 $productCategories = new ProductCategories($storeId);
-$comments          = new Comments($storeId);
 $articleCategories = new ArticleCategories($storeId);
 $users             = new Users($storeId);
+$editorialRatings  = new EditorialArticleRatings($storeId);
 
 $templateFile = 'news-detail.tpl.html';
 $slug = $request->element('slug');
@@ -98,7 +98,6 @@ $template->assign('lang',        $lang);
 $template->assign('slug',        $slug);
 $template->assign('objectInfo',     $objectInfo);
 $template->assign('categoryObj', $categoryObj);
-$template->assign('comments',    $comments);
 
 // Breadcrumb & topNav
 $proName = $objectInfo->getTitle($lang);
@@ -186,37 +185,13 @@ $template->assign('recentArticles', $recentArticles);
 $recentCaseStudies = $articles->getObjects(1, "a.`status` = '1' AND a.`id` != '" . $objectInfo->getId() . "' AND a.`category_id` IN (71, 77, 78)" . $langCondition, ['COALESCE(a.`publish_at`, a.`date_created`)' => 'DESC'], 4);
 $template->assign('recentCaseStudies', $recentCaseStudies);
 
-// Thống kê đánh giá
-$totalCount = $objectInfo->getCommentCount();
-$starStats = [];
-
-for ($star = 1; $star <= 5; $star++) {
-    $count = $comments->countCommentsByStar($objectInfo->getId(), $star, 'articles');
-    $starStats[$star] = [
-        'count'   => $count,
-        'percent' => $totalCount > 0 ? round(($count / $totalCount) * 100) : 0,
-    ];
-}
-
-$template->assign('starStats', $starStats);
-$template->assign('totalCount', $totalCount);
-
-// Danh sách bình luận
-$items_per_page = 6;
-$result = paginate(
-    $request,
-    $comments,
-    "status = 1 AND pid = " . $objectInfo->getId(),
-    "status = 1 AND pid = " . $objectInfo->getId(),
-    ['id' => 'DESC'],
-    $items_per_page
-);
-
-$template->assign('items',  $result['items']);
-$template->assign('page',         $result['page']);
-$template->assign('totalPages',   $result['totalPages']);
-$template->assign('totalRows',    $result['totalRows']); 
-$template->assign('itemsPerPage', $items_per_page);   
+// Keep member ratings isolated from legacy product/comment rating data.
+$editorialRatingSummary = $editorialRatings->getSummary($objectInfo->getId());
+$editorialMemberRating = !empty($_SESSION['store_customerId'])
+    ? $editorialRatings->getMemberRating($objectInfo->getId(), (int)$_SESSION['store_customerId'])
+    : 0;
+$template->assign('editorialRatingSummary', $editorialRatingSummary);
+$template->assign('editorialMemberRating', $editorialMemberRating);
 
 # meta avatar
 if ($objectInfo->getAvatarImage($uploads) != null) {
