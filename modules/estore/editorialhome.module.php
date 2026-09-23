@@ -44,6 +44,10 @@ $orderedArticles = $articles->getObjects(
 $homeCover = isset($orderedArticles[0]) ? $orderedArticles[0] : null;
 $homeLatest = array_slice($orderedArticles, 1, 6);
 $homeEarlier = array_slice($orderedArticles, 7, 6);
+$homePrimaryIds = array();
+if ($homeCover) $homePrimaryIds[] = (int)$homeCover->getId();
+foreach ($homeLatest as $primaryArticle) $homePrimaryIds[] = (int)$primaryArticle->getId();
+$homePrimaryIds = array_values(array_unique($homePrimaryIds));
 
 // V48 editorial assignments override the automatic newest-first selection.
 // The table check keeps the public homepage working before the migration is run.
@@ -106,11 +110,16 @@ if ($hasFeatureTable) {
         }
     }
 
+    $homePrimaryIds = array();
+    if ($homeCover) $homePrimaryIds[] = (int)$homeCover->getId();
+    foreach ($homeLatest as $primaryArticle) $homePrimaryIds[] = (int)$primaryArticle->getId();
+    $homePrimaryIds = array_values(array_unique($homePrimaryIds));
+
     $homeTrending = array();
     $trendingIds = array();
     foreach ($curatedTrendingIds as $articleId) {
         $candidate = $articles->getObject($articleId);
-        if ($isAvailableForLanguage($candidate) && !in_array($articleId, $trendingIds, true)) {
+        if ($isAvailableForLanguage($candidate) && !in_array($articleId, $trendingIds, true) && !in_array($articleId, $homePrimaryIds, true)) {
             $homeTrending[] = $candidate;
             $trendingIds[] = $articleId;
         }
@@ -128,7 +137,7 @@ if ($hasFeatureTable) {
         if ($dailyResult) {
             while ($daily = $db->fetchArray($dailyResult, 1)) {
                 $articleId = (int)$daily['article_id'];
-                if (in_array($articleId, $trendingIds, true)) continue;
+                if (in_array($articleId, $trendingIds, true) || in_array($articleId, $homePrimaryIds, true)) continue;
                 $candidate = $articles->getObject($articleId);
                 if ($isAvailableForLanguage($candidate)) {
                     $homeTrending[] = $candidate;
@@ -140,10 +149,10 @@ if ($hasFeatureTable) {
         }
     }
     if (count($homeTrending) < 4) {
-        $fallbackTrending = $articles->getObjects(1, $condition, array('a.viewed' => 'DESC'), 8) ?: array();
+        $fallbackTrending = $articles->getObjects(1, $condition, array('a.viewed' => 'DESC'), 12) ?: array();
         foreach ($fallbackTrending as $candidate) {
             $articleId = (int)$candidate->getId();
-            if (!in_array($articleId, $trendingIds, true)) {
+            if (!in_array($articleId, $trendingIds, true) && !in_array($articleId, $homePrimaryIds, true)) {
                 $homeTrending[] = $candidate;
                 $trendingIds[] = $articleId;
                 if (count($homeTrending) >= 4) break;
@@ -154,7 +163,13 @@ if ($hasFeatureTable) {
 }
 
 if (!isset($homeTrending)) {
-    $homeTrending = $articles->getObjects(1, $condition, array('a.viewed' => 'DESC'), 4) ?: array();
+    $trendingCandidates = $articles->getObjects(1, $condition, array('a.viewed' => 'DESC'), 12) ?: array();
+    $homeTrending = array();
+    foreach ($trendingCandidates as $candidate) {
+        if (in_array((int)$candidate->getId(), $homePrimaryIds, true)) continue;
+        $homeTrending[] = $candidate;
+        if (count($homeTrending) >= 4) break;
+    }
     $template->assign('homeTrending', $homeTrending);
 }
 
