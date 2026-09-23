@@ -81,6 +81,17 @@
 .ed-toast--error::before{background:#b3261e}
 .ed-toast.is-visible{opacity:1;transform:none}
 
+.ed-theme-toggle{display:grid;width:40px;height:40px;flex:0 0 40px;place-items:center;border:1px solid var(--color-border);border-radius:50%;background:var(--color-surface);color:var(--color-text);font-size:1.05rem;cursor:pointer;transition:background-color 180ms ease,border-color 180ms ease,color 180ms ease,transform 180ms ease}
+.ed-theme-toggle:hover{border-color:var(--color-primary);color:var(--color-primary);transform:rotate(10deg)}
+.ed-theme-toggle:focus-visible{outline:3px solid color-mix(in srgb,var(--color-focus) 35%,transparent);outline-offset:3px}
+
+:root[data-theme="dark"] body{background:var(--color-bg-light);color:var(--color-text)}
+:root[data-theme="dark"] .ed-header,:root[data-theme="dark"] .ed-toolbar{background:rgba(23,19,17,.97);border-color:var(--color-border)}
+:root[data-theme="dark"] .ed-journal .ed-tabs-wrap,:root[data-theme="dark"] .ed-card,:root[data-theme="dark"] .ed-watch__info,:root[data-theme="dark"] .ed-library-card,:root[data-theme="dark"] .ed-auth-card{background:var(--color-surface);border-color:var(--color-border)}
+:root[data-theme="dark"] .ed-journal .ed-page-hero,:root[data-theme="dark"] .ed-journal .ed-section,:root[data-theme="dark"] .ed-library{background:var(--color-bg-light)}
+:root[data-theme="dark"] .ed-archive--literature .ed-page-hero,:root[data-theme="dark"] .ed-archive--arts .ed-page-hero,:root[data-theme="dark"] .ed-archive--news .ed-page-hero{background:linear-gradient(115deg,#211a17,#171311 68%,#2b211c)}
+:root[data-theme="dark"] .ed-toast{background:var(--color-surface);border-color:var(--color-border);color:var(--color-text)}
+
 @media(max-width:560px){.ed-toasts{right:16px;bottom:16px;left:16px;width:auto}}
 
 @media (prefers-reduced-motion: reduce) {
@@ -96,6 +107,7 @@
     transition: none;
   }
   .ed-toast{transition:none}
+  .ed-theme-toggle{transition:none}
 }
 
 /* Article card foundation; page-specific layouts may still control columns. */
