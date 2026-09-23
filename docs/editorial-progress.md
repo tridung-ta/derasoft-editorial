@@ -36,7 +36,7 @@ Chưa bắt đầu.
 - [ ] Audit lại UI trước khi sửa
 - [x] Inline validation
 - [x] Loading state
-- [ ] Feedback UI
+- [x] Feedback UI
 - [ ] Mobile polish
 
 ### Homepage

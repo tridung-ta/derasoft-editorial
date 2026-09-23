@@ -15,12 +15,27 @@
     try { return decodeURIComponent(escape(text)); } catch (error) { return text; }
   }
 
-  function show(form, message, success) {
+  function show(form, message, success, fieldName) {
     var box = form.querySelector('[data-auth-message]');
     if (!box) return;
     box.hidden = false;
     box.textContent = normalizeMessage(message) || '';
     box.classList.toggle('is-success', !!success);
+    box.classList.toggle('is-error', !success);
+    box.dataset.state = success ? 'success' : 'error';
+    if (success) {
+      Array.prototype.forEach.call(form.querySelectorAll('[aria-invalid="true"]'), function (input) { validateInput(input, form); });
+      return;
+    }
+    if (fieldName && fieldName !== 'form' && fieldName !== 'not_verified') {
+      var input = form.elements[fieldName];
+      if (input) {
+        var error = errorElement(input);
+        input.setAttribute('aria-invalid', 'true');
+        if (error) { error.textContent = box.textContent; error.hidden = false; input.setAttribute('aria-describedby', error.id); }
+        input.focus();
+      }
+    }
   }
 
   function errorElement(input) {
@@ -101,14 +116,14 @@
     fetch('/ajax.php', { method: 'POST', body: new FormData(form), credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
       .then(function (response) { return response.json(); })
       .then(function (data) {
-        if (!data || !data.success) { show(form, (data && data.message) || 'Không thể thực hiện yêu cầu.', false); return; }
-        show(form, data.message || 'Thành công.', true);
+        if (!data || !data.success) { show(form, (data && data.message) || 'Không thể thực hiện yêu cầu.', false, data && data.field); return; }
+        show(form, data.message || 'Thành công.', true, data.field);
         if (data.redirect) {
           redirecting = true;
           window.setTimeout(function () { window.location.assign(data.redirect); }, 120);
         }
       })
-      .catch(function () { show(form, 'Không thể kết nối. Vui lòng thử lại.', false); })
+      .catch(function () { show(form, 'Không thể kết nối. Vui lòng thử lại.', false, 'form'); })
       .finally(function () { if (!redirecting) setSubmitting(form, false); });
   }
 
