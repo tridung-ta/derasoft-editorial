@@ -6,6 +6,19 @@
   var navigation = document.querySelector('[data-editorial-navigation]');
   var backToTop = document.getElementById('btnToTop');
 
+  function enhanceHomeCardImages() {
+    var images = document.querySelectorAll('.ed-home .ed-card__media img[loading="lazy"]');
+    Array.prototype.forEach.call(images, function (image) {
+      var media = image.closest('.ed-card__media');
+      if (!media || (image.complete && image.naturalWidth > 0)) return;
+      media.classList.add('is-loading');
+      var finish = function () { media.classList.remove('is-loading'); };
+      image.addEventListener('load', finish, { once: true });
+      image.addEventListener('error', finish, { once: true });
+      window.setTimeout(finish, 10000);
+    });
+  }
+
   function closeMenu() {
     if (!toggle || !navigation) return;
     toggle.classList.remove('is-active');
@@ -58,4 +71,5 @@
   }
   updateScrollState();
   window.addEventListener('scroll', updateScrollState, { passive: true });
+  enhanceHomeCardImages();
 })();

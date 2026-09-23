@@ -41,9 +41,10 @@ Chưa bắt đầu.
 
 ### Homepage
 
-- [ ] Skeleton loading
+- [x] Skeleton loading
 - [x] Card image hover đã tồn tại trong source
-- [ ] Normalize spacing theo token Phase 2
+- [x] Normalize spacing theo token Phase 2
+- [x] Loại nội dung trùng giữa Cover/Featured và Trending
 
 ### Category
 
