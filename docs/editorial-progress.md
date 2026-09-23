@@ -33,7 +33,7 @@ Chưa bắt đầu.
 
 ### Authentication
 
-- [ ] Audit lại UI trước khi sửa
+- [x] Audit lại UI trước khi sửa
 - [x] Inline validation
 - [x] Loading state
 - [x] Feedback UI
@@ -48,9 +48,9 @@ Chưa bắt đầu.
 
 ### Category
 
-- [ ] Masonry view cho Nghệ thuật & Văn hóa
+- [x] Masonry view cho Nghệ thuật & Văn hóa
 - [x] Lưu bài dùng thư viện theo tài khoản
-- [ ] Kiểm thử Grid/Compact responsive
+- [x] Kiểm thử Grid/Compact responsive
 
 ### Article Detail
 
@@ -58,17 +58,17 @@ Chưa bắt đầu.
 - [x] Automatic table of contents
 - [x] Share/copy actions
 - [x] Related content
-- [ ] Hoàn thiện và kiểm thử resume reading progress
+- [x] Hoàn thiện và kiểm thử resume reading progress
 
 ## Phase 4 — Polish
 
-Chưa bắt đầu.
+Đã hoàn thành trên nhánh `feature/ten-chuc-nang`, chờ duyệt merge vào `main`.
 
-- [ ] Page transitions
-- [ ] Global toast system
+- [x] Page transitions
+- [x] Global toast system
 - [x] Back-to-top đã tồn tại trên giao diện editorial
-- [ ] Dark mode
-- [x] Reduced-motion rule đã có một phần trong CSS editorial
+- [x] Dark mode
+- [x] Reduced-motion hoàn chỉnh cho các tương tác editorial mới
 
 ## Quy tắc commit
 
