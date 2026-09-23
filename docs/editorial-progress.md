@@ -34,10 +34,10 @@ Chưa bắt đầu.
 ### Authentication
 
 - [ ] Audit lại UI trước khi sửa
-- [ ] Inline validation nếu còn thiếu
-- [ ] Loading state nếu còn thiếu
-- [ ] Feedback UI
-- [ ] Mobile polish
+- [x] Inline validation
+- [x] Loading state
+- [x] Feedback UI
+- [x] Mobile polish
 
 ### Homepage
 

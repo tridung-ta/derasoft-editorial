@@ -18,7 +18,7 @@ body{margin:0}
 .ed-auth-card>p{margin:0 0 32px;color:var(--auth-muted);line-height:1.7}
 .ed-auth-field{display:block;margin-bottom:21px}.ed-auth-field>span:first-child{display:block;margin-bottom:8px;color:#55443c;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase}.ed-auth-field input{box-sizing:border-box;width:100%;height:56px;padding:0 15px;border:1px solid var(--auth-line);border-radius:4px;background:#fff;color:var(--auth-ink);font-size:1rem;outline:0;transition:.2s}.ed-auth-field input:focus{border-color:var(--auth-red);box-shadow:0 0 0 3px rgba(173,48,37,.09)}
 .ed-auth-password{position:relative;display:block}.ed-auth-password input{padding-right:56px}.ed-auth-password button{position:absolute;right:5px;top:6px;display:grid;place-items:center;width:44px;height:44px;border:0;background:transparent;color:#806d64;cursor:pointer}.ed-auth-password svg{width:21px;fill:none;stroke:currentColor;stroke-width:1.6}
-.ed-auth-form-meta{display:flex;justify-content:flex-end;margin:-5px 0 19px;color:#95847b;font-size:.72rem}.ed-auth-message{margin:0 0 18px;padding:13px 15px;border-left:3px solid var(--auth-red);background:#fff0ed;color:#802219;font-size:.86rem;line-height:1.5}.ed-auth-message.is-success{border-color:#397458;background:#edf7f1;color:#28563f}
+.ed-auth-form-meta{display:flex;justify-content:flex-end;margin:-5px 0 19px;color:#95847b;font-size:.72rem}.ed-auth-message{position:relative;margin:0 0 18px;padding:13px 15px 13px 42px;border-left:3px solid var(--auth-red);background:#fff0ed;color:#802219;font-size:.86rem;line-height:1.5}.ed-auth-message:before{position:absolute;top:13px;left:15px;width:18px;height:18px;border:1px solid currentColor;border-radius:50%;content:"!";font-size:.7rem;font-weight:800;line-height:16px;text-align:center}.ed-auth-message.is-success{border-color:var(--color-success,#397458);background:#edf7f1;color:#28563f}.ed-auth-message.is-success:before{content:"\2713"}.ed-auth-message[hidden]{display:none}
 .ed-auth-submit{display:flex;align-items:center;justify-content:space-between;width:100%;height:58px;padding:0 20px;border:0;border-radius:3px;background:var(--auth-red);color:#fff;font-size:.86rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:.2s}.ed-auth-submit:hover{background:#872219;transform:translateY(-1px)}.ed-auth-submit:disabled{opacity:.65;cursor:wait}.ed-auth-submit b{font-size:1.2rem}.ed-auth-alternate{margin-top:25px;padding-top:22px;border-top:1px solid #eee5df;color:var(--auth-muted);font-size:.86rem}.ed-auth-alternate a{color:var(--auth-red);font-weight:700}.ed-auth-page input:-webkit-autofill{-webkit-box-shadow:0 0 0 1000px #fff inset!important}
 @media(max-width:1100px){.ed-auth-shell{grid-template-columns:minmax(0,1fr) minmax(430px,.9fr)}.ed-auth-story h1{font-size:clamp(2.8rem,5vw,4.7rem)}}
 @media(max-width:900px){.ed-auth-shell{grid-template-columns:1fr}.ed-auth-visual{min-height:390px;padding:30px}.ed-auth-story h1{font-size:clamp(3rem,9vw,5rem)}.ed-auth-visual footer{display:none}.ed-auth-panel{min-height:650px}.ed-auth-card{margin:55px auto}}
@@ -28,6 +28,13 @@ body{margin:0}
 .ed-auth-panel--register{padding-block:28px}
 .ed-auth-card--register{width:min(100%,680px);padding:clamp(28px,3vw,46px)}
 .ed-auth-card--register h2{font-size:clamp(2.1rem,3vw,3rem)}
+.ed-auth-field__error{display:block;margin-top:7px;color:var(--color-error,#a92d24);font-size:.75rem;font-weight:600;line-height:1.4;letter-spacing:0;text-transform:none}
+.ed-auth-field__error[hidden]{display:none}
+.ed-auth-field input[aria-invalid="true"]{border-color:var(--color-error,#a92d24);box-shadow:0 0 0 2px rgba(169,45,36,.1)}
+.ed-auth-check input[aria-invalid="true"]+span{color:var(--color-error,#a92d24)}
+.ed-auth-submit.is-loading b{width:16px;height:16px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;font-size:0;animation:ed-auth-spin .7s linear infinite}
+@keyframes ed-auth-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.ed-auth-submit.is-loading b{animation:none;border-top-color:rgba(255,255,255,.45)}}
 .ed-auth-card--register>p{margin-bottom:25px}
 .ed-auth-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .ed-auth-form-grid .ed-auth-field{min-width:0}
@@ -37,3 +44,30 @@ body{margin:0}
 @media(max-width:1100px){.ed-auth-shell--register{grid-template-columns:minmax(0,.85fr) minmax(520px,1.15fr)}}
 @media(max-width:900px){.ed-auth-shell--register{grid-template-columns:1fr}.ed-auth-panel--register{min-height:auto}.ed-auth-card--register{margin:44px auto}}
 @media(max-width:620px){.ed-auth-form-grid{grid-template-columns:1fr;gap:0}.ed-auth-card--register{padding:26px 20px}.ed-auth-card--register h2{font-size:2.15rem}}
+@media(max-width:600px){
+ .ed-auth-page{width:100%;min-width:0;overflow-x:hidden}
+ .ed-auth-visual{min-height:240px;padding:24px 20px}
+ .ed-auth-brand-row{align-items:flex-start}
+ .ed-auth-brand{min-width:0}
+ .ed-auth-brand small{font-size:.58rem;letter-spacing:.16em}
+ .ed-auth-brand strong{font-size:clamp(1.55rem,8vw,2rem);overflow-wrap:anywhere}
+ .ed-auth-story{margin-top:34px}
+ .ed-auth-story h1{font-size:clamp(2.25rem,11vw,3.1rem);line-height:1.02}
+ .ed-auth-panel,.ed-auth-panel--register{min-width:0;padding:20px max(16px,env(safe-area-inset-right)) 28px max(16px,env(safe-area-inset-left))}
+ .ed-auth-panel__top{flex-wrap:wrap;gap:14px;margin-bottom:22px}
+ .ed-auth-panel__top nav a{display:inline-flex;min-width:40px;min-height:40px;align-items:center;justify-content:center}
+ .ed-auth-card,.ed-auth-card--register{width:100%;max-width:none;margin:0;padding:28px 20px}
+ .ed-auth-card h2,.ed-auth-card--register h2{font-size:clamp(2rem,10vw,2.6rem);line-height:1.02}
+ .ed-auth-field input{min-width:0;font-size:16px}
+ .ed-auth-password input{padding-right:52px}
+ .ed-auth-password button{width:48px;height:48px}
+ .ed-auth-check{align-items:flex-start;line-height:1.55}
+ .ed-auth-submit{min-height:56px}
+ .ed-auth-alternate{line-height:1.6}
+}
+@media(max-width:380px){
+ .ed-auth-visual{min-height:220px}
+ .ed-auth-story h1{font-size:2.15rem}
+ .ed-auth-card,.ed-auth-card--register{padding:24px 16px}
+ .ed-auth-card h2,.ed-auth-card--register h2{font-size:1.9rem}
+}
