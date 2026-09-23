@@ -24,7 +24,7 @@ Chưa bắt đầu. Chỉ thực hiện sau khi người dùng duyệt Phase 1.
 - [x] Typography scale
 - [x] Spacing scale
 - [x] Buttons
-- [ ] Article cards
+- [x] Article cards
 - [ ] Category badges
 
 ## Phase 3 — Page Improvements

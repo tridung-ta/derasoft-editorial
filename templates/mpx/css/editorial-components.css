@@ -76,3 +76,55 @@
     transition: none;
   }
 }
+
+/* Article card foundation; page-specific layouts may still control columns. */
+.ed-card {
+  min-width: 0;
+  height: 100%;
+  color: var(--color-text);
+}
+
+.ed-card__link {
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.ed-card__media {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-bg-subtle);
+}
+
+.ed-card__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ed-card__body {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.ed-card h2,
+.ed-card h3 {
+  color: var(--color-text);
+  font-family: var(--font-family-display);
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.ed-card__meta {
+  color: var(--color-text-muted);
+  font-family: var(--font-family-body);
+}
+
+.ed-card__link:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-focus) 35%, transparent);
+  outline-offset: 4px;
+}
