@@ -67,6 +67,8 @@
   transform: none;
 }
 
+.ed-library-action--archive{margin-top:var(--space-3,12px)}
+
 @media (prefers-reduced-motion: reduce) {
   .btn-primary,
   .btn-secondary,
