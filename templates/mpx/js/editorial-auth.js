@@ -4,9 +4,9 @@
   var language = (document.documentElement.lang || 'vi').toLowerCase();
   var locale = language.indexOf('zh') === 0 ? 'zh' : (language.indexOf('en') === 0 ? 'en' : 'vi');
   var messages = {
-    vi: { required: 'Vui lòng nhập thông tin này.', email: 'Email chưa đúng định dạng.', username: 'Tên tài khoản cần có ít nhất 6 ký tự.', password: 'Mật khẩu cần ít nhất 8 ký tự, gồm chữ và số.', confirm: 'Mật khẩu nhập lại chưa khớp.', phone: 'Số điện thoại chưa đúng định dạng.', agree: 'Bạn cần đồng ý với điều khoản sử dụng.' },
-    en: { required: 'Please complete this field.', email: 'Enter a valid email address.', username: 'Username must contain at least 6 characters.', password: 'Password must contain at least 8 characters, including letters and numbers.', confirm: 'The passwords do not match.', phone: 'Enter a valid phone number.', agree: 'You need to accept the terms of use.' },
-    zh: { required: '请填写此字段。', email: '请输入有效的电子邮箱地址。', username: '用户名至少需要 6 个字符。', password: '密码至少需要 8 个字符，并包含字母和数字。', confirm: '两次输入的密码不一致。', phone: '请输入有效的电话号码。', agree: '您需要同意使用条款。' }
+    vi: { required: 'Vui lòng nhập thông tin này.', email: 'Email chưa đúng định dạng.', username: 'Tên tài khoản cần có ít nhất 6 ký tự.', password: 'Mật khẩu cần ít nhất 8 ký tự, gồm chữ và số.', confirm: 'Mật khẩu nhập lại chưa khớp.', phone: 'Số điện thoại chưa đúng định dạng.', agree: 'Bạn cần đồng ý với điều khoản sử dụng.', loadingLogin: 'Đang đăng nhập…', loadingRegister: 'Đang tạo tài khoản…' },
+    en: { required: 'Please complete this field.', email: 'Enter a valid email address.', username: 'Username must contain at least 6 characters.', password: 'Password must contain at least 8 characters, including letters and numbers.', confirm: 'The passwords do not match.', phone: 'Enter a valid phone number.', agree: 'You need to accept the terms of use.', loadingLogin: 'Signing in…', loadingRegister: 'Creating account…' },
+    zh: { required: '请填写此字段。', email: '请输入有效的电子邮箱地址。', username: '用户名至少需要 6 个字符。', password: '密码至少需要 8 个字符，并包含字母和数字。', confirm: '两次输入的密码不一致。', phone: '请输入有效的电话号码。', agree: '您需要同意使用条款。', loadingLogin: '正在登录…', loadingRegister: '正在创建账户…' }
   }[locale];
 
   function normalizeMessage(value) {
@@ -77,18 +77,39 @@
     return valid;
   }
 
-  function submit(form) {
+  function setSubmitting(form, active) {
     var button = form.querySelector('[type="submit"]');
-    if (button) button.disabled = true;
+    if (!button) return;
+    if (active) {
+      if (!button.dataset.defaultHtml) button.dataset.defaultHtml = button.innerHTML;
+      var label = button.querySelector('span');
+      if (label) label.textContent = form.dataset.editorialAuth === 'register' ? messages.loadingRegister : messages.loadingLogin;
+      button.disabled = true;
+      button.classList.add('is-loading');
+      button.setAttribute('aria-busy', 'true');
+      return;
+    }
+    if (button.dataset.defaultHtml) button.innerHTML = button.dataset.defaultHtml;
+    button.disabled = false;
+    button.classList.remove('is-loading');
+    button.removeAttribute('aria-busy');
+  }
+
+  function submit(form) {
+    var redirecting = false;
+    setSubmitting(form, true);
     fetch('/ajax.php', { method: 'POST', body: new FormData(form), credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
       .then(function (response) { return response.json(); })
       .then(function (data) {
         if (!data || !data.success) { show(form, (data && data.message) || 'Không thể thực hiện yêu cầu.', false); return; }
         show(form, data.message || 'Thành công.', true);
-        if (data.redirect) window.setTimeout(function () { window.location.assign(data.redirect); }, 120);
+        if (data.redirect) {
+          redirecting = true;
+          window.setTimeout(function () { window.location.assign(data.redirect); }, 120);
+        }
       })
       .catch(function () { show(form, 'Không thể kết nối. Vui lòng thử lại.', false); })
-      .finally(function () { if (button) button.disabled = false; });
+      .finally(function () { if (!redirecting) setSubmitting(form, false); });
   }
 
   document.addEventListener('input', function (event) {

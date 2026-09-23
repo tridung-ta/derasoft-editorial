@@ -32,6 +32,9 @@ body{margin:0}
 .ed-auth-field__error[hidden]{display:none}
 .ed-auth-field input[aria-invalid="true"]{border-color:var(--color-error,#a92d24);box-shadow:0 0 0 2px rgba(169,45,36,.1)}
 .ed-auth-check input[aria-invalid="true"]+span{color:var(--color-error,#a92d24)}
+.ed-auth-submit.is-loading b{width:16px;height:16px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;font-size:0;animation:ed-auth-spin .7s linear infinite}
+@keyframes ed-auth-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.ed-auth-submit.is-loading b{animation:none;border-top-color:rgba(255,255,255,.45)}}
 .ed-auth-card--register>p{margin-bottom:25px}
 .ed-auth-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .ed-auth-form-grid .ed-auth-field{min-width:0}
