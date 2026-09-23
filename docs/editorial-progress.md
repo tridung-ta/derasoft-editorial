@@ -37,7 +37,7 @@ Chưa bắt đầu.
 - [x] Inline validation
 - [x] Loading state
 - [x] Feedback UI
-- [ ] Mobile polish
+- [x] Mobile polish
 
 ### Homepage
 
