@@ -1,5 +1,5 @@
 /* DeraCMS public editorial frontend — isolated from the legacy theme. */
-:root{--ed-ink:#211d1a;--ed-muted:#716a64;--ed-paper:#fbf9f5;--ed-tint:#f2eee7;--ed-line:#dcd4ca;--ed-accent:#9e3027;--ed-accent-dark:#742018;--ed-gold:#b9904f;--ed-deep:#211714;--ed-white:#fff;--ed-serif:"Times New Roman",Times,serif;--ed-sans:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;--ed-shadow:0 22px 60px rgba(42,31,25,.12)}
+:root{--ed-ink:var(--color-text,#211d1a);--ed-muted:var(--color-text-muted,#716a64);--ed-paper:var(--color-bg-light,#fbf9f5);--ed-tint:var(--color-bg-subtle,#f2eee7);--ed-line:var(--color-border,#dcd4ca);--ed-accent:var(--color-primary,#9e3027);--ed-accent-dark:var(--color-primary-dark,#742018);--ed-gold:var(--color-secondary,#b9904f);--ed-deep:var(--color-bg-dark,#211714);--ed-white:var(--color-surface,#fff);--ed-serif:"Times New Roman",Times,serif;--ed-sans:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;--ed-shadow:var(--shadow-editorial,0 22px 60px rgba(42,31,25,.12))}
 html{scroll-behavior:smooth}
 body{margin:0;overflow-x:hidden;background:var(--ed-paper);color:var(--ed-ink);font-family:var(--ed-sans);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
 body.menu-open{overflow:hidden}

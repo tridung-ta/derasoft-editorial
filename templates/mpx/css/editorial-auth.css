@@ -1,4 +1,4 @@
-:root{--auth-ink:#251b18;--auth-paper:#fbf8f3;--auth-red:#ad3025;--auth-line:#ded3ca;--auth-muted:#76655d}
+:root{--auth-ink:var(--color-text,#251b18);--auth-paper:var(--color-bg-light,#fbf8f3);--auth-red:var(--color-primary,#ad3025);--auth-line:var(--color-border,#ded3ca);--auth-muted:var(--color-text-muted,#76655d)}
 body{margin:0}
 .ed-auth-page{margin:0;background:var(--auth-paper);color:var(--auth-ink);font-family:Arial,sans-serif}
 .ed-auth-shell{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(460px,.95fr);min-height:100vh}

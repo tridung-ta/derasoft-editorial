@@ -1,0 +1,17 @@
+/* Shared visual tokens for the public editorial experience. */
+:root {
+  --color-primary: #9e3027;
+  --color-primary-dark: #742018;
+  --color-secondary: #b9904f;
+  --color-bg-light: #fbf9f5;
+  --color-bg-subtle: #f2eee7;
+  --color-bg-dark: #211714;
+  --color-surface: #ffffff;
+  --color-text: #211d1a;
+  --color-text-muted: #716a64;
+  --color-border: #dcd4ca;
+  --color-error: #a92d24;
+  --color-success: #356b4d;
+  --color-focus: #9e3027;
+  --shadow-editorial: 0 22px 60px rgba(42, 31, 25, 0.12);
+}
