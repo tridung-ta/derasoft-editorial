@@ -6,6 +6,36 @@
   var navigation = document.querySelector('[data-editorial-navigation]');
   var backToTop = document.getElementById('btnToTop');
 
+  function normalizeMessage(value) {
+    var message = String(value || '');
+    if (!/[ÃƒÃ‚Ã„Ã†]/.test(message)) return message;
+    try { return decodeURIComponent(escape(message)); } catch (error) { return message; }
+  }
+
+  function showToast(message, type) {
+    var region = document.querySelector('[data-editorial-toasts]');
+    if (!region) {
+      region = document.createElement('div');
+      region.className = 'ed-toasts';
+      region.setAttribute('data-editorial-toasts', '');
+      region.setAttribute('aria-live', 'polite');
+      region.setAttribute('aria-atomic', 'false');
+      document.body.appendChild(region);
+    }
+    var toast = document.createElement('div');
+    toast.className = 'ed-toast ed-toast--' + (type === 'error' ? 'error' : 'success');
+    toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+    toast.textContent = normalizeMessage(message);
+    region.appendChild(toast);
+    window.requestAnimationFrame(function () { toast.classList.add('is-visible'); });
+    window.setTimeout(function () {
+      toast.classList.remove('is-visible');
+      window.setTimeout(function () { toast.remove(); }, 220);
+    }, 3200);
+  }
+
+  window.editorialToast = showToast;
+
   function enhanceHomeCardImages() {
     var images = document.querySelectorAll('.ed-home .ed-card__media img[loading="lazy"]');
     Array.prototype.forEach.call(images, function (image) {

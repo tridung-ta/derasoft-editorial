@@ -69,6 +69,14 @@
 
 .ed-library-action--archive{margin-top:var(--space-3,12px)}
 
+.ed-toasts{position:fixed;z-index:120;right:var(--space-5,24px);bottom:var(--space-5,24px);display:flex;width:min(360px,calc(100vw - 32px));flex-direction:column;gap:var(--space-3,12px);pointer-events:none}
+.ed-toast{padding:14px 18px;border:1px solid var(--color-border);background:var(--color-surface);box-shadow:var(--shadow-editorial);color:var(--color-text);font:600 var(--font-size-caption) var(--font-family-body);line-height:1.5;opacity:0;transform:translateY(12px);transition:opacity 180ms ease,transform 180ms ease}
+.ed-toast::before{display:inline-block;width:7px;height:7px;margin-right:10px;border-radius:50%;background:var(--color-primary);content:""}
+.ed-toast--error::before{background:#b3261e}
+.ed-toast.is-visible{opacity:1;transform:none}
+
+@media(max-width:560px){.ed-toasts{right:16px;bottom:16px;left:16px;width:auto}}
+
 @media (prefers-reduced-motion: reduce) {
   .btn-primary,
   .btn-secondary,
@@ -77,6 +85,7 @@
   .ed-auth-submit {
     transition: none;
   }
+  .ed-toast{transition:none}
 }
 
 /* Article card foundation; page-specific layouts may still control columns. */
