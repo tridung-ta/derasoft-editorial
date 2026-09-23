@@ -5,6 +5,55 @@
   var toggle = document.querySelector('[data-editorial-menu-toggle]');
   var navigation = document.querySelector('[data-editorial-navigation]');
   var backToTop = document.getElementById('btnToTop');
+  var themeToggle = document.querySelector('[data-theme-toggle]');
+
+  function normalizeMessage(value) {
+    var message = String(value || '');
+    if (!/[ÃƒÃ‚Ã„Ã†]/.test(message)) return message;
+    try { return decodeURIComponent(escape(message)); } catch (error) { return message; }
+  }
+
+  function showToast(message, type) {
+    var region = document.querySelector('[data-editorial-toasts]');
+    if (!region) {
+      region = document.createElement('div');
+      region.className = 'ed-toasts';
+      region.setAttribute('data-editorial-toasts', '');
+      region.setAttribute('aria-live', 'polite');
+      region.setAttribute('aria-atomic', 'false');
+      document.body.appendChild(region);
+    }
+    var toast = document.createElement('div');
+    toast.className = 'ed-toast ed-toast--' + (type === 'error' ? 'error' : 'success');
+    toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+    toast.textContent = normalizeMessage(message);
+    region.appendChild(toast);
+    window.requestAnimationFrame(function () { toast.classList.add('is-visible'); });
+    window.setTimeout(function () {
+      toast.classList.remove('is-visible');
+      window.setTimeout(function () { toast.remove(); }, 220);
+    }, 3200);
+  }
+
+  window.editorialToast = showToast;
+
+  function updateThemeToggle() {
+    if (!themeToggle) return;
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    themeToggle.classList.toggle('is-dark', dark);
+    themeToggle.setAttribute('aria-pressed', String(dark));
+    themeToggle.querySelector('span').textContent = dark ? '\u2600' : '\u263d';
+  }
+
+  if (themeToggle) {
+    updateThemeToggle();
+    themeToggle.addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { window.localStorage.setItem('editorial-theme', next); } catch (error) {}
+      updateThemeToggle();
+    });
+  }
 
   function enhanceHomeCardImages() {
     var images = document.querySelectorAll('.ed-home .ed-card__media img[loading="lazy"]');

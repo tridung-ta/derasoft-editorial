@@ -35,15 +35,16 @@
     <meta property="og:site_name" content="{if $lang == 'en'}Literature &amp; Arts{elseif $lang == 'zh'}文学与艺术{else}Văn học &amp; Nghệ thuật{/if}">
 
     <link rel="icon" type="image/png" href="/{$templatePath}/{$userTemplate}/img/logo/favicon.png">
+    <script>(function(){try{var theme=localStorage.getItem('editorial-theme');if(!theme&&window.matchMedia('(prefers-color-scheme: dark)').matches)theme='dark';document.documentElement.setAttribute('data-theme',theme==='dark'?'dark':'light');}catch(error){}})();</script>
     <link rel="stylesheet" href="/{$templatePath}/{$userTemplate}/css/base.css">
-    <link rel="stylesheet" href="/{$templatePath}/{$userTemplate}/css/editorial-design-tokens.css?v=20260923-1">
+    <link rel="stylesheet" href="/{$templatePath}/{$userTemplate}/css/editorial-design-tokens.css?v=20260923-2">
     <link rel="stylesheet" href="/{$templatePath}/{$userTemplate}/css/literature-redesign.css?v=20260922-4">
     <link rel="stylesheet" href="/{$templatePath}/{$userTemplate}/css/editorial-reader.css?v=20260916-1">
 <link rel="stylesheet" href="/{$templatePath}/{$userTemplate}/css/editorial-library.css?v=20260922-1">
 <link rel="stylesheet" href="/{$templatePath}/{$userTemplate}/css/editorial-auth.css?v=20260923-1">
     <link rel="stylesheet" href="/{$templatePath}/{$userTemplate}/css/editorial-toolbar.css?v=20260916-1">
     <link rel="stylesheet" href="/{$templatePath}/{$userTemplate}/css/editorial-edition.css?v=20260923-3">
-    <link rel="stylesheet" href="/{$templatePath}/{$userTemplate}/css/editorial-components.css?v=20260923-3">
+    <link rel="stylesheet" href="/{$templatePath}/{$userTemplate}/css/editorial-components.css?v=20260923-6">
 
     <script>window.csrfToken = '{$csrf_token}';</script>
     {if $breadcrumbJson}<script type="application/ld+json">{$breadcrumbJson nofilter}</script>{/if}

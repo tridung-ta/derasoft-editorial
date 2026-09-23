@@ -44,7 +44,7 @@
   var copyButton = document.querySelector('[data-copy-link]');
   if (copyButton) copyButton.addEventListener('click', function () {
     var original = copyButton.getAttribute('data-copy-label') || copyButton.textContent;
-    var done = function () { copyButton.textContent = copyButton.getAttribute('data-copied-label') || original; window.setTimeout(function () { copyButton.textContent = original; }, 1800); };
+    var done = function () { var message = copyButton.getAttribute('data-copied-label') || original; copyButton.textContent = message; if (window.editorialToast) window.editorialToast(message, 'success'); window.setTimeout(function () { copyButton.textContent = original; }, 1800); };
     if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(window.location.href).then(done).catch(function () {});
   });
 })();
