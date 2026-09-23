@@ -23,6 +23,14 @@
  </nav></div>
  {/if}
  <section class="ed-archive__content"><div class="ed-shell">
+  {if $items}<div class="ed-archive-view" data-archive-view-controls>
+   <span>{if $lang == 'en'}View{elseif $lang == 'zh'}&#35270;&#22270;{else}Hi&#7875;n th&#7883;{/if}</span>
+   <div class="ed-archive-view__buttons" role="group" aria-label="{if $lang == 'en'}Article layout{elseif $lang == 'zh'}&#25991;&#31456;&#24067;&#23616;{else}B&#7889; c&#7909;c b&#224;i vi&#7871;t{/if}">
+    <button type="button" class="is-active" data-archive-view="grid" aria-pressed="true">{if $lang == 'en'}Grid{elseif $lang == 'zh'}&#32593;&#26684;{else}L&#432;&#7899;i{/if}</button>
+    <button type="button" data-archive-view="compact" aria-pressed="false">{if $lang == 'en'}Compact{elseif $lang == 'zh'}&#32039;&#20945;{else}G&#7885;n{/if}</button>
+    {if $slugActive == 'nghe-thuat'}<button type="button" data-archive-view="masonry" aria-pressed="false">Masonry</button>{/if}
+   </div>
+  </div>{/if}
   <div class="ed-archive__lede"><span class="ed-kicker">{if $lang == 'en'}EDITORIAL SELECTION{elseif $lang == 'zh'}精选文章{else}BÀI VIẾT CHỌN LỌC{/if}</span><p>{if isset($totalRows)}{$totalRows|escape:'html'} {if $lang == 'en'}articles{elseif $lang == 'zh'}篇文章{else}bài viết{/if}{/if}</p></div>
   {if $items}{include file='listarticlesfromsearch.tpl.html' title='articles'}{else}<div class="ed-empty"><h2>{if $lang == 'en'}No content is available{elseif $lang == 'zh'}暂无内容{else}Nội dung đang được cập nhật{/if}</h2><p>{if $lang == 'en'}New articles will be published in this section soon.{elseif $lang == 'zh'}新文章将很快在此栏目发布。{else}Các bài viết mới sẽ sớm được xuất bản tại chuyên mục này.{/if}</p></div>{/if}
  </div></section>
