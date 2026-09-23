@@ -28,6 +28,10 @@ body{margin:0}
 .ed-auth-panel--register{padding-block:28px}
 .ed-auth-card--register{width:min(100%,680px);padding:clamp(28px,3vw,46px)}
 .ed-auth-card--register h2{font-size:clamp(2.1rem,3vw,3rem)}
+.ed-auth-field__error{display:block;margin-top:7px;color:var(--color-error,#a92d24);font-size:.75rem;font-weight:600;line-height:1.4;letter-spacing:0;text-transform:none}
+.ed-auth-field__error[hidden]{display:none}
+.ed-auth-field input[aria-invalid="true"]{border-color:var(--color-error,#a92d24);box-shadow:0 0 0 2px rgba(169,45,36,.1)}
+.ed-auth-check input[aria-invalid="true"]+span{color:var(--color-error,#a92d24)}
 .ed-auth-card--register>p{margin-bottom:25px}
 .ed-auth-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .ed-auth-form-grid .ed-auth-field{min-width:0}

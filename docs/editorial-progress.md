@@ -34,7 +34,7 @@ Chưa bắt đầu.
 ### Authentication
 
 - [ ] Audit lại UI trước khi sửa
-- [ ] Inline validation nếu còn thiếu
+- [x] Inline validation
 - [ ] Loading state nếu còn thiếu
 - [ ] Feedback UI
 - [ ] Mobile polish
