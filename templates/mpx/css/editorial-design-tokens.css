@@ -14,4 +14,15 @@
   --color-success: #356b4d;
   --color-focus: #9e3027;
   --shadow-editorial: 0 22px 60px rgba(42, 31, 25, 0.12);
+  --font-family-display: "Times New Roman", Times, serif;
+  --font-family-body: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --font-size-body: 1rem;
+  --font-size-caption: 0.75rem;
+  --font-size-card-title: clamp(1.35rem, 1.8vw, 1.65rem);
+  --font-size-section-title: clamp(2rem, 3.2vw, 3.2rem);
+  --font-size-display: clamp(2.75rem, 4vw, 4.2rem);
+  --font-size-page-title: clamp(2.75rem, 5vw, 4.8rem);
+  --font-size-article-title: clamp(2.6rem, 4.5vw, 4.3rem);
+  --line-height-body: 1.65;
+  --line-height-heading: 1.12;
 }

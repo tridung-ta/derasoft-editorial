@@ -21,7 +21,7 @@ Tài liệu: `docs/editorial-phase1-audit.md`
 Chưa bắt đầu. Chỉ thực hiện sau khi người dùng duyệt Phase 1.
 
 - [x] Global editorial color tokens
-- [ ] Typography scale
+- [x] Typography scale
 - [ ] Spacing scale
 - [ ] Buttons
 - [ ] Article cards
