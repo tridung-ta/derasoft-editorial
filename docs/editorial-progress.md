@@ -43,7 +43,7 @@ Chưa bắt đầu.
 
 - [x] Skeleton loading
 - [x] Card image hover đã tồn tại trong source
-- [ ] Normalize spacing theo token Phase 2
+- [x] Normalize spacing theo token Phase 2
 
 ### Category
 

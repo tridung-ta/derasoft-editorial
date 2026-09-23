@@ -35,6 +35,18 @@
 .ed-journal .ed-manifesto{padding:clamp(74px,9vw,116px) 0;background:#733327}
 .ed-journal .ed-manifesto blockquote{font-size:clamp(2rem,3.5vw,3.5rem)}
 
+/* Homepage rhythm uses the shared spacing scale. */
+.ed-home.ed-journal{--home-section-space:var(--space-9,96px);--home-heading-gap:var(--space-7,48px);--home-card-gap:var(--space-5,24px);--home-card-padding:var(--space-5,24px)}
+.ed-home.ed-journal .ed-section{padding:var(--home-section-space) 0}
+.ed-home.ed-journal .ed-section__head{margin-bottom:var(--home-heading-gap);padding-bottom:var(--space-5,24px)}
+.ed-home.ed-journal .ed-home-grid{gap:var(--home-card-gap)}
+.ed-home.ed-journal .ed-home-grid:not(.ed-home-grid--earlier) .ed-card{padding-bottom:var(--home-card-padding)}
+.ed-home.ed-journal .ed-home-grid:not(.ed-home-grid--earlier) .ed-card__media{margin-bottom:var(--space-4,16px)}
+.ed-home.ed-journal .ed-home-grid:not(.ed-home-grid--earlier) .ed-card__body{padding-inline:var(--home-card-padding)}
+.ed-home.ed-journal .ed-home-grid--earlier{column-gap:var(--space-6,32px)}
+.ed-home.ed-journal .ed-home-grid--earlier .ed-card{padding-block:var(--space-5,24px)}
+.ed-home.ed-journal .ed-home-grid--earlier .ed-card__link{gap:var(--space-5,24px)}
+
 /* Section covers distinguish literature, arts and news without hiding filters. */
 .ed-journal .ed-page-hero{overflow:hidden;padding:clamp(58px,7vw,98px) 0;border-bottom:1px solid var(--edition-rule)}
 .ed-journal .ed-page-hero__inner{position:relative;z-index:1;width:min(1216px,calc(100% - 64px));max-width:none;text-align:left}
@@ -102,6 +114,7 @@
  .ed-archive--arts .ed-archive-grid .ed-card--feature{grid-column:span 12;grid-row:auto}
 }
 @media(max-width:767px){
+ .ed-home.ed-journal{--home-section-space:calc(var(--space-7,48px) + var(--space-2,8px));--home-heading-gap:var(--space-6,32px);--home-card-gap:var(--space-6,32px);--home-card-padding:var(--space-4,16px)}
  .ed-journal .ed-shell,.ed-journal .ed-page-hero__inner{width:calc(100% - 32px)}
  .ed-journal .ed-hero{padding:46px 0 60px}
  .ed-journal .ed-hero__grid{grid-template-columns:minmax(0,1fr);gap:28px}
@@ -116,6 +129,7 @@
  .ed-journal .ed-home-grid--earlier .ed-card__link{grid-template-columns:102px minmax(0,1fr);gap:14px}
  .ed-journal .ed-home-grid--earlier .ed-card h3{font-size:1.15rem}
  .ed-journal .ed-home-grid--earlier .ed-card p{display:none}
+ .ed-home.ed-journal .ed-home-grid--earlier .ed-card__link{gap:var(--space-4,16px)}
  .ed-journal .ed-page-hero{padding:55px 0}
  .ed-journal .ed-page-hero h1{font-size:clamp(3rem,12vw,4.2rem)}
  .ed-journal .ed-page-hero__index{right:-6px;bottom:-.29em;font-size:10rem}
