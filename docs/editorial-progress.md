@@ -22,7 +22,7 @@ Chưa bắt đầu. Chỉ thực hiện sau khi người dùng duyệt Phase 1.
 
 - [x] Global editorial color tokens
 - [x] Typography scale
-- [ ] Spacing scale
+- [x] Spacing scale
 - [ ] Buttons
 - [ ] Article cards
 - [ ] Category badges

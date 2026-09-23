@@ -25,4 +25,13 @@
   --font-size-article-title: clamp(2.6rem, 4.5vw, 4.3rem);
   --line-height-body: 1.65;
   --line-height-heading: 1.12;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
 }
