@@ -1,4 +1,10 @@
 /* Reusable controls shared by editorial pages and the member gateway. */
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:ed-page-out 140ms ease both}
+::view-transition-new(root){animation:ed-page-in 220ms ease both}
+@keyframes ed-page-out{to{opacity:.72;transform:translateY(-4px)}}
+@keyframes ed-page-in{from{opacity:.72;transform:translateY(6px)}}
+
 .btn-primary,
 .btn-secondary,
 .ed-button,
@@ -78,6 +84,10 @@
 @media(max-width:560px){.ed-toasts{right:16px;bottom:16px;left:16px;width:auto}}
 
 @media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 1ms;
+  }
   .btn-primary,
   .btn-secondary,
   .ed-button,
