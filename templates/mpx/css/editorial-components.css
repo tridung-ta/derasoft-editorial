@@ -128,3 +128,27 @@
   outline: 3px solid color-mix(in srgb, var(--color-focus) 35%, transparent);
   outline-offset: 4px;
 }
+
+/* Category and status badges. */
+.badge-category,
+.ed-card__badge {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  border: 1px solid var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-surface);
+  font-family: var(--font-family-body);
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.badge-category--outline {
+  background: transparent;
+  color: var(--color-primary);
+}
