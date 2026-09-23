@@ -1,0 +1,154 @@
+/* Reusable controls shared by editorial pages and the member gateway. */
+.btn-primary,
+.btn-secondary,
+.ed-button,
+.ed-library-action,
+.ed-auth-submit {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-3, 0.75rem) var(--space-5, 1.5rem);
+  border: 1px solid var(--color-primary);
+  border-radius: 2px;
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-caption);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.btn-primary,
+.ed-library-action,
+.ed-auth-submit {
+  background: var(--color-primary);
+  color: var(--color-surface);
+}
+
+.btn-secondary,
+.ed-button {
+  background: transparent;
+  color: var(--color-primary);
+}
+
+.btn-primary:hover,
+.ed-library-action:hover,
+.ed-auth-submit:hover {
+  background: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+}
+
+.btn-secondary:hover,
+.ed-button:hover {
+  background: var(--color-primary);
+  color: var(--color-surface);
+}
+
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.ed-button:focus-visible,
+.ed-library-action:focus-visible,
+.ed-auth-submit:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-focus) 35%, transparent);
+  outline-offset: 3px;
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled,
+.ed-library-action:disabled,
+.ed-auth-submit:disabled {
+  opacity: 0.65;
+  cursor: wait;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary,
+  .btn-secondary,
+  .ed-button,
+  .ed-library-action,
+  .ed-auth-submit {
+    transition: none;
+  }
+}
+
+/* Article card foundation; page-specific layouts may still control columns. */
+.ed-card {
+  min-width: 0;
+  height: 100%;
+  color: var(--color-text);
+}
+
+.ed-card__link {
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.ed-card__media {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-bg-subtle);
+}
+
+.ed-card__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ed-card__body {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.ed-card h2,
+.ed-card h3 {
+  color: var(--color-text);
+  font-family: var(--font-family-display);
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.ed-card__meta {
+  color: var(--color-text-muted);
+  font-family: var(--font-family-body);
+}
+
+.ed-card__link:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-focus) 35%, transparent);
+  outline-offset: 4px;
+}
+
+/* Category and status badges. */
+.badge-category,
+.ed-card__badge {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  border: 1px solid var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-surface);
+  font-family: var(--font-family-body);
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.badge-category--outline {
+  background: transparent;
+  color: var(--color-primary);
+}
