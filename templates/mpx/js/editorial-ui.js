@@ -19,6 +19,38 @@
     });
   }
 
+  function enhanceArchiveViews() {
+    var archive = document.querySelector('.ed-archive');
+    var controls = document.querySelector('[data-archive-view-controls]');
+    var grid = archive && archive.querySelector('.ed-archive-grid');
+    if (!archive || !controls || !grid) return;
+
+    var buttons = controls.querySelectorAll('[data-archive-view]');
+    var storageKey = archive.classList.contains('ed-archive--arts') ? 'editorial-arts-view' : 'editorial-archive-view';
+    var allowed = Array.prototype.map.call(buttons, function (button) {
+      return button.getAttribute('data-archive-view');
+    });
+
+    function activate(view) {
+      if (allowed.indexOf(view) === -1) view = 'grid';
+      grid.setAttribute('data-archive-layout', view);
+      Array.prototype.forEach.call(buttons, function (button) {
+        var active = button.getAttribute('data-archive-view') === view;
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+      try { window.localStorage.setItem(storageKey, view); } catch (error) {}
+    }
+
+    var initialView = 'grid';
+    try { initialView = window.localStorage.getItem(storageKey) || initialView; } catch (error) {}
+    activate(initialView);
+    controls.addEventListener('click', function (event) {
+      var button = event.target.closest('[data-archive-view]');
+      if (button) activate(button.getAttribute('data-archive-view'));
+    });
+  }
+
   function closeMenu() {
     if (!toggle || !navigation) return;
     toggle.classList.remove('is-active');
@@ -72,4 +104,5 @@
   updateScrollState();
   window.addEventListener('scroll', updateScrollState, { passive: true });
   enhanceHomeCardImages();
+  enhanceArchiveViews();
 })();
