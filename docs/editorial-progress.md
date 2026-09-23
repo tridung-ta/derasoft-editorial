@@ -41,7 +41,7 @@ Chưa bắt đầu.
 
 ### Homepage
 
-- [ ] Skeleton loading
+- [x] Skeleton loading
 - [x] Card image hover đã tồn tại trong source
 - [ ] Normalize spacing theo token Phase 2
 

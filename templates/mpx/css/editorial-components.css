@@ -103,6 +103,21 @@
   object-fit: cover;
 }
 
+.ed-home .ed-card__media.is-loading::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: linear-gradient(100deg, var(--color-bg-subtle) 20%, var(--color-surface) 38%, var(--color-bg-subtle) 56%);
+  background-size: 220% 100%;
+  content: "";
+  pointer-events: none;
+  animation: ed-card-skeleton 1.25s ease-in-out infinite;
+}
+
+@keyframes ed-card-skeleton {
+  to { background-position-x: -220%; }
+}
+
 .ed-card__body {
   display: flex;
   min-width: 0;
@@ -151,4 +166,10 @@
 .badge-category--outline {
   background: transparent;
   color: var(--color-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ed-home .ed-card__media.is-loading::after {
+    animation: none;
+  }
 }
