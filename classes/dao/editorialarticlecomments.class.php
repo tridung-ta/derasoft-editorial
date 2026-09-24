@@ -68,6 +68,19 @@ class EditorialArticleComments extends Model
         );
     }
 
+    function countRecentByCustomer($customerId, $minutes = 10)
+    {
+        $customerId = (int)$customerId;
+        $minutes = max(1, min(60, (int)$minutes));
+        if ($customerId < 1) return 0;
+        return (int)$this->countItems(
+            'id',
+            '`store_id` = ' . $this->store_id
+            . ' AND `customer_id` = ' . $customerId
+            . ' AND `date_created` >= DATE_SUB(NOW(), INTERVAL ' . $minutes . ' MINUTE)'
+        );
+    }
+
     function getModerationItems($status = -1, $page = 1, $itemsPerPage = 20)
     {
         $status = (int)$status;
