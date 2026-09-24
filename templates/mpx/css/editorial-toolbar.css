@@ -3,11 +3,11 @@
 .ed-toolbar .ed-header__utility{height:34px}
 .ed-toolbar .ed-header__utility-inner{min-height:34px}
 .ed-toolbar .ed-header__utility p{font-size:.66rem;letter-spacing:.12em;text-transform:uppercase}
-.ed-toolbar__main{display:flex;min-height:82px;align-items:center;gap:clamp(28px,4vw,64px)}
+.ed-toolbar__main{display:flex;min-height:82px;align-items:center;gap:clamp(20px,3vw,48px)}
 .ed-toolbar__brand{flex:0 0 auto;text-align:left;white-space:nowrap}
 .ed-toolbar__brand .ed-brand__eyebrow{margin-bottom:2px;font-size:.55rem;letter-spacing:.18em}
 .ed-toolbar__brand strong{font-size:clamp(1.45rem,2vw,2rem);letter-spacing:-.025em}
-.ed-toolbar__navigation{flex:1;border:0}
+.ed-toolbar__navigation{flex:1;margin-left:auto;border:0}
 .ed-toolbar__navigation .ed-nav{min-height:82px;justify-content:flex-end;gap:clamp(20px,2.5vw,42px)}
 .ed-toolbar__navigation .ed-nav>a{font-size:.76rem;white-space:nowrap}
 .ed-toolbar.is-scrolled .ed-toolbar__main{min-height:68px}
