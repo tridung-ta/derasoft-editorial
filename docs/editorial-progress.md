@@ -212,8 +212,9 @@ Commits:
 - [x] Lập kế hoạch migration cộng thêm và rollout hai giai đoạn
 - [x] Duyệt Giai đoạn A: membership foundation chưa kết nối thanh toán thật
 - [x] Tạo migration/rollback cho membership plan và subscription
-- [ ] Chạy migration và xác nhận schema trên production
-- [ ] Triển khai DAO và entitlement service
+- [x] Chạy migration và xác nhận schema trên production
+- [x] Triển khai DAO và entitlement service
+- [ ] Thêm quản lý gói/quyền thủ công trong Editorial Control Center
 
 Tài liệu: `docs/editorial-membership-paywall-audit.md`
 
