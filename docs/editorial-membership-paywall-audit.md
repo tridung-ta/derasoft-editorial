@@ -5,7 +5,7 @@ Nhánh: `feature/ten-chuc-nang`
 
 ## Kết luận
 
-Tính năng thành viên trả phí/paywall hiện **MISSING**. Hệ thống chỉ có cổng đăng nhập bắt buộc cho toàn bộ nội dung editorial; mọi tài khoản đã đăng nhập đang có cùng quyền đọc. Source chưa có subscription có thời hạn, entitlement service, giao dịch thanh toán hay callback/webhook của VNPay/MoMo.
+Giai đoạn A của tính năng thành viên trả phí/paywall đã được triển khai: hệ thống có gói hội viên, subscription có thời hạn, entitlement service, quản trị cấp/thu hồi quyền, cờ bài premium và paywall phía backend. Giai đoạn B về giao dịch thanh toán và callback/webhook của VNPay/MoMo chưa triển khai.
 
 Không nên gắn paywall trực tiếp vào `orders` legacy. Luồng này được thiết kế cho sản phẩm vật lý, chứa trạng thái giao hàng và một số query cũ có alias không hợp lệ. Tái sử dụng nó cho quyền đọc sẽ làm tăng rủi ro cấp quyền sai khi thanh toán.
 

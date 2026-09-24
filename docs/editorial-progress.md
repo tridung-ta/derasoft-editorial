@@ -215,9 +215,21 @@ Commits:
 - [x] Chạy migration và xác nhận schema trên production
 - [x] Triển khai DAO và entitlement service
 - [x] Thêm quản lý gói/quyền thủ công trong Editorial Control Center
-- [ ] Thêm cờ bài premium và thực thi paywall ở backend
+- [x] Thêm cờ bài premium và thực thi paywall ở backend
+- [x] Bảo đảm nội dung premium không xuất hiện trong HTML khi chưa đủ quyền
+- [x] Hoàn thiện paywall responsive bằng VI/EN/中文
+- [x] Kiểm tra PHP syntax và 63 lượt Smarty smoke test
+- [ ] Kiểm tra trực quan bài miễn phí/premium trên production bằng tài khoản có và chưa có quyền
 
 Tài liệu: `docs/editorial-membership-paywall-audit.md`
+
+Commits:
+
+- `68b2c13` — `feat(membership): add plans and subscriptions schema`
+- `9141e5a` — `feat(membership): add subscription persistence and entitlement service`
+- `6bb21f6` — `feat(admin): add editorial membership management`
+- `7e22a17` — `feat(article): enforce premium content access`
+- `293aca1` — `style(paywall): add multilingual membership gate`
 
 ## Quy tắc commit
 
