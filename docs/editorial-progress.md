@@ -186,6 +186,14 @@ Commits:
 - `bbd9e9c` — `feat(recommendations): add content-based recommendation service`
 - `029df88` — `feat(reading-hub): add personalized article recommendations`
 
+### Đồng bộ tiến độ đọc đa thiết bị
+
+- [x] Audit luồng lưu/khôi phục progress hiện có
+- [x] Lập kế hoạch hoàn thiện không dùng WebSocket và không đổi database
+- [ ] Chờ duyệt cơ chế chống lùi progress và chu kỳ đồng bộ 5 giây
+
+Tài liệu: `docs/editorial-reading-sync-audit.md`
+
 ## Quy tắc commit
 
 - Một chức năng hoàn chỉnh = test + một commit riêng.
