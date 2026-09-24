@@ -111,9 +111,19 @@ Commits:
 
 - [x] Audit dữ liệu tác giả, route và giao diện hiện có
 - [x] Lập kế hoạch triển khai không thay đổi database
-- [ ] Chờ duyệt trước khi triển khai
+- [x] Thêm route VI/EN/中文 và trang danh sách bài viết theo tác giả
+- [x] Chỉ công khai tên hiển thị, avatar và giới thiệu đã lọc
+- [x] Liên kết tên tác giả trên trang chi tiết bài viết
+- [x] Kiểm tra PHP syntax và Git diff
+- [ ] Kiểm tra giao diện và route trên production
 
 Tài liệu: `docs/editorial-author-page-audit.md`
+
+Commits:
+
+- `414e128` — `feat(author): add public editorial author page`
+- `dad2612` — `feat(article): link article byline to author profile`
+- `131dc29` — `fix(author): use existing localized biography fields`
 
 ## Quy tắc commit
 
