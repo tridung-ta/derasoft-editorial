@@ -20,6 +20,7 @@
   {/if}
   {if isset($editorialSaved)}<div class="ecc-alert ecc-alert--ok">Đã lưu cấu hình nội dung nổi bật.</div>{/if}
   {if isset($editorialCommentSaved)}<div class="ecc-alert ecc-alert--ok">Đã cập nhật trạng thái bình luận.</div>{/if}
+  {if isset($editorialNewsletterSaved)}<div class="ecc-alert ecc-alert--ok">Đã cập nhật trạng thái subscriber Newsletter.</div>{/if}
   {if isset($editorialError)}<div class="ecc-alert ecc-alert--error">{$editorialError|escape:'html'}</div>{/if}
 
   <div class="ecc-grid">
@@ -52,6 +53,17 @@
       {/foreach}
       </tbody></table>
       {else}<div class="ecc-empty">Không có bình luận trong trạng thái này.</div>{/if}
+    {/if}
+  </section>
+
+  <section class="ecc-panel" id="editorial-newsletter">
+    <h3>Newsletter subscribers</h3>
+    <p class="ecc-panel__intro">Danh sách email đã chủ động đồng ý qua form Newsletter. Giai đoạn hiện tại chỉ ghi nhận pending; chưa gửi email hàng loạt.</p>
+    {if !$newsletterTableReady}
+      <div class="ecc-alert">Chưa cài bảng <code>dc_editorial_newsletter_subscribers</code>.</div>
+    {else}
+      <form class="ecc-filter" action="/{$aScript}" method="get"><input type="hidden" name="op" value="editorial" /><label for="newsletterStatusFilter">Trạng thái</label><select id="newsletterStatusFilter" name="newsletter_status_filter"><option value="-1"{if $newsletterStatusFilter eq -1} selected="selected"{/if}>Tất cả</option><option value="0"{if $newsletterStatusFilter eq 0} selected="selected"{/if}>Chờ xác nhận</option><option value="1"{if $newsletterStatusFilter eq 1} selected="selected"{/if}>Đang nhận tin</option><option value="2"{if $newsletterStatusFilter eq 2} selected="selected"{/if}>Đã hủy</option><option value="3"{if $newsletterStatusFilter eq 3} selected="selected"{/if}>Đã chặn</option></select><button class="ecc-submit" type="submit">Lọc</button></form>
+      {if $editorialNewsletterRows}<table class="ecc-table"><thead><tr><th>ID</th><th>Email</th><th>Ngôn ngữ</th><th>Nguồn</th><th>Consent</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>{foreach from=$editorialNewsletterRows item=subscriber}<tr><td>#{$subscriber.id}</td><td>{$subscriber.email|escape:'html'}</td><td>{$subscriber.language|upper|escape:'html'}</td><td>{$subscriber.source|escape:'html'}</td><td>{$subscriber.consented_at|default:$subscriber.date_created|escape:'html'}</td><td>{if $subscriber.status eq 0}Chờ xác nhận{elseif $subscriber.status eq 1}Đang nhận tin{elseif $subscriber.status eq 2}Đã hủy{else}Đã chặn{/if}</td><td><form class="ecc-moderate" action="/{$aScript}" method="post"><input type="hidden" name="op" value="editorial" /><input type="hidden" name="doo" value="manage_newsletter_subscriber" /><input type="hidden" name="csrf_token" value="{$editorialCsrf|escape:'html'}" /><input type="hidden" name="subscriber_id" value="{$subscriber.id}" />{if $subscriber.status eq 3}<button class="ecc-approve" type="submit" name="subscriber_status" value="0">Bỏ chặn</button>{else}<button class="ecc-delete" type="submit" name="subscriber_status" value="3">Chặn</button>{/if}</form></td></tr>{/foreach}</tbody></table>{else}<div class="ecc-empty">Chưa có subscriber trong trạng thái này.</div>{/if}
     {/if}
   </section>
 

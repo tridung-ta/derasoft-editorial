@@ -62,9 +62,11 @@ $storeId = (int)$storeId;
 $featureTableReady = editorialTableExists($db, DB_PREFIX . 'editorial_features');
 $viewTableReady = editorialTableExists($db, DB_PREFIX . 'article_view_daily');
 $commentTableReady = editorialTableExists($db, DB_PREFIX . 'editorial_article_comments');
+$newsletterTableReady = editorialTableExists($db, DB_PREFIX . 'editorial_newsletter_subscribers');
 $template->assign('featureTableReady', $featureTableReady);
 $template->assign('viewTableReady', $viewTableReady);
 $template->assign('commentTableReady', $commentTableReady);
+$template->assign('newsletterTableReady', $newsletterTableReady);
 
 if (empty($_SESSION['editorial_csrf'])) {
     $_SESSION['editorial_csrf'] = bin2hex(random_bytes(24));
@@ -114,6 +116,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $request->element('doo') === 'moder
                 exit;
             }
             $template->assign('editorialError', 'Không thể cập nhật bình luận. Dữ liệu cũ được giữ nguyên.');
+        }
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $request->element('doo') === 'manage_newsletter_subscriber') {
+    $userInfo->checkPermission('comment', 'edit');
+    if (!$newsletterTableReady) {
+        $template->assign('editorialError', 'Chưa cài bảng subscriber Newsletter.');
+    } elseif (!hash_equals($_SESSION['editorial_csrf'], (string)$request->element('csrf_token'))) {
+        $template->assign('editorialError', 'Phiên làm việc đã hết hạn. Vui lòng tải lại trang.');
+    } else {
+        $subscriberId = (int)$request->element('subscriber_id');
+        $subscriberStatus = (int)$request->element('subscriber_status');
+        if ($subscriberId < 1 || !in_array($subscriberStatus, array(0, 3), true)) {
+            $template->assign('editorialError', 'Thao tác subscriber không hợp lệ.');
+        } else {
+            $updated = $db->query(
+                "UPDATE `" . DB_PREFIX . "editorial_newsletter_subscribers` " .
+                "SET status = $subscriberStatus, date_updated = NOW() " .
+                "WHERE id = $subscriberId AND store_id = $storeId LIMIT 1"
+            );
+            if ($updated) {
+                $trackings->addData(array(
+                    'store_id' => $storeId,
+                    'username' => $userInfo->getUsername(),
+                    'action' => 'Cập nhật Newsletter subscriber #' . $subscriberId . ' thành trạng thái ' . $subscriberStatus,
+                    'date_created' => date('Y-m-d H:i:s'),
+                    'ip' => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : ''
+                ));
+                header('Location: /' . ADMIN_SCRIPT . '?op=editorial&newsletter_saved=1#editorial-newsletter');
+                exit;
+            }
+            $template->assign('editorialError', 'Không thể cập nhật subscriber. Dữ liệu cũ được giữ nguyên.');
         }
     }
 }
@@ -195,6 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $request->element('doo') === 'save_
 
 if ($request->element('saved')) $template->assign('editorialSaved', 1);
 if ($request->element('comment_saved')) $template->assign('editorialCommentSaved', 1);
+if ($request->element('newsletter_saved')) $template->assign('editorialNewsletterSaved', 1);
 
 $articleRows = editorialRows($db,
     "SELECT a.id, a.title, a.slug, a.slug_en, a.slug_zh, a.lang, a.description, a.detail, " .
@@ -308,4 +344,19 @@ if ($commentTableReady) {
 }
 $template->assign('editorialCommentRows', $editorialCommentRows);
 $template->assign('commentStatusFilter', $commentStatusFilter);
+
+$newsletterStatusFilter = $request->element('newsletter_status_filter');
+$newsletterStatusFilter = $newsletterStatusFilter === '' || $newsletterStatusFilter === null ? -1 : (int)$newsletterStatusFilter;
+if (!in_array($newsletterStatusFilter, array(-1, 0, 1, 2, 3), true)) $newsletterStatusFilter = -1;
+$editorialNewsletterRows = array();
+if ($newsletterTableReady) {
+    $newsletterCondition = $newsletterStatusFilter >= 0 ? ' AND status = ' . $newsletterStatusFilter : '';
+    $editorialNewsletterRows = editorialRows($db,
+        "SELECT id, email, language, status, source, consented_at, confirmed_at, unsubscribed_at, date_created " .
+        "FROM `" . DB_PREFIX . "editorial_newsletter_subscribers` " .
+        "WHERE store_id = $storeId$newsletterCondition ORDER BY date_created DESC, id DESC LIMIT 100"
+    );
+}
+$template->assign('editorialNewsletterRows', $editorialNewsletterRows);
+$template->assign('newsletterStatusFilter', $newsletterStatusFilter);
 ?>
