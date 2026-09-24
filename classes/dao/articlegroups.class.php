@@ -195,6 +195,23 @@ class ArticleGroups extends Model {
 		return $map;
 	}
 
+	function getActiveObjectsByIds($ids = array()) {
+		$cleanIds = array();
+		foreach ((array)$ids as $id) {
+			$id = (int)$id;
+			if ($id > 0) $cleanIds[$id] = $id;
+		}
+		if (!$cleanIds) return array();
+
+		$objects = $this->getObjects(
+			1,
+			"`status` = " . S_ENABLED . " AND `id` IN (" . implode(',', $cleanIds) . ")",
+			array('id' => 'ASC'),
+			count($cleanIds)
+		);
+		return $objects ?: array();
+	}
+
 	
 }
 ?>

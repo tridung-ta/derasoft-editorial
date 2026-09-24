@@ -110,8 +110,8 @@ class ArticleGroupInfo {
 	}
 	function getNameByLang($lang = 'vn')
 	{
-		if($lang == 'en') return $this->name_en;
-		if($lang == 'zh') return $this->name_zh;
+		if($lang == 'en' && trim((string)$this->name_en) !== '') return $this->name_en;
+		if($lang == 'zh' && trim((string)$this->name_zh) !== '') return $this->name_zh;
 		return $this->name;
 	}
     
