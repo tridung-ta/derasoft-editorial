@@ -186,6 +186,7 @@ main header{position:static;z-index:auto;top:auto;left:auto;width:auto;backgroun
 .ed-article__content blockquote{margin:42px 0;padding:4px 0 4px 28px;border-left:3px solid var(--ed-accent);color:#5f5048;font-size:1.4rem;font-style:italic}
 .ed-article__content a{color:var(--ed-accent);text-decoration:underline;text-underline-offset:3px}
 .ed-article__footer{margin-top:54px;padding-top:24px;border-top:1px solid var(--ed-line);color:var(--ed-accent);font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.ed-article-tags{display:flex;align-items:flex-start;gap:18px;margin-top:42px;padding-top:24px;border-top:1px solid var(--ed-line)}.ed-article-tags>span{padding-top:8px;color:var(--ed-muted);font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase}.ed-article-tags>div{display:flex;flex-wrap:wrap;gap:8px}.ed-article-tags a{padding:7px 12px;border:1px solid var(--ed-line);border-radius:999px;color:var(--ed-ink);font-size:.78rem;text-decoration:none}.ed-article-tags a:hover,.ed-article-tags a:focus-visible{border-color:var(--ed-accent);background:var(--ed-accent);color:#fff}
 .ed-related{padding:clamp(70px,8vw,110px) 0;background:var(--ed-tint)}
 .ed-related__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
 
@@ -345,7 +346,7 @@ main header{position:static;z-index:auto;top:auto;left:auto;width:auto;backgroun
 .ed-article-save{display:flex;align-items:center;justify-content:space-between;gap:var(--space-5,24px);margin-top:var(--space-7,48px);padding:var(--space-5,24px);border-top:1px solid var(--ed-line);border-bottom:1px solid var(--ed-line);font-family:var(--ed-sans);font-size:.9rem}
 .ed-share [data-library-save]{display:block!important;visibility:visible!important}
 @media(max-width:1050px){.ed-video-page .ed-watch__layout{grid-template-columns:minmax(0,1fr)!important}.ed-video-page .ed-watch__player{width:100%}}
-@media(max-width:560px){.ed-article-save{align-items:stretch;flex-direction:column}.ed-library-action--card{width:calc(100% - 40px)}}
+@media(max-width:560px){.ed-article-save{align-items:stretch;flex-direction:column}.ed-library-action--card{width:calc(100% - 40px)}.ed-article-tags{flex-direction:column;gap:10px}}
 /* Video theatre redesign 2026-09-22 */
 .ed-video-page .ed-watch{background:linear-gradient(180deg,#f8f4ef 0%,#eee6dd 100%)}
 .ed-video-page .ed-watch>.ed-shell{width:min(calc(100% - 48px),1280px)}

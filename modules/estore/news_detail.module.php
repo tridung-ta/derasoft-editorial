@@ -11,6 +11,7 @@ include_once(ROOT_PATH . 'classes/dao/articles.class.php');
 include_once(ROOT_PATH . 'classes/dao/menus.class.php');
 include_once(ROOT_PATH . 'classes/dao/productcategories.class.php');
 include_once(ROOT_PATH . 'classes/dao/articlecategories.class.php');
+include_once(ROOT_PATH . 'classes/dao/articlegroups.class.php');
 include_once(ROOT_PATH . 'classes/dao/users.class.php');
 include_once(ROOT_PATH . 'classes/dao/editorialarticleratings.class.php');
 
@@ -23,6 +24,7 @@ $articles          = new Articles($storeId);
 $menus             = new Menus($storeId);
 $productCategories = new ProductCategories($storeId);
 $articleCategories = new ArticleCategories($storeId);
+$articleGroups      = new ArticleGroups($storeId);
 $users             = new Users($storeId);
 $editorialRatings  = new EditorialArticleRatings($storeId);
 
@@ -106,6 +108,21 @@ if ($userInfo && $userInfo->isEnabled()) {
     }
 }
 $template->assign('articleAuthor', $articleAuthor);
+
+$articleTagIds = array_filter(array_map('intval', explode(',', (string)$objectInfo->getArticleGroupIds())));
+$articleTagObjects = $articleGroups->getActiveObjectsByIds($articleTagIds);
+$articleTags = array();
+foreach ($articleTagObjects as $articleTagObject) {
+    $tagSlug = trim((string)$articleTagObject->getSlug());
+    if ($tagSlug === '') continue;
+    $articleTags[] = array(
+        'name' => $articleTagObject->getNameByLang($lang),
+        'url' => $lang === 'vn'
+            ? '/chu-de/' . rawurlencode($tagSlug)
+            : '/' . $lang . '/tag/' . rawurlencode($tagSlug)
+    );
+}
+$template->assign('articleTags', $articleTags);
 
 $template->assign('lang',        $lang);
 $template->assign('slug',        $slug);
