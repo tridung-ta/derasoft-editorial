@@ -1,0 +1,24 @@
+.ed-membership{margin:0 0 clamp(48px,7vw,76px);padding:clamp(26px,4vw,46px);border:1px solid #d8c9bb;background:linear-gradient(145deg,#fffdf9 0%,#f2e8dc 100%);box-shadow:0 18px 50px rgba(54,39,30,.08)}
+.ed-membership>header{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:22px;border-bottom:1px solid var(--ed-line)}
+.ed-membership h2{margin:6px 0 18px;font-family:var(--ed-serif);font-size:clamp(2rem,4vw,3rem);font-weight:400;line-height:1.1}
+.ed-membership__status{padding:8px 12px;border-radius:999px;background:#315f48;color:#fff;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.ed-membership__active{margin:0 0 24px;color:var(--ed-muted);font-size:.92rem}
+.ed-membership__active strong{color:var(--ed-ink)}
+.ed-membership__notice{margin:0 0 22px;padding:14px 16px;border-left:3px solid var(--ed-accent);background:#fff;color:var(--ed-ink);font-size:.88rem}
+.ed-membership__plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.ed-membership-plan{display:flex;min-width:0;flex-direction:column;padding:24px;border:1px solid var(--ed-line);background:rgba(255,255,255,.78)}
+.ed-membership-plan>span{color:var(--ed-accent);font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.ed-membership-plan h3{margin:12px 0 8px;font-family:var(--ed-serif);font-size:1.55rem;font-weight:400;line-height:1.2}
+.ed-membership-plan p{margin:0 0 18px;color:var(--ed-muted);font-size:.86rem;line-height:1.6}
+.ed-membership-plan>strong{display:block;margin:auto 0 20px;font-family:var(--ed-serif);font-size:1.35rem;font-weight:400}
+.ed-membership-plan form,.ed-membership-plan .ed-button{width:100%}
+.ed-membership-plan .ed-button{box-sizing:border-box;justify-content:center;background:var(--ed-accent);color:#fff;cursor:pointer}
+.ed-membership-plan small{display:block;margin-top:auto;color:var(--ed-muted);line-height:1.5}
+.ed-payment-result{display:grid;min-height:62vh;place-items:center;padding:clamp(52px,8vw,100px) 0;background:#f7f3ee}
+.ed-payment-result__card{width:min(100%,780px);box-sizing:border-box;padding:clamp(34px,6vw,72px);border:1px solid #d8c9bb;background:#fffdf9;box-shadow:0 24px 70px rgba(54,39,30,.1);text-align:center}
+.ed-payment-result__card h1{margin:14px auto 18px;font-family:var(--ed-serif);font-size:clamp(2.3rem,5vw,4.2rem);font-weight:400;line-height:1.08}
+.ed-payment-result__card p{max-width:610px;margin:0 auto 30px;color:var(--ed-muted);line-height:1.75}
+.ed-payment-result__card .ed-button{background:var(--ed-accent);color:#fff;text-decoration:none}
+@media(max-width:900px){.ed-membership__plans{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.ed-membership>header{align-items:flex-start;flex-direction:column}.ed-membership__plans{grid-template-columns:1fr}.ed-membership-plan{padding:20px}.ed-payment-result__card .ed-button{display:flex;justify-content:center;width:100%;box-sizing:border-box}}
+@media(prefers-reduced-motion:reduce){.ed-membership-plan .ed-button{transition:none}}
