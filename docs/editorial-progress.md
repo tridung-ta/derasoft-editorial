@@ -190,9 +190,20 @@ Commits:
 
 - [x] Audit luồng lưu/khôi phục progress hiện có
 - [x] Lập kế hoạch hoàn thiện không dùng WebSocket và không đổi database
-- [ ] Chờ duyệt cơ chế chống lùi progress và chu kỳ đồng bộ 5 giây
+- [x] Chống request cũ ghi lùi progress đã đồng bộ
+- [x] Thêm API lấy một history item và giảm chu kỳ ghi xuống tối đa mỗi 5 giây
+- [x] Gửi lần đồng bộ cuối bằng `keepalive` khi tab bị ẩn hoặc đóng
+- [x] Thêm CTA đọc tiếp, phần trăm và thời điểm đồng bộ trong Không gian đọc
+- [x] Kiểm tra PHP syntax, JavaScript syntax, Smarty compile và Git diff
+- [ ] Kiểm tra luồng hai thiết bị và giao diện responsive trên production
 
 Tài liệu: `docs/editorial-reading-sync-audit.md`
+
+Commits:
+
+- `ffbcf9f` — `fix(reading): prevent stale progress regression`
+- `6e51bac` — `feat(reading): make cross-device progress sync resilient`
+- `572e690` — `feat(reading-hub): improve continue-reading experience`
 
 ## Quy tắc commit
 
