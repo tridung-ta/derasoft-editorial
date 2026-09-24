@@ -12,6 +12,7 @@ define('ROOT_PATH', dirname(__DIR__) . '/');
 define('DB_PREFIX', 'dc_');
 require_once ROOT_PATH . 'classes/dao/editorialpaymenttransactions.class.php';
 require_once ROOT_PATH . 'classes/payment/vnpaygateway.class.php';
+require_once ROOT_PATH . 'classes/payment/editorialvnPaypayments.class.php';
 
 class EditorialPaymentLedgerFake extends EditorialPaymentTransactions
 {
@@ -83,3 +84,88 @@ if (isset($sanitized['vnp_HashSecret']) || isset($sanitized['vnp_SecureHash'])) 
 }
 
 echo "OK: VNPay HMAC-SHA512 signing, tamper detection and response filtering\n";
+
+class EditorialPaymentDbFake
+{
+    public $queries = array();
+    function query($sql)
+    {
+        $this->queries[] = $sql;
+        return true;
+    }
+}
+
+class EditorialPaymentPlansFake
+{
+    function getById($id)
+    {
+        return array('id' => (int)$id, 'code' => 'premium-30', 'price' => '99000.00', 'currency' => 'VND', 'duration_days' => 30, 'status' => 1);
+    }
+}
+
+class EditorialPaymentSubscriptionsFake
+{
+    public $grantCount = 0;
+    function getActiveForCustomer($customerId) { return 0; }
+    function grant($customerId, $planId, $startsAt, $endsAt, $source, $grantedBy, $note)
+    {
+        ++$this->grantCount;
+        return 88;
+    }
+}
+
+class EditorialPaymentTransactionsFake
+{
+    public $payment;
+    function __construct()
+    {
+        $this->payment = array(
+            'id' => 42, 'customer_id' => 7, 'plan_id' => 3, 'plan_duration_days' => 30,
+            'amount' => '99000.00', 'status' => EditorialPaymentTransactions::STATUS_PENDING,
+        );
+    }
+    function createPending($customerId, $planId, $duration, $txnRef, $amount, $currency) { return 42; }
+    function getByTxnRefForUpdate($txnRef) { return $this->payment; }
+    function updateProviderResult($id, $status, $fields)
+    {
+        $this->payment['status'] = $status;
+        return 1;
+    }
+}
+
+function signVnPaySmokeParams($params, $secret)
+{
+    ksort($params);
+    $parts = array();
+    foreach ($params as $key => $value) $parts[] = urlencode($key) . '=' . urlencode($value);
+    $params['vnp_SecureHash'] = hash_hmac('sha512', implode('&', $parts), $secret);
+    return $params;
+}
+
+$paymentDb = new EditorialPaymentDbFake();
+$paymentPlans = new EditorialPaymentPlansFake();
+$paymentSubscriptions = new EditorialPaymentSubscriptionsFake();
+$paymentTransactions = new EditorialPaymentTransactionsFake();
+$paymentService = new EditorialVnPayPayments(1, $paymentDb, $paymentPlans, $paymentSubscriptions, $paymentTransactions, $gateway);
+$checkout = $paymentService->createCheckout(7, 3, '127.0.0.1', 'vn');
+if (empty($checkout['success']) || strpos($checkout['payment_url'], 'vnp_SecureHash=') === false) {
+    fwrite(STDERR, "FAIL: VNPay checkout creation\n");
+    exit(1);
+}
+$ipn = signVnPaySmokeParams(array(
+    'vnp_Amount' => '9900000', 'vnp_BankCode' => 'NCB', 'vnp_PayDate' => '20260924101500',
+    'vnp_ResponseCode' => '00', 'vnp_TmnCode' => 'TESTCODE', 'vnp_TransactionNo' => '123456789',
+    'vnp_TransactionStatus' => '00', 'vnp_TxnRef' => $checkout['txn_ref'],
+), 'sandbox-secret');
+$ipnResult = $paymentService->processIpn($ipn);
+if ($ipnResult['RspCode'] !== '00' || $paymentSubscriptions->grantCount !== 1 || $paymentTransactions->payment['status'] !== EditorialPaymentTransactions::STATUS_PAID) {
+    fwrite(STDERR, "FAIL: VNPay successful IPN processing\n");
+    exit(1);
+}
+$duplicateResult = $paymentService->processIpn($ipn);
+if ($duplicateResult['RspCode'] !== '02' || $paymentSubscriptions->grantCount !== 1) {
+    fwrite(STDERR, "FAIL: duplicate VNPay IPN granted access twice\n");
+    exit(1);
+}
+
+echo "OK: VNPay checkout and idempotent subscription activation\n";

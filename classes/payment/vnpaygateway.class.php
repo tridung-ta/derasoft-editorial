@@ -82,6 +82,11 @@ class VnPayGateway
         return hash_equals($expectedHash, $receivedHash);
     }
 
+    function matchesMerchant($tmnCode)
+    {
+        return $this->tmnCode !== '' && hash_equals($this->tmnCode, trim((string)$tmnCode));
+    }
+
     function sanitizeResponse($params)
     {
         $allowed = array(
