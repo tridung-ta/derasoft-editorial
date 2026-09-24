@@ -1,6 +1,6 @@
 # Editorial Development Progress
 
-Cập nhật gần nhất: 23/09/2026  
+Cập nhật gần nhất: 24/09/2026  
 Nhánh làm việc: `feature/ten-chuc-nang`
 
 ## Phase 1 — Audit & Baseline
@@ -62,13 +62,37 @@ Chưa bắt đầu.
 
 ## Phase 4 — Polish
 
-Đã hoàn thành trên nhánh `feature/ten-chuc-nang`, chờ duyệt merge vào `main`.
+Đã hoàn thành và đã kiểm tra trên production.
 
 - [x] Page transitions
 - [x] Global toast system
 - [x] Back-to-top đã tồn tại trên giao diện editorial
 - [x] Dark mode
 - [x] Reduced-motion hoàn chỉnh cho các tương tác editorial mới
+
+## Feature Roadmap — Nhóm trung bình
+
+### Đánh giá bài viết
+
+- [x] Tạo bảng đánh giá editorial riêng, không trộn dữ liệu comment/sản phẩm legacy
+- [x] Một tài khoản chỉ có một đánh giá cho mỗi bài và được phép cập nhật mức sao
+- [x] Bảo vệ endpoint bằng đăng nhập, CSRF và giới hạn tần suất
+- [x] Giao diện 5 sao responsive, hỗ trợ VI/EN/中文
+- [x] Migration và rollback riêng
+- [x] Chạy migration và kiểm tra hoạt động trên production
+
+Commits:
+
+- `37f2b84` — `feat(rating): add secure editorial rating data layer`
+- `4633f77` — `feat(article): add member rating interface`
+- `c1e4495` — `fix(smarty): escape dark mode bootstrap script`
+- `7a7202f` — `refactor(header): remove redundant global search`
+
+### Bình luận bài viết
+
+- [ ] Audit hệ bình luận legacy và luồng kiểm duyệt hiện có
+- [ ] Lập kế hoạch dữ liệu/API/giao diện an toàn
+- [ ] Chờ duyệt trước khi triển khai
 
 ## Quy tắc commit
 
