@@ -129,6 +129,32 @@ foreach (array('vn' => '', 'en' => '/en', 'zh' => '/zh') as $lang => $prefix) {
         $failures[] = "$lang article: premium content gate";
     }
 
+    $smarty->assign('personalRecommendations', array());
+    $smarty->assign('savedItems', array());
+    $smarty->assign('historyItems', array());
+    $smarty->assign('watchLaterItems', array());
+    $smarty->assign('membershipPlans', array(array(
+        'id' => 3, 'name' => 'Premium 30', 'description' => 'Test plan', 'price' => '99000.00',
+        'currency' => 'VND', 'duration_days' => 30,
+    )));
+    $smarty->assign('activeSubscription', 0);
+    $smarty->assign('vnpayConfigured', true);
+    $smarty->assign('paymentError', '');
+    $readingHub = $smarty->fetch('reading-hub.tpl.html');
+    ++$checks;
+    if (strpos($readingHub, 'ed-membership') === false || strpos($readingHub, $prefix . '/thanh-toan/vnpay') === false || strpos($readingHub, 'csrf_token') === false) {
+        $failures[] = "$lang membership: checkout form";
+    }
+
+    $smarty->assign('paymentSignatureValid', true);
+    $smarty->assign('paymentTransaction', array('status' => 1));
+    $smarty->assign('paymentReportedSuccess', true);
+    $paymentReturn = $smarty->fetch('vnpay-return.tpl.html');
+    ++$checks;
+    if (strpos($paymentReturn, 'ed-payment-result') === false || strpos($paymentReturn, $smarty->getTemplateVars('readingHubPath')) === false) {
+        $failures[] = "$lang payment: return page";
+    }
+
     $smarty->assign('curatedVideos', array(array(
         'id' => 'Q8ucXj2pDbo',
         'type' => 'culture',

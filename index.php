@@ -103,6 +103,9 @@ $editorialRoutes = [
 	'/unsubscribe' => ['act' => 'newsletterunsubscribe', 'slug' => 'unsubscribe'],
 	'/khong-gian-doc' => ['act' => 'readinghub', 'slug' => 'reading-space'],
 	'/reading-space' => ['act' => 'readinghub', 'slug' => 'reading-space'],
+	'/thanh-toan/vnpay' => ['act' => 'vnpaycheckout', 'slug' => 'vnpay-checkout'],
+	'/thanh-toan/vnpay-return' => ['act' => 'vnpayreturn', 'slug' => 'vnpay-return'],
+	'/thanh-toan/vnpay-ipn' => ['act' => 'vnpayipn', 'slug' => 'vnpay-ipn'],
 	'/van-tho' => ['act' => 'vantho', 'slug' => 'van-tho'],
 	'/van-tho/tho' => ['act' => 'vantho', 'slug' => 'van-tho', 'category' => 'tho'],
 	'/van-tho/van-xuoi' => ['act' => 'vantho', 'slug' => 'van-tho', 'category' => 'van-xuoi'],
@@ -131,7 +134,7 @@ $publicQuery = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_QUERY);
 if ($publicQuery) {
 	$publicParams = [];
 	parse_str($publicQuery, $publicParams);
-	foreach (['category', 'page', 'q', 'type', 'from', 'to'] as $allowedPublicParam) {
+	foreach (['category', 'page', 'q', 'type', 'from', 'to', 'payment_error'] as $allowedPublicParam) {
 		if (isset($publicParams[$allowedPublicParam]) && is_scalar($publicParams[$allowedPublicParam])) {
 			$_GET[$allowedPublicParam] = trim((string)$publicParams[$allowedPublicParam]);
 		}

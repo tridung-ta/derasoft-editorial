@@ -49,7 +49,7 @@ $template->assign('messages', $messages);
 $CustomerId = $_SESSION["store_customerId"] ?? 0;
 $template->assign('CustomerId', $CustomerId);
 /* Member gateway: public editorial content requires a signed-in customer. */
-$memberPublicActs = array('login', 'signin', 'logout', 'verifyuser', 'forgotpassword', 'resetpassword', 'newsletterunsubscribe');
+$memberPublicActs = array('login', 'signin', 'logout', 'verifyuser', 'forgotpassword', 'resetpassword', 'newsletterunsubscribe', 'vnpayipn');
 if (!$CustomerId && !in_array(strtolower((string)$act), $memberPublicActs, true)) {
     $requestedPath = isset($_SERVER['REQUEST_URI']) ? (string)$_SERVER['REQUEST_URI'] : '/';
     $requestedPath = str_replace(array("\r", "\n"), '', $requestedPath);
