@@ -92,9 +92,28 @@ Commits:
 
 - [x] Audit hệ bình luận legacy và luồng kiểm duyệt hiện có
 - [x] Lập kế hoạch dữ liệu/API/giao diện an toàn
-- [ ] Chờ duyệt trước khi triển khai
+- [x] Tạo migration và rollback cho bảng bình luận editorial riêng
+- [x] Hoàn thiện API yêu cầu đăng nhập, CSRF, validation và rate limit
+- [x] Hoàn thiện giao diện bình luận đa ngôn ngữ trên trang bài viết
+- [x] Hoàn thiện màn hình kiểm duyệt bình luận trong Admin
+- [x] Chạy migration và kiểm tra hoạt động trên production
 
 Tài liệu: `docs/editorial-comments-audit.md`
+
+Commits:
+
+- `e75c4a1` — `feat(comments): add editorial comment persistence layer`
+- `4fc0a10` — `feat(comments): add secure article comment API`
+- `297bc09` — `feat(article): add member comment interface`
+- `c683e62` — `feat(admin): add editorial comment moderation`
+
+### Trang tác giả
+
+- [x] Audit dữ liệu tác giả, route và giao diện hiện có
+- [x] Lập kế hoạch triển khai không thay đổi database
+- [ ] Chờ duyệt trước khi triển khai
+
+Tài liệu: `docs/editorial-author-page-audit.md`
 
 ## Quy tắc commit
 
