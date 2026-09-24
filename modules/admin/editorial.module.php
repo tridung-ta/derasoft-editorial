@@ -63,10 +63,19 @@ $featureTableReady = editorialTableExists($db, DB_PREFIX . 'editorial_features')
 $viewTableReady = editorialTableExists($db, DB_PREFIX . 'article_view_daily');
 $commentTableReady = editorialTableExists($db, DB_PREFIX . 'editorial_article_comments');
 $newsletterTableReady = editorialTableExists($db, DB_PREFIX . 'editorial_newsletter_subscribers');
+$membershipPlanTableReady = editorialTableExists($db, DB_PREFIX . 'editorial_membership_plans');
+$subscriptionTableReady = editorialTableExists($db, DB_PREFIX . 'editorial_subscriptions');
+$membershipTableReady = $membershipPlanTableReady && $subscriptionTableReady;
 $template->assign('featureTableReady', $featureTableReady);
 $template->assign('viewTableReady', $viewTableReady);
 $template->assign('commentTableReady', $commentTableReady);
 $template->assign('newsletterTableReady', $newsletterTableReady);
+$template->assign('membershipTableReady', $membershipTableReady);
+
+include_once(ROOT_PATH . 'classes/dao/editorialmembershipplans.class.php');
+include_once(ROOT_PATH . 'classes/dao/editorialsubscriptions.class.php');
+$editorialMembershipPlans = new EditorialMembershipPlans($storeId);
+$editorialSubscriptions = new EditorialSubscriptions($storeId);
 
 if (empty($_SESSION['editorial_csrf'])) {
     $_SESSION['editorial_csrf'] = bin2hex(random_bytes(24));
@@ -153,6 +162,76 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $request->element('doo') === 'manag
     }
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($request->element('doo'), array('save_membership_plan', 'change_membership_plan_status', 'grant_editorial_subscription', 'revoke_editorial_subscription'), true)) {
+    $userInfo->checkPermission('customer', 'edit');
+    if (!$membershipTableReady) {
+        $template->assign('editorialError', 'Chưa cài đầy đủ bảng membership editorial.');
+    } elseif (!hash_equals($_SESSION['editorial_csrf'], (string)$request->element('csrf_token'))) {
+        $template->assign('editorialError', 'Phiên làm việc đã hết hạn. Vui lòng tải lại trang.');
+    } else {
+        $membershipAction = $request->element('doo');
+        $membershipSaved = false;
+        $trackingAction = '';
+        if ($membershipAction === 'save_membership_plan') {
+            $membershipSaved = (bool)$editorialMembershipPlans->savePlan(0, array(
+                'code' => $request->element('plan_code'),
+                'name' => $request->element('plan_name'),
+                'description' => $request->element('plan_description'),
+                'price' => $request->element('plan_price'),
+                'currency' => $request->element('plan_currency'),
+                'duration_days' => $request->element('plan_duration_days'),
+                'status' => $request->element('plan_status'),
+                'position' => $request->element('plan_position'),
+            ));
+            $trackingAction = 'Tạo gói membership editorial';
+        } elseif ($membershipAction === 'change_membership_plan_status') {
+            $planId = (int)$request->element('plan_id');
+            $planStatus = (int)$request->element('plan_status');
+            $membershipSaved = (bool)$editorialMembershipPlans->changeStatus($planId, $planStatus);
+            $trackingAction = 'Cập nhật trạng thái gói membership #' . $planId;
+        } elseif ($membershipAction === 'grant_editorial_subscription') {
+            $customerId = (int)$request->element('membership_customer_id');
+            $planId = (int)$request->element('membership_plan_id');
+            $plan = $editorialMembershipPlans->getById($planId);
+            $customerExists = editorialScalar($db, "SELECT COUNT(id) total FROM `" . DB_PREFIX . "customers` WHERE id = $customerId AND store_id IN (0,$storeId) AND status = 1", 'total');
+            $startsAtInput = trim((string)$request->element('membership_starts_at'));
+            $endsAtInput = trim((string)$request->element('membership_ends_at'));
+            $startsAt = $startsAtInput !== '' && strtotime($startsAtInput) !== false ? date('Y-m-d H:i:s', strtotime($startsAtInput)) : date('Y-m-d H:i:s');
+            $endsAt = $endsAtInput !== '' && strtotime($endsAtInput) !== false
+                ? date('Y-m-d H:i:s', strtotime($endsAtInput))
+                : ($plan ? date('Y-m-d H:i:s', strtotime($startsAt . ' +' . (int)$plan['duration_days'] . ' days')) : '');
+            if ($plan && (int)$plan['status'] === EditorialMembershipPlans::STATUS_ACTIVE && $customerExists && $endsAt !== '') {
+                $membershipSaved = (bool)$editorialSubscriptions->grant(
+                    $customerId,
+                    $planId,
+                    $startsAt,
+                    $endsAt,
+                    'manual',
+                    (int)$userInfo->getId(),
+                    $request->element('membership_note')
+                );
+            }
+            $trackingAction = 'Cấp quyền membership cho customer #' . $customerId . ', gói #' . $planId;
+        } else {
+            $subscriptionId = (int)$request->element('subscription_id');
+            $membershipSaved = (bool)$editorialSubscriptions->revoke($subscriptionId);
+            $trackingAction = 'Thu hồi subscription editorial #' . $subscriptionId;
+        }
+        if ($membershipSaved) {
+            $trackings->addData(array(
+                'store_id' => $storeId,
+                'username' => $userInfo->getUsername(),
+                'action' => $trackingAction,
+                'date_created' => date('Y-m-d H:i:s'),
+                'ip' => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : ''
+            ));
+            header('Location: /' . ADMIN_SCRIPT . '?op=editorial&membership_saved=1#editorial-membership');
+            exit;
+        }
+        $template->assign('editorialError', 'Không thể cập nhật membership. Vui lòng kiểm tra dữ liệu và thử lại.');
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $request->element('doo') === 'save_features') {
     if (!$featureTableReady) {
         $template->assign('editorialError', 'Chưa cài bảng V48. Hãy chạy file SQL được cung cấp trước.');
@@ -231,6 +310,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $request->element('doo') === 'save_
 if ($request->element('saved')) $template->assign('editorialSaved', 1);
 if ($request->element('comment_saved')) $template->assign('editorialCommentSaved', 1);
 if ($request->element('newsletter_saved')) $template->assign('editorialNewsletterSaved', 1);
+if ($request->element('membership_saved')) $template->assign('editorialMembershipSaved', 1);
 
 $articleRows = editorialRows($db,
     "SELECT a.id, a.title, a.slug, a.slug_en, a.slug_zh, a.lang, a.description, a.detail, " .
@@ -359,4 +439,14 @@ if ($newsletterTableReady) {
 }
 $template->assign('editorialNewsletterRows', $editorialNewsletterRows);
 $template->assign('newsletterStatusFilter', $newsletterStatusFilter);
+
+$editorialMembershipPlanRows = $membershipTableReady ? $editorialMembershipPlans->getAdminItems() : array();
+$editorialSubscriptionRows = $membershipTableReady ? $editorialSubscriptions->getAdminItems(-1, 100) : array();
+$editorialMembershipCustomers = $membershipTableReady ? editorialRows($db,
+    "SELECT id, username, email, fullname FROM `" . DB_PREFIX . "customers` " .
+    "WHERE store_id IN (0,$storeId) AND status = 1 ORDER BY id DESC LIMIT 300"
+) : array();
+$template->assign('editorialMembershipPlanRows', $editorialMembershipPlanRows);
+$template->assign('editorialSubscriptionRows', $editorialSubscriptionRows);
+$template->assign('editorialMembershipCustomers', $editorialMembershipCustomers);
 ?>

@@ -214,7 +214,8 @@ Commits:
 - [x] Tạo migration/rollback cho membership plan và subscription
 - [x] Chạy migration và xác nhận schema trên production
 - [x] Triển khai DAO và entitlement service
-- [ ] Thêm quản lý gói/quyền thủ công trong Editorial Control Center
+- [x] Thêm quản lý gói/quyền thủ công trong Editorial Control Center
+- [ ] Thêm cờ bài premium và thực thi paywall ở backend
 
 Tài liệu: `docs/editorial-membership-paywall-audit.md`
 
