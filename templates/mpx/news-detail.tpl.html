@@ -17,10 +17,10 @@
    <div class="ed-article__meta">{if $articleAuthor}<a href="{$articleAuthor.url|escape:'html'}" rel="author">{$articleAuthor.name|escape:'html'}</a>{else}<span>{if $lang == 'en'}Editorial Board{elseif $lang == 'zh'}编辑部{else}Ban biên tập{/if}</span>{/if}<i aria-hidden="true"></i><time>{if $objectInfo->getPublishAt()}{$objectInfo->getPublishAt()|date_format:"%d/%m/%Y"}{else}{$objectInfo->getDateCreated()|date_format:"%d/%m/%Y"}{/if}</time><i aria-hidden="true"></i><span id="articleReadingTime">{if $lang == 'en'}Calculating read time…{elseif $lang == 'zh'}正在计算阅读时间…{else}Đang tính thời gian đọc…{/if}</span></div>
   </header>
   <figure class="ed-article__cover ed-wide-width">{include file='editorial-card-media.tpl.html' article=$objectInfo avatar=$avatar imageClass='img-content' lazy=false}</figure>
-  <div class="ed-reader-layout ed-wide-width">
-   <aside class="ed-reader-tools" id="articleReaderTools">
+  <div class="ed-reader-layout ed-wide-width{if !$canReadArticle} ed-reader-layout--gated{/if}">
+   {if $canReadArticle}<aside class="ed-reader-tools" id="articleReaderTools">
     <div class="ed-reader-tools__inner"><span class="ed-kicker">{if $lang == 'en'}IN THIS ARTICLE{elseif $lang == 'zh'}本文目录{else}TRONG BÀI VIẾT{/if}</span><nav id="articleTableOfContents" aria-label="{if $lang == 'en'}Table of contents{elseif $lang == 'zh'}目录{else}Mục lục{/if}"></nav><div class="ed-share"><span>{if $lang == 'en'}Share{elseif $lang == 'zh'}分享{else}Chia sẻ{/if}</span><button type="button" data-library-save data-library-type="saved" data-library-key="{$objectInfo->getId()}" data-library-title="{$objectInfo->getTitle($lang)|escape:'html'}" data-library-url="{$objectInfo->getUrl($lang)|escape:'html'}" data-saved-label="{if $lang == 'en'}Saved{elseif $lang == 'zh'}已收藏{else}Đã lưu{/if}">{if $lang == 'en'}Save article{elseif $lang == 'zh'}收藏文章{else}Lưu bài viết{/if}</button><button type="button" data-share-native>{if $lang == 'en'}Share article{elseif $lang == 'zh'}分享文章{else}Chia sẻ bài viết{/if}</button><button type="button" data-copy-link data-copy-label="{if $lang == 'en'}Copy link{elseif $lang == 'zh'}复制链接{else}Sao chép liên kết{/if}" data-copied-label="{if $lang == 'en'}Copied{elseif $lang == 'zh'}已复制{else}Đã sao chép{/if}">{if $lang == 'en'}Copy link{elseif $lang == 'zh'}复制链接{else}Sao chép liên kết{/if}</button></div></div>
-   </aside>
+   </aside>{/if}
    <div class="ed-article__content" id="articleContent">
     {if $canReadArticle}
      {$articleDetailHtml}

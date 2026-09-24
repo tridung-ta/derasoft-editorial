@@ -370,3 +370,15 @@ main header{position:static;z-index:auto;top:auto;left:auto;width:auto;backgroun
 .ed-video-page .ed-video-choice figure img{width:100%;height:100%;object-fit:cover}
 @media(max-width:900px){.ed-video-page .ed-watch__info{grid-template-columns:1fr;gap:14px;padding-top:28px!important}.ed-video-page .ed-watch__info>*{grid-column:1!important;grid-row:auto!important}.ed-video-page .ed-watch__info h2{margin-bottom:8px!important}.ed-video-page .ed-watch__info>.ed-library-action{width:auto;justify-self:start}.ed-video-page .ed-watch__info>#editorialVideoExternal{width:auto;justify-content:flex-start}}
 @media(max-width:560px){.ed-video-page .ed-watch>.ed-shell{width:calc(100% - 24px)}.ed-video-page .ed-watch__info>.ed-library-action{width:100%}.ed-video-page .ed-watch__info>#editorialVideoExternal{justify-content:center;width:100%}}
+
+/* Premium article gate */
+.ed-reader-layout--gated{display:block}
+.ed-reader-layout--gated .ed-article__content{max-width:860px;margin-inline:auto}
+.ed-premium-gate{position:relative;isolation:isolate;overflow:hidden;margin:0 0 42px;padding:clamp(34px,5vw,64px);border:1px solid #d8c9bb;background:linear-gradient(145deg,#fffdf9 0%,#f5ede3 62%,#eadbcb 100%);box-shadow:0 22px 60px rgba(54,39,30,.1);font-family:var(--ed-sans);text-align:center}
+.ed-premium-gate::before{position:absolute;z-index:-1;top:-120px;right:-90px;width:300px;height:300px;border:1px solid rgba(167,45,34,.16);border-radius:50%;content:""}
+.ed-premium-gate .ed-kicker{margin-bottom:16px}
+.ed-article__content .ed-premium-gate h2{max-width:650px;margin:0 auto 18px;color:var(--ed-ink);font-family:var(--ed-serif);font-size:clamp(2rem,4vw,3.4rem);font-weight:400;line-height:1.08}
+.ed-article__content .ed-premium-gate p{max-width:640px;margin:0 auto 28px;color:var(--ed-muted);font-family:var(--ed-sans);font-size:1rem;line-height:1.75}
+.ed-premium-gate .ed-button{justify-content:center;min-height:48px;background:var(--ed-accent);color:#fff;text-decoration:none}
+.ed-premium-gate .ed-button:hover{background:#7e2019;border-color:#7e2019}
+@media(max-width:560px){.ed-premium-gate{padding:32px 22px}.ed-premium-gate .ed-button{display:flex;width:100%;box-sizing:border-box}}
