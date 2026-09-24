@@ -147,9 +147,25 @@ Commits:
 
 - [x] Audit dữ liệu email, footer, mail transport và luồng unsubscribe hiện có
 - [x] Lập kế hoạch tách subscriber có consent khỏi dữ liệu comment/customer
-- [ ] Chờ duyệt migration bảng subscriber mới và phạm vi giai đoạn đầu
+- [x] Tạo migration, rollback và DAO subscriber riêng
+- [x] Chạy migration trên production
+- [x] Thêm API đăng ký có CSRF, validation, honeypot và rate limit
+- [x] Thêm form footer VI/EN/中文 với loading và feedback
+- [x] Thêm luồng hủy đăng ký bằng token hash và POST xác nhận
+- [x] Thêm quản lý subscriber trong Editorial Control Center
+- [x] Kiểm tra PHP syntax, JavaScript syntax và Smarty compile
+- [ ] Kiểm tra form đăng ký, dữ liệu pending, Admin và responsive trên production
+- [ ] Double opt-in và gửi chiến dịch — chờ SMTP/SPF/DKIM hoạt động ổn định
 
 Tài liệu: `docs/editorial-newsletter-audit.md`
+
+Commits:
+
+- `893d428` — `feat(newsletter): add subscriber persistence layer`
+- `fcfac04` — `feat(newsletter): add secure subscription API`
+- `232b458` — `feat(footer): add multilingual newsletter form`
+- `2ee4ef7` — `feat(newsletter): add secure unsubscribe flow`
+- `5478892` — `feat(admin): add newsletter subscriber management`
 
 ## Quy tắc commit
 
