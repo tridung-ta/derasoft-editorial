@@ -210,7 +210,10 @@ Commits:
 - [x] Audit tài khoản, customer group, đơn hàng và payment method legacy
 - [x] Xác định kiến trúc membership tách khỏi đơn hàng sản phẩm
 - [x] Lập kế hoạch migration cộng thêm và rollout hai giai đoạn
-- [ ] Chờ duyệt Giai đoạn A: membership foundation chưa kết nối thanh toán thật
+- [x] Duyệt Giai đoạn A: membership foundation chưa kết nối thanh toán thật
+- [x] Tạo migration/rollback cho membership plan và subscription
+- [ ] Chạy migration và xác nhận schema trên production
+- [ ] Triển khai DAO và entitlement service
 
 Tài liệu: `docs/editorial-membership-paywall-audit.md`
 
