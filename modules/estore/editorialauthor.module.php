@@ -39,10 +39,10 @@ if ($authorName === '') {
     $authorName = $lang === 'en' ? 'Editorial Board' : ($lang === 'zh' ? '编辑部' : 'Ban biên tập');
 }
 $authorIntro = trim(strip_tags((string)$author->getProperty('custom_intro')));
-if ($lang === 'en' && $author->getProperty('custom_en_intro')) {
-    $authorIntro = trim(strip_tags((string)$author->getProperty('custom_en_intro')));
-} elseif ($lang === 'zh' && $author->getProperty('custom_zh_intro')) {
-    $authorIntro = trim(strip_tags((string)$author->getProperty('custom_zh_intro')));
+if ($lang === 'en' && $author->getProperty('custom_intro_en')) {
+    $authorIntro = trim(strip_tags((string)$author->getProperty('custom_intro_en')));
+} elseif ($lang === 'zh' && $author->getProperty('custom_intro_zh')) {
+    $authorIntro = trim(strip_tags((string)$author->getProperty('custom_intro_zh')));
 }
 if (function_exists('mb_substr')) $authorIntro = mb_substr($authorIntro, 0, 600, 'UTF-8');
 else $authorIntro = substr($authorIntro, 0, 600);
