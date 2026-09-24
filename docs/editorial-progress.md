@@ -205,6 +205,15 @@ Commits:
 - `6e51bac` — `feat(reading): make cross-device progress sync resilient`
 - `572e690` — `feat(reading-hub): improve continue-reading experience`
 
+### Thành viên trả phí và paywall
+
+- [x] Audit tài khoản, customer group, đơn hàng và payment method legacy
+- [x] Xác định kiến trúc membership tách khỏi đơn hàng sản phẩm
+- [x] Lập kế hoạch migration cộng thêm và rollout hai giai đoạn
+- [ ] Chờ duyệt Giai đoạn A: membership foundation chưa kết nối thanh toán thật
+
+Tài liệu: `docs/editorial-membership-paywall-audit.md`
+
 ## Quy tắc commit
 
 - Một chức năng hoàn chỉnh = test + một commit riêng.
