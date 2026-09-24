@@ -61,8 +61,10 @@ function editorialHasTranslation($row, $properties, $lang)
 $storeId = (int)$storeId;
 $featureTableReady = editorialTableExists($db, DB_PREFIX . 'editorial_features');
 $viewTableReady = editorialTableExists($db, DB_PREFIX . 'article_view_daily');
+$commentTableReady = editorialTableExists($db, DB_PREFIX . 'editorial_article_comments');
 $template->assign('featureTableReady', $featureTableReady);
 $template->assign('viewTableReady', $viewTableReady);
+$template->assign('commentTableReady', $commentTableReady);
 
 if (empty($_SESSION['editorial_csrf'])) {
     $_SESSION['editorial_csrf'] = bin2hex(random_bytes(24));
@@ -82,6 +84,39 @@ $editorialVideoChoices = array(
     'tJTkPdk3Mks' => 'Không gian mỹ thuật đương đại'
 );
 $template->assign('editorialVideoChoices', $editorialVideoChoices);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $request->element('doo') === 'moderate_comment') {
+    $userInfo->checkPermission('comment', 'edit');
+    if (!$commentTableReady) {
+        $template->assign('editorialError', 'Chưa cài bảng bình luận editorial.');
+    } elseif (!hash_equals($_SESSION['editorial_csrf'], (string)$request->element('csrf_token'))) {
+        $template->assign('editorialError', 'Phiên làm việc đã hết hạn. Vui lòng tải lại trang.');
+    } else {
+        $commentId = (int)$request->element('comment_id');
+        $commentStatus = (int)$request->element('comment_status');
+        $allowedCommentStatuses = array(1, 2, 3);
+        if ($commentId < 1 || !in_array($commentStatus, $allowedCommentStatuses, true)) {
+            $template->assign('editorialError', 'Thao tác kiểm duyệt không hợp lệ.');
+        } else {
+            $updated = $db->query(
+                "UPDATE `" . DB_PREFIX . "editorial_article_comments` SET status = $commentStatus, date_updated = NOW() " .
+                "WHERE id = $commentId AND store_id = $storeId LIMIT 1"
+            );
+            if ($updated) {
+                $trackings->addData(array(
+                    'store_id' => $storeId,
+                    'username' => $userInfo->getUsername(),
+                    'action' => 'Kiểm duyệt bình luận editorial #' . $commentId . ' thành trạng thái ' . $commentStatus,
+                    'date_created' => date('Y-m-d H:i:s'),
+                    'ip' => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : ''
+                ));
+                header('Location: /' . ADMIN_SCRIPT . '?op=editorial&comment_saved=1#editorial-comments');
+                exit;
+            }
+            $template->assign('editorialError', 'Không thể cập nhật bình luận. Dữ liệu cũ được giữ nguyên.');
+        }
+    }
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $request->element('doo') === 'save_features') {
     if (!$featureTableReady) {
@@ -159,6 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $request->element('doo') === 'save_
 }
 
 if ($request->element('saved')) $template->assign('editorialSaved', 1);
+if ($request->element('comment_saved')) $template->assign('editorialCommentSaved', 1);
 
 $articleRows = editorialRows($db,
     "SELECT a.id, a.title, a.slug, a.slug_en, a.slug_zh, a.lang, a.description, a.detail, " .
@@ -254,4 +290,22 @@ if ($viewTableReady) {
 $template->assign('editorialAnalytics', $analytics);
 $template->assign('topGrowth', $topGrowth);
 $template->assign('topCategory', $topCategory);
+
+$commentStatusFilter = $request->element('comment_status_filter');
+$commentStatusFilter = $commentStatusFilter === '' || $commentStatusFilter === null ? 0 : (int)$commentStatusFilter;
+if (!in_array($commentStatusFilter, array(-1, 0, 1, 2, 3), true)) $commentStatusFilter = 0;
+$editorialCommentRows = array();
+if ($commentTableReady) {
+    $commentCondition = $commentStatusFilter >= 0 ? ' AND ec.status = ' . $commentStatusFilter : '';
+    $editorialCommentRows = editorialRows($db,
+        "SELECT ec.id, ec.article_id, ec.customer_id, ec.content, ec.status, ec.date_created, " .
+        "a.title AS article_title, COALESCE(NULLIF(c.fullname,''), c.username, 'Bạn đọc') AS customer_name " .
+        "FROM `" . DB_PREFIX . "editorial_article_comments` ec " .
+        "LEFT JOIN `" . DB_PREFIX . "articles` a ON a.id = ec.article_id AND a.store_id IN (0,$storeId) " .
+        "LEFT JOIN `" . DB_PREFIX . "customers` c ON c.id = ec.customer_id AND c.store_id = $storeId " .
+        "WHERE ec.store_id = $storeId$commentCondition ORDER BY ec.date_created DESC, ec.id DESC LIMIT 100"
+    );
+}
+$template->assign('editorialCommentRows', $editorialCommentRows);
+$template->assign('commentStatusFilter', $commentStatusFilter);
 ?>
