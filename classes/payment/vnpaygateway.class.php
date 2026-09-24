@@ -19,14 +19,21 @@ class VnPayGateway
 
     static function fromEnvironment()
     {
-        $paymentUrl = getenv('DERACMS_VNPAY_PAYMENT_URL');
-        if ($paymentUrl === false || trim($paymentUrl) === '') $paymentUrl = self::SANDBOX_PAYMENT_URL;
+        $paymentUrl = self::readSetting('DERACMS_VNPAY_PAYMENT_URL', 'VNPAY_PAYMENT_URL');
+        if ($paymentUrl === '') $paymentUrl = self::SANDBOX_PAYMENT_URL;
         return new self(
-            getenv('DERACMS_VNPAY_TMN_CODE') ?: '',
-            getenv('DERACMS_VNPAY_HASH_SECRET') ?: '',
-            getenv('DERACMS_VNPAY_RETURN_URL') ?: '',
+            self::readSetting('DERACMS_VNPAY_TMN_CODE', 'VNPAY_TMN_CODE'),
+            self::readSetting('DERACMS_VNPAY_HASH_SECRET', 'VNPAY_HASH_SECRET'),
+            self::readSetting('DERACMS_VNPAY_RETURN_URL', 'VNPAY_RETURN_URL'),
             $paymentUrl
         );
+    }
+
+    private static function readSetting($environmentName, $constantName)
+    {
+        $value = getenv($environmentName);
+        if ($value !== false && trim((string)$value) !== '') return trim((string)$value);
+        return defined($constantName) ? trim((string)constant($constantName)) : '';
     }
 
     function isConfigured()

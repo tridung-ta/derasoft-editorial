@@ -220,6 +220,15 @@ Commits:
 - [x] Hoàn thiện paywall responsive bằng VI/EN/中文
 - [x] Kiểm tra PHP syntax và 63 lượt Smarty smoke test
 - [ ] Kiểm tra trực quan bài miễn phí/premium trên production bằng tài khoản có và chưa có quyền
+- [x] Tạo payment transaction ledger và migration rollback riêng
+- [x] Tích hợp adapter VNPay 2.1.0 dùng HMAC-SHA512
+- [x] Thêm checkout lấy giá trực tiếp từ membership plan trong database
+- [x] Thêm Return URL chỉ hiển thị kết quả và IPN kích hoạt quyền theo transaction
+- [x] Chống IPN lặp bằng row lock và xử lý subscription/payment trong cùng transaction
+- [x] Thêm giao diện mua/gia hạn gói responsive bằng VI/EN/中文
+- [x] Kiểm tra 69 lượt Smarty smoke test và payment smoke test
+- [ ] Cấu hình credential/Return URL/IPN URL trên VNPay sandbox và hosting
+- [ ] Chạy giao dịch sandbox end-to-end trên production
 
 Tài liệu: `docs/editorial-membership-paywall-audit.md`
 
@@ -230,6 +239,12 @@ Commits:
 - `6bb21f6` — `feat(admin): add editorial membership management`
 - `7e22a17` — `feat(article): enforce premium content access`
 - `293aca1` — `style(paywall): add multilingual membership gate`
+- `0d70e63` — `feat(payments): add membership transaction ledger`
+- `f9ede61` — `feat(payments): add secure VNPay gateway adapter`
+- `8ed0293` — `fix(payments): snapshot purchased plan duration`
+- `da086ff` — `feat(payments): process idempotent VNPay callbacks`
+- `7b75cd5` — `feat(payments): add VNPay checkout return and IPN routes`
+- `e3ddff9` — `style(membership): add responsive VNPay checkout interface`
 
 ## Quy tắc commit
 
