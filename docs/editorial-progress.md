@@ -125,6 +125,14 @@ Commits:
 - `dad2612` — `feat(article): link article byline to author profile`
 - `131dc29` — `fix(author): use existing localized biography fields`
 
+### Hệ thống tag
+
+- [x] Audit cơ chế nhóm bài viết và dữ liệu gắn bài hiện có
+- [x] Lập kế hoạch tái sử dụng `article_groups`, không thay đổi database
+- [ ] Chờ duyệt trước khi triển khai
+
+Tài liệu: `docs/editorial-tags-audit.md`
+
 ## Quy tắc commit
 
 - Một chức năng hoàn chỉnh = test + một commit riêng.
