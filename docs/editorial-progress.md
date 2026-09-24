@@ -90,9 +90,11 @@ Commits:
 
 ### Bình luận bài viết
 
-- [ ] Audit hệ bình luận legacy và luồng kiểm duyệt hiện có
-- [ ] Lập kế hoạch dữ liệu/API/giao diện an toàn
+- [x] Audit hệ bình luận legacy và luồng kiểm duyệt hiện có
+- [x] Lập kế hoạch dữ liệu/API/giao diện an toàn
 - [ ] Chờ duyệt trước khi triển khai
+
+Tài liệu: `docs/editorial-comments-audit.md`
 
 ## Quy tắc commit
 
