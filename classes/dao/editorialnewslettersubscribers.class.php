@@ -108,6 +108,20 @@ class EditorialNewsletterSubscribers extends Model
         );
     }
 
+    function getByUnsubscribeTokenHash($tokenHash)
+    {
+        if (!preg_match('/^[a-f0-9]{64}$/', $tokenHash)) return 0;
+        $rows = $this->select(
+            'id,status',
+            '`store_id` = ' . $this->store_id
+                . " AND `unsubscribe_token_hash` = '" . $tokenHash . "'",
+            array(),
+            0,
+            1
+        );
+        return $rows ? $rows[0] : 0;
+    }
+
     function getAdminItems($status = -1, $page = 1, $itemsPerPage = 30)
     {
         $status = (int)$status;

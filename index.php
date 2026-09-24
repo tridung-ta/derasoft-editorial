@@ -99,6 +99,8 @@ $editorialRoutes = [
 	'/register' => ['act' => 'signin', 'slug' => 'register'],
 	'/verify-user' => ['act' => 'verifyuser', 'slug' => 'verify-user'],
 	'/logout' => ['act' => 'logout', 'slug' => 'logout'],
+	'/huy-dang-ky' => ['act' => 'newsletterunsubscribe', 'slug' => 'unsubscribe'],
+	'/unsubscribe' => ['act' => 'newsletterunsubscribe', 'slug' => 'unsubscribe'],
 	'/khong-gian-doc' => ['act' => 'readinghub', 'slug' => 'reading-space'],
 	'/reading-space' => ['act' => 'readinghub', 'slug' => 'reading-space'],
 	'/van-tho' => ['act' => 'vantho', 'slug' => 'van-tho'],
