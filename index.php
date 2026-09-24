@@ -145,6 +145,9 @@ if (isset($editorialRoutes[$routeWithoutLang])) {
 	$_GET['act'] = 'editorialauthor';
 	$_GET['slug'] = 'author';
 	$_GET['author_id'] = (int)$authorRouteMatch[1];
+} elseif (preg_match('#^/(?:chu-de|(?:en|zh)/tag)/([a-z0-9][a-z0-9-]{0,190})$#', $publicPath, $tagRouteMatch)) {
+	$_GET['act'] = 'editorialtag';
+	$_GET['slug'] = $tagRouteMatch[1];
 }
 $request = new Request;
 $op = $request->element('op'); 
@@ -155,6 +158,9 @@ if (isset($editorialRoutes[$routeWithoutLang])) {
 } elseif (isset($authorRouteMatch)) {
 	$op = 'estore';
 	$act = 'editorialauthor';
+} elseif (isset($tagRouteMatch)) {
+	$op = 'estore';
+	$act = 'editorialtag';
 }
 
 # Bootstrap
