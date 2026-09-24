@@ -143,6 +143,14 @@ Commits:
 - `78a09dd` — `feat(article): display editorial tags on article detail`
 - `8998637` — `feat(tags): add public editorial tag archive`
 
+### Newsletter
+
+- [x] Audit dữ liệu email, footer, mail transport và luồng unsubscribe hiện có
+- [x] Lập kế hoạch tách subscriber có consent khỏi dữ liệu comment/customer
+- [ ] Chờ duyệt migration bảng subscriber mới và phạm vi giai đoạn đầu
+
+Tài liệu: `docs/editorial-newsletter-audit.md`
+
 ## Quy tắc commit
 
 - Một chức năng hoàn chỉnh = test + một commit riêng.
