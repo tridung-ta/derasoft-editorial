@@ -8,7 +8,7 @@ $customerId=(int)($_SESSION['store_customerId']??0);
 if(!$customerId)libraryResponse(false,array('message'=>'Bạn cần đăng nhập.'),401);
 $action=trim((string)($_POST['action']??$_GET['action']??'list'));
 $library=new EditorialUserLibrary(1);
-if($action==='list'){ $type=trim((string)($_GET['type']??'')); libraryResponse(true,array('items'=>$library->getItems($customerId,$type))); }
+if($action==='list'){ $type=trim((string)($_GET['type']??'')); $key=trim((string)($_GET['key']??'')); if($key!=='')libraryResponse(true,array('item'=>$library->getItem($customerId,$type,$key))); libraryResponse(true,array('items'=>$library->getItems($customerId,$type))); }
 if($_SERVER['REQUEST_METHOD']!=='POST')libraryResponse(false,array('message'=>'Yêu cầu không hợp lệ.'),405);
 if(empty($_SESSION['csrf_token'])||!hash_equals($_SESSION['csrf_token'],(string)($_POST['csrf_token']??'')))libraryResponse(false,array('message'=>'Phiên làm việc đã hết hạn.'),403);
 $type=trim((string)($_POST['item_type']??'')); $key=trim((string)($_POST['item_key']??''));
