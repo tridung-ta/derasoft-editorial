@@ -141,6 +141,10 @@ if (isset($editorialRoutes[$routeWithoutLang])) {
 	if (isset($editorialRoutes[$routeWithoutLang]['category'])) {
 		$_GET['category'] = $editorialRoutes[$routeWithoutLang]['category'];
 	}
+} elseif (preg_match('#^/(?:tac-gia|(?:en|zh)/author)/(\d+)$#', $publicPath, $authorRouteMatch)) {
+	$_GET['act'] = 'editorialauthor';
+	$_GET['slug'] = 'author';
+	$_GET['author_id'] = (int)$authorRouteMatch[1];
 }
 $request = new Request;
 $op = $request->element('op'); 
@@ -148,6 +152,9 @@ $act = $request->element('act');
 if (isset($editorialRoutes[$routeWithoutLang])) {
 	$op = 'estore';
 	$act = $editorialRoutes[$routeWithoutLang]['act'];
+} elseif (isset($authorRouteMatch)) {
+	$op = 'estore';
+	$act = 'editorialauthor';
 }
 
 # Bootstrap
