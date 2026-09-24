@@ -11,6 +11,7 @@ if (PHP_SAPI !== 'cli') {
 define('ROOT_PATH', dirname(__DIR__) . '/');
 define('DB_PREFIX', 'dc_');
 require_once ROOT_PATH . 'classes/dao/editorialpaymenttransactions.class.php';
+require_once ROOT_PATH . 'classes/payment/vnpaygateway.class.php';
 
 class EditorialPaymentLedgerFake extends EditorialPaymentTransactions
 {
@@ -56,3 +57,29 @@ if (isset($ledger->updated[0]['ignored']) || $ledger->updated[0]['response_code'
 }
 
 echo "OK: payment ledger validation and field allowlist\n";
+
+$gateway = new VnPayGateway(
+    'TESTCODE',
+    'sandbox-secret',
+    'https://example.test/thanh-toan/vnpay-return'
+);
+$createdAt = new DateTimeImmutable('2026-09-24 10:00:00', new DateTimeZone('Asia/Ho_Chi_Minh'));
+$paymentUrl = $gateway->buildPaymentUrl('MEM-20260924-1', 99000, 'Thanh toan goi hoi vien', '127.0.0.1', 'vn', $createdAt);
+parse_str((string)parse_url($paymentUrl, PHP_URL_QUERY), $signedParams);
+if ($paymentUrl === '' || !$gateway->verifySignature($signedParams) || $signedParams['vnp_Amount'] !== '9900000') {
+    fwrite(STDERR, "FAIL: VNPay payment signature\n");
+    exit(1);
+}
+$signedParams['vnp_Amount'] = '10000000';
+if ($gateway->verifySignature($signedParams)) {
+    fwrite(STDERR, "FAIL: tampered VNPay payload accepted\n");
+    exit(1);
+}
+$signedParams['vnp_HashSecret'] = 'must-not-be-saved';
+$sanitized = $gateway->sanitizeResponse($signedParams);
+if (isset($sanitized['vnp_HashSecret']) || isset($sanitized['vnp_SecureHash'])) {
+    fwrite(STDERR, "FAIL: VNPay secret/hash entered response snapshot\n");
+    exit(1);
+}
+
+echo "OK: VNPay HMAC-SHA512 signing, tamper detection and response filtering\n";
