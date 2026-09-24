@@ -173,9 +173,18 @@ Commits:
 
 - [x] Audit lịch sử đọc, bài đã lưu và dữ liệu chuyên mục hiện có
 - [x] Lập kế hoạch content-based không dùng ML và không đổi database
-- [ ] Chờ duyệt trước khi triển khai
+- [x] Xây dựng dịch vụ xếp hạng theo chuyên mục/chủ đề từ bài đã lưu và lịch sử đọc
+- [x] Loại nội dung đã tương tác, lọc trạng thái/store/ngôn ngữ và bổ sung fallback phổ biến
+- [x] Thêm khối “Dành cho bạn” tối đa 6 bài trong Không gian đọc
+- [x] Kiểm tra PHP syntax, Smarty compile và Git diff
+- [ ] Kiểm tra dữ liệu gợi ý và giao diện responsive trên production
 
 Tài liệu: `docs/editorial-recommendations-audit.md`
+
+Commits:
+
+- `bbd9e9c` — `feat(recommendations): add content-based recommendation service`
+- `029df88` — `feat(reading-hub): add personalized article recommendations`
 
 ## Quy tắc commit
 
