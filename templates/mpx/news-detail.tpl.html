@@ -14,7 +14,7 @@
    {if $categoryObj}<a class="ed-article__category" href="{$publicBase}{$categoryRoute}">{include file='editorial-category-label.tpl.html' article=$objectInfo}</a>{/if}
    <h1>{$objectInfo->getTitle($lang)|escape:'html'}</h1>
    {if $objectInfo->getDescription($lang)}<p class="ed-article__lead">{$objectInfo->getDescription($lang)|strip_tags}</p>{/if}
-   <div class="ed-article__meta"><span>{if $lang == 'en'}Editorial Board{elseif $lang == 'zh'}编辑部{else}Ban biên tập{/if}</span><i aria-hidden="true"></i><time>{if $objectInfo->getPublishAt()}{$objectInfo->getPublishAt()|date_format:"%d/%m/%Y"}{else}{$objectInfo->getDateCreated()|date_format:"%d/%m/%Y"}{/if}</time><i aria-hidden="true"></i><span id="articleReadingTime">{if $lang == 'en'}Calculating read time…{elseif $lang == 'zh'}正在计算阅读时间…{else}Đang tính thời gian đọc…{/if}</span></div>
+   <div class="ed-article__meta">{if $articleAuthor}<a href="{$articleAuthor.url|escape:'html'}" rel="author">{$articleAuthor.name|escape:'html'}</a>{else}<span>{if $lang == 'en'}Editorial Board{elseif $lang == 'zh'}编辑部{else}Ban biên tập{/if}</span>{/if}<i aria-hidden="true"></i><time>{if $objectInfo->getPublishAt()}{$objectInfo->getPublishAt()|date_format:"%d/%m/%Y"}{else}{$objectInfo->getDateCreated()|date_format:"%d/%m/%Y"}{/if}</time><i aria-hidden="true"></i><span id="articleReadingTime">{if $lang == 'en'}Calculating read time…{elseif $lang == 'zh'}正在计算阅读时间…{else}Đang tính thời gian đọc…{/if}</span></div>
   </header>
   <figure class="ed-article__cover ed-wide-width">{include file='editorial-card-media.tpl.html' article=$objectInfo avatar=$avatar imageClass='img-content' lazy=false}</figure>
   <div class="ed-reader-layout ed-wide-width">

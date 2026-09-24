@@ -92,7 +92,20 @@ $isDetail = true;
 $template->assign('isDetail', $isDetail);
 
 $userInfo = $users->getObject($objectInfo->poster_id);
-$template->assign('userInfo', $userInfo);
+$articleAuthor = null;
+if ($userInfo && $userInfo->isEnabled()) {
+    $articleAuthorName = trim((string)$userInfo->getFullName());
+    if ($articleAuthorName !== '') {
+        $articleAuthor = array(
+            'id' => (int)$userInfo->getId(),
+            'name' => $articleAuthorName,
+            'url' => $lang === 'vn'
+                ? '/tac-gia/' . (int)$userInfo->getId()
+                : '/' . $lang . '/author/' . (int)$userInfo->getId()
+        );
+    }
+}
+$template->assign('articleAuthor', $articleAuthor);
 
 $template->assign('lang',        $lang);
 $template->assign('slug',        $slug);
