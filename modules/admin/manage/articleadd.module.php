@@ -206,6 +206,7 @@ if ($_POST && $request->element('doo') == 'submit') { # if form is submitted
 						}
 						$properties[$field->getName()] = $value;
 					}
+					$properties['custom_editorial_access'] = $request->element('editorial_access') === 'premium' ? 'premium' : 'free';
 
 					# Prepare data to be inserted to DB
 					$data = array(

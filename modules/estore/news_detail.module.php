@@ -14,6 +14,7 @@ include_once(ROOT_PATH . 'classes/dao/articlecategories.class.php');
 include_once(ROOT_PATH . 'classes/dao/articlegroups.class.php');
 include_once(ROOT_PATH . 'classes/dao/users.class.php');
 include_once(ROOT_PATH . 'classes/dao/editorialarticleratings.class.php');
+include_once(ROOT_PATH . 'classes/dao/editorialentitlement.class.php');
 
 $uploadAlbums      = new UploadAlbums($storeId);
 $uploads           = new Uploads($storeId);
@@ -27,6 +28,7 @@ $articleCategories = new ArticleCategories($storeId);
 $articleGroups      = new ArticleGroups($storeId);
 $users             = new Users($storeId);
 $editorialRatings  = new EditorialArticleRatings($storeId);
+$editorialEntitlement = new EditorialEntitlement($storeId);
 
 $templateFile = 'news-detail.tpl.html';
 $slug = $request->element('slug');
@@ -52,6 +54,18 @@ switch ($lang) {
 
 $objectInfo = $articles->getObject($slug, $slugField);
 $template->assign('objectInfo', $objectInfo);
+
+$customerId = !empty($_SESSION['store_customerId']) ? (int)$_SESSION['store_customerId'] : 0;
+$isPremiumArticle = $editorialEntitlement->isPremiumArticle($objectInfo);
+$activeSubscription = $isPremiumArticle && $customerId > 0 ? $editorialEntitlement->getActiveSubscription($customerId) : 0;
+$hasPremiumAccess = (bool)$activeSubscription;
+$canReadArticle = !$isPremiumArticle || $hasPremiumAccess;
+$articleDetailHtml = $canReadArticle ? $objectInfo->getDetail($lang) : '';
+$template->assign('isPremiumArticle', $isPremiumArticle);
+$template->assign('hasPremiumAccess', $hasPremiumAccess);
+$template->assign('canReadArticle', $canReadArticle);
+$template->assign('activeSubscription', $activeSubscription);
+$template->assign('articleDetailHtml', $articleDetailHtml);
 
 assignLangUrls($template, $articles, $objectInfo->id, 'article');
 if ($lang == 'en') {

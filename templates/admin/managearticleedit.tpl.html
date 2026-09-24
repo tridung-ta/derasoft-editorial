@@ -31,6 +31,11 @@
 <option value="1"{if $item->getStatus() eq "1"} selected="selected"{/if}>{$locale->msg('enable')}</option>
 <option value="0"{if $item->getStatus() eq "0"} selected="selected"{/if}>{$locale->msg('disable')}</option>
 </select></p>
+<p><label for="editorial_access">Quyền đọc</label>
+<select name="editorial_access" id="editorial_access" class="small">
+<option value="free"{if $item->getProperty('custom_editorial_access') != 'premium'} selected="selected"{/if}>Miễn phí</option>
+<option value="premium"{if $item->getProperty('custom_editorial_access') == 'premium'} selected="selected"{/if}>Hội viên Premium</option>
+</select></p>
 <p><label for="status">{$locale->msg('choose_language')}</label>
   <label for="vn">Tiếng Việt</label>
   <input type="checkbox" name="language[]" value="vn" {if isset($language) && in_array('vn', $language)}checked="checked"{/if}>
@@ -164,6 +169,11 @@
 <select name="status" id="status" class="verysmall">
 <option value="1" {if isset($error.INPUT) && $error.INPUT.status.value eq 1}selected="selected"{/if}>{$locale->msg('enable')}</option>
 <option value="0" {if isset($error.INPUT) && $error.INPUT.status.value eq 0} selected="selected"{/if}>{$locale->msg('disable')}</option>
+</select></p>
+<p><label for="editorial_access_retry">Quyền đọc</label>
+<select name="editorial_access" id="editorial_access_retry" class="small">
+<option value="free"{if !isset($error.INPUT) || $error.INPUT.editorial_access.value != 'premium'} selected="selected"{/if}>Miễn phí</option>
+<option value="premium"{if isset($error.INPUT) && $error.INPUT.editorial_access.value == 'premium'} selected="selected"{/if}>Hội viên Premium</option>
 </select></p>
 <p><label for="status">{$locale->msg('choose_language')}</label>
   <label for="vn">Tiếng Việt</label>

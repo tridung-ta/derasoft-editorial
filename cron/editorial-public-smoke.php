@@ -20,6 +20,7 @@ class EditorialSmokeStore
 
 class EditorialSmokeArticle
 {
+    public function getId() { return 1; }
     public function getAvatarImage($uploads) { return null; }
     public function getTitle($lang) { return strtoupper($lang) . ' cover story'; }
     public function getDescription($lang) { return strtoupper($lang) . ' cover description'; }
@@ -31,6 +32,7 @@ class EditorialSmokeArticle
     public function getDetail($lang) { return '<p>' . strtoupper($lang) . ' article body</p>'; }
     public function getPublishAt() { return '2026-09-18 12:00:00'; }
     public function getDateCreated() { return '2026-09-18 12:00:00'; }
+    public function getProperty($key) { return ''; }
 }
 
 $smarty = new Smarty();
@@ -56,13 +58,20 @@ $fixtures = array(
     'logoimg1' => '',
     'typeweb' => 'website',
     'categoryObj' => null,
+    'CustomerId' => 0,
+    'readingHubPath' => '/khong-gian-doc',
     'items' => array(),
     'homeLatest' => array(),
     'homeEarlier' => array(),
     'homeCover' => null,
+    'homeTrending' => array(),
     'uploads' => null,
     'curatedVideos' => array(),
     'recentArticlesBlock' => array(),
+    'articleAuthor' => null,
+    'articleTags' => array(),
+    'editorialMemberRating' => 0,
+    'editorialRatingSummary' => array('average' => 0, 'count' => 0),
     'editorialTitle' => 'Test',
     'editorialIntro' => 'Test',
     'totalPages' => 1,
@@ -105,10 +114,19 @@ foreach (array('vn' => '', 'en' => '/en', 'zh' => '/zh') as $lang => $prefix) {
     $smarty->assign('homeCover', null);
 
     $smarty->assign('objectInfo', new EditorialSmokeArticle());
+    $smarty->assign('canReadArticle', true);
+    $smarty->assign('articleDetailHtml', '<p>' . strtoupper($lang) . ' article body</p>');
     $detail = $smarty->fetch('news-detail.tpl.html');
     ++$checks;
     if (strpos($detail, 'ed-detail-page ed-journal') === false || strpos($detail, strtoupper($lang) . ' article body') === false || strpos($detail, 'editorial-reader.js') === false) {
         $failures[] = "$lang article: journal reading view";
+    }
+    $smarty->assign('canReadArticle', false);
+    $smarty->assign('articleDetailHtml', 'PREMIUM BODY MUST NOT LEAK');
+    $lockedDetail = $smarty->fetch('news-detail.tpl.html');
+    ++$checks;
+    if (strpos($lockedDetail, 'ed-premium-gate') === false || strpos($lockedDetail, 'PREMIUM BODY MUST NOT LEAK') !== false || strpos($lockedDetail, 'data-reader-article') !== false) {
+        $failures[] = "$lang article: premium content gate";
     }
 
     $smarty->assign('curatedVideos', array(array(

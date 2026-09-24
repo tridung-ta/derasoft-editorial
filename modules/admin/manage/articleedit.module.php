@@ -277,6 +277,7 @@ if (!$articleInfo) {
 						}
 						$properties[$field->getName()] = $value;
 					}
+					$properties['custom_editorial_access'] = $request->element('editorial_access') === 'premium' ? 'premium' : 'free';
 
 					$data = array(
 						'store_id' => $storeId,
