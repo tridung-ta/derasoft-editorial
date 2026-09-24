@@ -167,6 +167,16 @@ Commits:
 - `2ee4ef7` — `feat(newsletter): add secure unsubscribe flow`
 - `5478892` — `feat(admin): add newsletter subscriber management`
 
+## Feature Roadmap — Nhóm khó
+
+### Gợi ý cá nhân hóa
+
+- [x] Audit lịch sử đọc, bài đã lưu và dữ liệu chuyên mục hiện có
+- [x] Lập kế hoạch content-based không dùng ML và không đổi database
+- [ ] Chờ duyệt trước khi triển khai
+
+Tài liệu: `docs/editorial-recommendations-audit.md`
+
 ## Quy tắc commit
 
 - Một chức năng hoàn chỉnh = test + một commit riêng.
