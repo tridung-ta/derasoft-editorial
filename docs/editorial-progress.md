@@ -129,9 +129,19 @@ Commits:
 
 - [x] Audit cơ chế nhóm bài viết và dữ liệu gắn bài hiện có
 - [x] Lập kế hoạch tái sử dụng `article_groups`, không thay đổi database
-- [ ] Chờ duyệt trước khi triển khai
+- [x] Chuẩn hóa cách lấy nhóm bài đang hoạt động và fallback đa ngôn ngữ
+- [x] Hiển thị tag và liên kết chủ đề trên trang chi tiết bài viết
+- [x] Thêm trang lưu trữ tag VI/EN/中文, phân trang và 404
+- [x] Kiểm tra PHP syntax, Smarty compile và Git diff
+- [ ] Kiểm tra giao diện và route trên production
 
 Tài liệu: `docs/editorial-tags-audit.md`
+
+Commits:
+
+- `c1aed0d` — `refactor(tags): expose safe editorial article groups`
+- `78a09dd` — `feat(article): display editorial tags on article detail`
+- `8998637` — `feat(tags): add public editorial tag archive`
 
 ## Quy tắc commit
 
