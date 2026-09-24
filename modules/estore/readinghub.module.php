@@ -7,7 +7,7 @@ include_once(ROOT_PATH.'classes/dao/editorialuserlibrary.class.php');
 include_once(ROOT_PATH.'classes/dao/editorialrecommendations.class.php');
 $library=new EditorialUserLibrary($storeId);
 $recommendationService=new EditorialRecommendations($storeId);
-function decodeLibraryRows($rows,$withResume=false){foreach($rows as &$row){$data=json_decode($row['payload'],true);$row['data']=is_array($data)?$data:array();if($withResume&&!empty($row['data']['url'])){$progress=max(0,min(100,(int)$row['progress']));$separator=strpos($row['data']['url'],'?')===false?'?':'&';if($progress>=2&&$progress<=97)$row['data']['url'].=$separator.'resume='.$progress;}}unset($row);return $rows;}
+function decodeLibraryRows($rows,$withResume=false){foreach($rows as &$row){$data=json_decode($row['payload'],true);$row['data']=is_array($data)?$data:array();$activityAt=strtotime(isset($row['activity_at'])?$row['activity_at']:'');$row['activity_display']=$activityAt?date('d/m/Y H:i',$activityAt):'';if($withResume&&!empty($row['data']['url'])){$progress=max(0,min(100,(int)$row['progress']));$separator=strpos($row['data']['url'],'?')===false?'?':'&';if($progress>=2&&$progress<=97)$row['data']['url'].=$separator.'resume='.$progress;}}unset($row);return $rows;}
 $template->assign('savedItems',decodeLibraryRows($library->getItems($_SESSION['store_customerId'],'saved',100)));
 $template->assign('historyItems',decodeLibraryRows($library->getItems($_SESSION['store_customerId'],'history',100),true));
 $template->assign('watchLaterItems',decodeLibraryRows($library->getItems($_SESSION['store_customerId'],'watch_later',100)));
