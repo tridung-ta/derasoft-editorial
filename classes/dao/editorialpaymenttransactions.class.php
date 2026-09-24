@@ -24,20 +24,22 @@ class EditorialPaymentTransactions extends Model
         $this->store_id = max(1, (int)$store_id);
     }
 
-    function createPending($customerId, $planId, $txnRef, $amount, $currency = 'VND')
+    function createPending($customerId, $planId, $planDurationDays, $txnRef, $amount, $currency = 'VND')
     {
         $customerId = (int)$customerId;
         $planId = (int)$planId;
+        $planDurationDays = (int)$planDurationDays;
         $txnRef = trim((string)$txnRef);
         $currency = strtoupper(trim((string)$currency));
         $amount = round((float)$amount, 2);
-        if ($customerId < 1 || $planId < 1 || $txnRef === '' || strlen($txnRef) > 100) return 0;
+        if ($customerId < 1 || $planId < 1 || $planDurationDays < 1 || $planDurationDays > 3650 || $txnRef === '' || strlen($txnRef) > 100) return 0;
         if ($amount <= 0 || !preg_match('/^[A-Z]{3}$/', $currency)) return 0;
         $now = date('Y-m-d H:i:s');
         return $this->add(array(
             'store_id' => $this->store_id,
             'customer_id' => $customerId,
             'plan_id' => $planId,
+            'plan_duration_days' => $planDurationDays,
             'provider' => 'vnpay',
             'txn_ref' => $txnRef,
             'amount' => number_format($amount, 2, '.', ''),

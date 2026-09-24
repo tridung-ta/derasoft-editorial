@@ -38,12 +38,12 @@ class EditorialPaymentLedgerFake extends EditorialPaymentTransactions
 }
 
 $ledger = new EditorialPaymentLedgerFake();
-$created = $ledger->createPending(7, 3, 'MEM-TEST', 99000, 'vnd');
-if ($created !== 42 || $ledger->added['amount'] !== '99000.00' || $ledger->added['currency'] !== 'VND') {
+$created = $ledger->createPending(7, 3, 30, 'MEM-TEST', 99000, 'vnd');
+if ($created !== 42 || $ledger->added['plan_duration_days'] !== 30 || $ledger->added['amount'] !== '99000.00' || $ledger->added['currency'] !== 'VND') {
     fwrite(STDERR, "FAIL: valid pending transaction\n");
     exit(1);
 }
-if ($ledger->createPending(0, 3, 'BAD', 99000, 'VND') !== 0) {
+if ($ledger->createPending(0, 3, 30, 'BAD', 99000, 'VND') !== 0 || $ledger->createPending(7, 3, 0, 'BAD', 99000, 'VND') !== 0) {
     fwrite(STDERR, "FAIL: invalid customer accepted\n");
     exit(1);
 }
