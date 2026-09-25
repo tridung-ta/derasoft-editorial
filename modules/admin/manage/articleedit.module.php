@@ -278,6 +278,14 @@ if (!$articleInfo) {
 						$properties[$field->getName()] = $value;
 					}
 					$properties['custom_editorial_access'] = $request->element('editorial_access') === 'premium' ? 'premium' : 'free';
+					foreach (array('en', 'zh') as $translationLang) {
+						foreach (array('title', 'keyword', 'description', 'detail') as $translationField) {
+							$translationValue = $request->element($translationField . '_' . $translationLang);
+							$properties['custom_' . $translationLang . '_' . $translationField] = is_string($translationValue)
+								? stripslashes($translationValue)
+								: '';
+						}
+					}
 
 					$data = array(
 						'store_id' => $storeId,

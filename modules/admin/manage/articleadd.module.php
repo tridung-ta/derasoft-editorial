@@ -207,6 +207,14 @@ if ($_POST && $request->element('doo') == 'submit') { # if form is submitted
 						$properties[$field->getName()] = $value;
 					}
 					$properties['custom_editorial_access'] = $request->element('editorial_access') === 'premium' ? 'premium' : 'free';
+					foreach (array('en', 'zh') as $translationLang) {
+						foreach (array('title', 'keyword', 'description', 'detail') as $translationField) {
+							$translationValue = $request->element($translationField . '_' . $translationLang);
+							$properties['custom_' . $translationLang . '_' . $translationField] = is_string($translationValue)
+								? stripslashes($translationValue)
+								: '';
+						}
+					}
 
 					# Prepare data to be inserted to DB
 					$data = array(

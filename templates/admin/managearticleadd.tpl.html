@@ -75,6 +75,7 @@
 <p{if isset($error.INPUT) && $error.INPUT.detail.error} class="errormsg"{/if}><label for="detail">* {$locale->msg('detail')}</label></p>
 <textarea rows="10" cols="20" name="detail" id="detail">{if isset($error.INPUT)}{$error.INPUT.detail.value|escape}{/if}</textarea>
 {literal}<script type="text/javascript">var editor = CKEDITOR.replace('detail');</script>{/literal}
+{include file='managearticletranslations.tpl.html'}
 <br />
 <p><label for="article_group_ids">{$locale->msg('article_group')}</label>
 <select name="article_group_ids[]" id="article_group_ids" class="small" multiple="multiple">
