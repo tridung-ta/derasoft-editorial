@@ -93,6 +93,7 @@ $editorialRouterVersion = '20260922-stable-routes';
 if (!headers_sent()) header('X-Dera-Editorial-Router: '.$editorialRouterVersion);
 $publicPath = '/' . trim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH), '/');
 $editorialRoutes = [
+	'/' => ['act' => 'editorialhome', 'slug' => 'home'],
 	'/dang-nhap' => ['act' => 'login', 'slug' => 'dang-nhap'],
 	'/dang-ky' => ['act' => 'signin', 'slug' => 'dang-ky'],
 	'/login' => ['act' => 'login', 'slug' => 'login'],
