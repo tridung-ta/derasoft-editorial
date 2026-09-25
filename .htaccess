@@ -24,6 +24,11 @@ ExpiresActive On
     Header set Cache-Control "max-age=3600"
 </FilesMatch>
 
+# PWA metadata and worker must be revalidated after every deployment.
+<FilesMatch "^(service-worker\.js|manifest\.webmanifest)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+</FilesMatch>
+
 </IfModule>
 
 <Files config.php>
