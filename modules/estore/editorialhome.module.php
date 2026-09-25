@@ -77,10 +77,32 @@ if ($hasFeatureTable) {
         $candidate = $articles->getObject($curatedCoverId);
         if ($isAvailableForLanguage($candidate)) $homeCover = $candidate;
     }
+
+    // Rebuild chronological sections after resolving a curated cover so the
+    // newest automatic article is not discarded when an older cover is pinned.
+    $automaticArticles = array();
+    $coverId = $homeCover ? (int)$homeCover->getId() : 0;
+    foreach ($orderedArticles as $candidate) {
+        if ((int)$candidate->getId() !== $coverId) $automaticArticles[] = $candidate;
+    }
+    $homeLatest = array_slice($automaticArticles, 0, 6);
+    $homeEarlier = array_slice($automaticArticles, 6, 6);
+
     if ($curatedFeaturedIds) {
         $selected = array();
         $usedIds = array($homeCover ? (int)$homeCover->getId() : 0);
+        // Keep the newest automatic item at the front of the latest section.
+        // Curated features follow it instead of replacing fresh publications.
+        foreach ($orderedArticles as $candidate) {
+            $candidateId = (int)$candidate->getId();
+            if (!in_array($candidateId, $usedIds, true)) {
+                $selected[] = $candidate;
+                $usedIds[] = $candidateId;
+                break;
+            }
+        }
         foreach ($curatedFeaturedIds as $articleId) {
+            if (count($selected) >= 6) break;
             $candidate = $articles->getObject($articleId);
             if ($isAvailableForLanguage($candidate) && !in_array($articleId, $usedIds, true)) {
                 $selected[] = $candidate;
