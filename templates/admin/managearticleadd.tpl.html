@@ -37,9 +37,9 @@
   <label for="vn">Tiếng Việt</label>
   <input type="checkbox" name="language[]" value="vn" checked="checked">
   <label for="en">Tiếng Anh</label>
-  <input type="checkbox" name="language[]" value="en">
+  <input type="checkbox" name="language[]" value="en" {if isset($error.INPUT.language.value) && in_array('en', $error.INPUT.language.value)}checked="checked"{/if}>
   <label for="zh">Tiếng Hoa</label>
-  <input type="checkbox" name="language[]" value="zh">
+  <input type="checkbox" name="language[]" value="zh" {if isset($error.INPUT.language.value) && in_array('zh', $error.INPUT.language.value)}checked="checked"{/if}>
 </p>
 <p{if isset($error.INPUT) && $error.INPUT.position.error} class="errormsg"{/if}><label for="position">{$locale->msg('position')}</label>
 <input type="text" value="{if isset($error.INPUT)}{$error.INPUT.position.value}{/if}" name="position" id="position" class="verysmall" /></p>

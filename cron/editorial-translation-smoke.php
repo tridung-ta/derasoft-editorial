@@ -49,6 +49,13 @@ foreach (array('title_en', 'keyword_en', 'description_en', 'detail_en', 'title_z
 }
 $checks['Existing English value'] = strpos($html, 'value="English title"') !== false;
 $checks['Existing Chinese value'] = strpos($html, 'value="Chinese title"') !== false;
+$checks['Inline translation feedback'] = strpos($html, 'article-translations__panel small') !== false;
+
+foreach (array('articleadd', 'articleedit') as $moduleName) {
+    $moduleSource = file_get_contents(dirname(__DIR__) . '/modules/admin/manage/' . $moduleName . '.module.php');
+    $checks[$moduleName . ' validates translated title'] = strpos($moduleSource, "array('title', 'description', 'detail')") !== false;
+    $checks[$moduleName . ' keeps Vietnamese available'] = strpos($moduleSource, "array_unshift(\$selectedLanguages, 'vn')") !== false;
+}
 
 $failures = array_keys(array_filter($checks, function ($passed) { return !$passed; }));
 if ($failures) {

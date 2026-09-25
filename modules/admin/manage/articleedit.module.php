@@ -287,6 +287,9 @@ if (!$articleInfo) {
 						}
 					}
 
+					$selectedLanguages = array_values(array_intersect(array('vn', 'en', 'zh'), (array)$request->element('language')));
+					if (!in_array('vn', $selectedLanguages, true)) array_unshift($selectedLanguages, 'vn');
+
 					$data = array(
 						'store_id' => $storeId,
 						'category_id' => (int)$request->element('category_id'),
@@ -300,7 +303,7 @@ if (!$articleInfo) {
 						'detail' => $request->element('detail'),
 						'position' => (int)$request->element('position'),
 						'status' => (int)$request->element('status'),
-						'lang' => implode(',', (array)$request->element('language')),
+						'lang' => implode(',', $selectedLanguages),
 						'article_group_ids' => $request->element('article_group_ids') ? implode(',', $request->element('article_group_ids')) : '',
 						'properties' => serialize($properties),
 						'updater_id' => (int)$userInfo->getId(),
@@ -412,6 +415,22 @@ function validateData($request)
 	$error['INPUT']['position'] = $validate->pasteString($request->element('position'));
 	$error['INPUT']['status'] = $validate->pasteString($request->element('status'));
 	$error['INPUT']['view'] = $validate->pasteString($request->element('view'));
+	foreach (array('en' => 'English', 'zh' => '中文') as $translationLang => $translationLabel) {
+		$error['INPUT']['title_' . $translationLang] = $validate->pasteString($request->element('title_' . $translationLang));
+		$error['INPUT']['keyword_' . $translationLang] = $validate->pasteString($request->element('keyword_' . $translationLang));
+		$error['INPUT']['description_' . $translationLang] = $validate->pasteString($request->element('description_' . $translationLang));
+		$error['INPUT']['detail_' . $translationLang] = $validate->pasteString($request->element('detail_' . $translationLang));
+		if (in_array($translationLang, $chooseLang, true)) {
+			foreach (array('title', 'description', 'detail') as $requiredTranslationField) {
+				$fieldKey = $requiredTranslationField . '_' . $translationLang;
+				if (trim(strip_tags((string)$request->element($fieldKey))) === '') {
+					$error['INPUT'][$fieldKey]['error'] = 1;
+					$error['INPUT'][$fieldKey]['message'] = $translationLabel . ' - ' . $amessages['invalid_field'];
+					$error['invalid'] = 1;
+				}
+			}
+		}
+	}
 
 	global $fieldOptionList;
 	foreach ($fieldOptionList as $field) {

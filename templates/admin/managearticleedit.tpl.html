@@ -38,11 +38,11 @@
 </select></p>
 <p><label for="status">{$locale->msg('choose_language')}</label>
   <label for="vn">Tiếng Việt</label>
-  <input type="checkbox" name="language[]" value="vn" {if isset($language) && in_array('vn', $language)}checked="checked"{/if}>
+  <input type="checkbox" name="language[]" value="vn" checked="checked">
   <label for="en">Tiếng Anh</label>
-  <input type="checkbox" name="language[]" value="en" {if isset($language) && in_array('en', $language)}checked="checked"{/if}>
+  <input type="checkbox" name="language[]" value="en" {if (isset($error.INPUT.language.value) && in_array('en', $error.INPUT.language.value)) || (!isset($error.INPUT.language.value) && isset($language) && in_array('en', $language))}checked="checked"{/if}>
   <label for="zh">Tiếng Hoa</label>
-  <input type="checkbox" name="language[]" value="zh" {if isset($language) && in_array('zh', $language)}checked="checked"{/if}>
+  <input type="checkbox" name="language[]" value="zh" {if (isset($error.INPUT.language.value) && in_array('zh', $error.INPUT.language.value)) || (!isset($error.INPUT.language.value) && isset($language) && in_array('zh', $language))}checked="checked"{/if}>
 </p>
 <p><label for="position">{$locale->msg('position')}</label>
 <input type="text" value="{$item->getPosition()}" name="position" id="position" class="verysmall" /></p>

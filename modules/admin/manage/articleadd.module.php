@@ -216,6 +216,9 @@ if ($_POST && $request->element('doo') == 'submit') { # if form is submitted
 						}
 					}
 
+					$selectedLanguages = array_values(array_intersect(array('vn', 'en', 'zh'), (array)$request->element('language')));
+					if (!in_array('vn', $selectedLanguages, true)) array_unshift($selectedLanguages, 'vn');
+
 					# Prepare data to be inserted to DB
 					$data = array(
 						'store_id' => $storeId,
@@ -231,7 +234,7 @@ if ($_POST && $request->element('doo') == 'submit') { # if form is submitted
 						'status' => (int)$request->element('status'),
 						'viewed' => (int)$request->element('view'),
 						'poster_id' => (int)$userInfo->getId(),
-						'lang' => implode(',', (array)$request->element('language')),
+						'lang' => implode(',', $selectedLanguages),
 						'properties' => serialize($properties),
 						'article_group_ids' => $request->element('article_group_ids') ? implode(',', $request->element('article_group_ids')) : '',
 						'date_created' => date("Y-m-d H:i:s"),
@@ -330,6 +333,23 @@ function validateData($request)
 	$error['INPUT']['position'] = $validate->pasteString($request->element('position'));
 	$error['INPUT']['view'] = $validate->pasteString($request->element('view'));
 	$error['INPUT']['status'] = $validate->pasteString($request->element('status'));
+	$error['INPUT']['language'] = array('value' => $chooseLang, 'error' => 0, 'message' => '');
+	foreach (array('en' => 'English', 'zh' => '中文') as $translationLang => $translationLabel) {
+		$error['INPUT']['title_' . $translationLang] = $validate->pasteString($request->element('title_' . $translationLang));
+		$error['INPUT']['keyword_' . $translationLang] = $validate->pasteString($request->element('keyword_' . $translationLang));
+		$error['INPUT']['description_' . $translationLang] = $validate->pasteString($request->element('description_' . $translationLang));
+		$error['INPUT']['detail_' . $translationLang] = $validate->pasteString($request->element('detail_' . $translationLang));
+		if (in_array($translationLang, $chooseLang, true)) {
+			foreach (array('title', 'description', 'detail') as $requiredTranslationField) {
+				$fieldKey = $requiredTranslationField . '_' . $translationLang;
+				if (trim(strip_tags((string)$request->element($fieldKey))) === '') {
+					$error['INPUT'][$fieldKey]['error'] = 1;
+					$error['INPUT'][$fieldKey]['message'] = $translationLabel . ' - ' . $amessages['invalid_field'];
+					$error['invalid'] = 1;
+				}
+			}
+		}
+	}
 
 	# Paste value of custom fields
 	global $fieldList;
