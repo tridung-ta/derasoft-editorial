@@ -162,6 +162,8 @@ if (isset($editorialRoutes[$routeWithoutLang])) {
 	// a hard-coded route entry for every newly published story.
 	$_GET['act'] = 'news_detail';
 	$_GET['slug'] = $articleRouteMatch[1];
+	$_REQUEST['act'] = 'news_detail';
+	$_REQUEST['slug'] = $articleRouteMatch[1];
 }
 $request = new Request;
 $op = $request->element('op'); 

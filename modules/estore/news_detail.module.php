@@ -32,6 +32,12 @@ $editorialEntitlement = new EditorialEntitlement($storeId);
 
 $templateFile = 'news-detail.tpl.html';
 $slug = $request->element('slug');
+if ($slug === '') {
+    $articlePath = '/' . trim((string)parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH), '/');
+    if (preg_match('#^/(?:en/|zh/)?([a-z0-9][a-z0-9-]{0,190})$#', $articlePath, $articlePathMatch)) {
+        $slug = $articlePathMatch[1];
+    }
+}
 
 // Lang
 $lang = $request->element('lang');
@@ -53,6 +59,21 @@ switch ($lang) {
 }
 
 $objectInfo = $articles->getObject($slug, $slugField);
+$resolvedArticleId = 0;
+if (!$objectInfo && $slug !== '') {
+    $safeSlug = addslashes($slug);
+    $resolvedRows = $db->query(
+        "SELECT `id` FROM `" . DB_PREFIX . "articles` " .
+        "WHERE (`store_id` = " . (int)$storeId . " OR `store_id` = 0) " .
+        "AND `" . $slugField . "` = '" . $safeSlug . "' LIMIT 1"
+    );
+    if ($resolvedRows) {
+        $resolvedRow = $db->fetchArray($resolvedRows, 1);
+        $resolvedArticleId = !empty($resolvedRow['id']) ? (int)$resolvedRow['id'] : 0;
+        $db->freeResult($resolvedRows);
+    }
+    if ($resolvedArticleId > 0) $objectInfo = $articles->getObject($resolvedArticleId);
+}
 $template->assign('objectInfo', $objectInfo);
 
 // A stale or malformed article URL must render the normal 404 page instead
