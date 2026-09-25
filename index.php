@@ -38,8 +38,11 @@ if(DEBUG && $_SERVER['REMOTE_ADDR'] == DEBUG_IP) {
 	$debugText = '';
 	$time_start = microtime(true);
 	error_reporting(E_ALL);
-	ini_set('display_errors', TRUE);
-	ini_set('display_startup_errors', TRUE);
+	// Keep diagnostics in the server logs/debug file without exposing paths,
+	// database names or stack traces in the public response.
+	ini_set('log_errors', TRUE);
+	ini_set('display_errors', FALSE);
+	ini_set('display_startup_errors', FALSE);
 } else {
 	error_reporting(0);
 	ini_set('display_errors', FALSE);
