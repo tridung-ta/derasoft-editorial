@@ -2,6 +2,7 @@
 include_once(ROOT_PATH . 'classes/dao/uploads.class.php');
 include_once(ROOT_PATH . 'classes/dao/articles.class.php');
 include_once(ROOT_PATH . 'classes/dao/articlecategories.class.php');
+include_once(ROOT_PATH . 'includes/editorial_category_scope.inc.php');
 
 $uploads = new Uploads($storeId);
 $articles = new Articles($storeId);
@@ -14,20 +15,11 @@ $categoryRows = $db->query(
     "ORDER BY position ASC, id ASC"
 ) ?: array();
 
-$byParent = array();
-$bySlug = array();
-foreach ($categoryRows as $category) {
-    $category['id'] = (int) $category['id'];
-    $category['parent_id'] = (int) $category['parent_id'];
-    $byParent[$category['parent_id']][] = $category;
-    $bySlug[$category['slug']] = $category;
-}
-
-$editorialCategoryIds = array();
-foreach (array('tho', 'van-xuoi', 'am-nhac', 'my-thuat', 'san-khau-nghe-thuat', 'van-hoa', 'tin-tuc-moi', 'video') as $editorialSlug) {
-    if (!empty($bySlug[$editorialSlug])) $editorialCategoryIds[] = (int) $bySlug[$editorialSlug]['id'];
-}
-$editorialCategoryIds = array_values(array_unique($editorialCategoryIds));
+$editorialCategoryIds = editorialCollectCategoryIds(
+    $categoryRows,
+    array('van-tho', 'nghe-thuat', 'tin-tuc-moi', 'tin-tuc', 'video'),
+    array('tho', 'van-xuoi', 'am-nhac', 'my-thuat', 'san-khau-nghe-thuat', 'van-hoa')
+);
 $condition = $editorialCategoryIds
     ? 'a.status = 1 AND a.category_id IN (' . implode(',', $editorialCategoryIds) . ')'
     : '1 = 0';
