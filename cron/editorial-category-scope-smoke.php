@@ -16,6 +16,7 @@ $rows = array(
     array('id' => 20, 'parent_id' => 999, 'slug' => 'van-xuoi'),
     array('id' => 30, 'parent_id' => 0, 'slug' => 'nghe-thuat'),
     array('id' => 31, 'parent_id' => 30, 'slug' => 'am-nhac'),
+    array('id' => 32, 'parent_id' => 0, 'slug' => 'am-nhac'),
     array('id' => 90, 'parent_id' => 0, 'slug' => 'dich-vu'),
 );
 
@@ -25,7 +26,7 @@ $ids = editorialCollectCategoryIds(
     array('tho', 'van-xuoi', 'am-nhac')
 );
 
-foreach (array(10, 11, 12, 20, 30, 31) as $expectedId) {
+foreach (array(10, 11, 12, 20, 30, 31, 32) as $expectedId) {
     assertCategoryScope(in_array($expectedId, $ids, true), 'missing editorial category ' . $expectedId);
 }
 assertCategoryScope(!in_array(90, $ids, true), 'unrelated category was included');

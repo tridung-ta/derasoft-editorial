@@ -22,17 +22,21 @@ foreach ($categoryRows as $category) {
     $parentId = isset($category['parent_id']) ? (int)$category['parent_id'] : 0;
     $categorySlug = isset($category['slug']) ? (string)$category['slug'] : '';
     $byParent[$parentId][] = $categoryId;
-    if ($categorySlug !== '') $bySlug[$categorySlug] = $categoryId;
+    if ($categorySlug !== '') $bySlug[$categorySlug][] = $categoryId;
 }
 
 $editorialCategoryIds = array();
 $visitedCategoryIds = array();
 $pendingCategoryIds = array();
 foreach (array('van-tho', 'nghe-thuat', 'tin-tuc-moi', 'tin-tuc', 'video') as $rootSlug) {
-    if (isset($bySlug[$rootSlug])) $pendingCategoryIds[] = $bySlug[$rootSlug];
+    if (!empty($bySlug[$rootSlug])) {
+        foreach ($bySlug[$rootSlug] as $categoryId) $pendingCategoryIds[] = (int)$categoryId;
+    }
 }
 foreach (array('tho', 'van-xuoi', 'am-nhac', 'my-thuat', 'san-khau-nghe-thuat', 'van-hoa') as $fallbackSlug) {
-    if (isset($bySlug[$fallbackSlug])) $pendingCategoryIds[] = $bySlug[$fallbackSlug];
+    if (!empty($bySlug[$fallbackSlug])) {
+        foreach ($bySlug[$fallbackSlug] as $categoryId) $pendingCategoryIds[] = (int)$categoryId;
+    }
 }
 while ($pendingCategoryIds) {
     $categoryId = (int)array_shift($pendingCategoryIds);

@@ -16,7 +16,7 @@ if (!function_exists('editorialCollectCategoryIds')) {
             if ($category['id'] <= 0) continue;
 
             $byParent[$category['parent_id']][] = $category;
-            if ($category['slug'] !== '') $bySlug[$category['slug']] = $category;
+            if ($category['slug'] !== '') $bySlug[$category['slug']][] = $category;
         }
 
         $categoryIds = array();
@@ -35,11 +35,13 @@ if (!function_exists('editorialCollectCategoryIds')) {
         };
 
         foreach ($rootSlugs as $slug) {
-            if (isset($bySlug[$slug])) $collectBranch((int)$bySlug[$slug]['id']);
+            if (empty($bySlug[$slug])) continue;
+            foreach ($bySlug[$slug] as $category) $collectBranch((int)$category['id']);
         }
 
         foreach ($fallbackSlugs as $slug) {
-            if (isset($bySlug[$slug])) $collectBranch((int)$bySlug[$slug]['id']);
+            if (empty($bySlug[$slug])) continue;
+            foreach ($bySlug[$slug] as $category) $collectBranch((int)$category['id']);
         }
 
         return array_values(array_unique($categoryIds));
