@@ -12,6 +12,7 @@ class EditorialSubscriptions extends Model
     var $table;
     var $_db;
     var $store_id;
+    var $table_available = null;
 
     function __construct($store_id = 1, $database = '')
     {
@@ -25,8 +26,18 @@ class EditorialSubscriptions extends Model
         $this->store_id = max(1, (int)$store_id);
     }
 
+    function tableExists()
+    {
+        if ($this->table_available !== null) return $this->table_available;
+        $result = $this->_db->query("SHOW TABLES LIKE '" . addslashes($this->table) . "'");
+        $this->table_available = $result && $this->_db->numRows($result) > 0;
+        if ($result) $this->_db->freeResult($result);
+        return $this->table_available;
+    }
+
     function getActiveForCustomer($customerId, $at = '')
     {
+        if (!$this->tableExists()) return 0;
         $customerId = (int)$customerId;
         if ($customerId < 1) return 0;
         $timestamp = $at !== '' ? strtotime($at) : time();
@@ -48,6 +59,7 @@ class EditorialSubscriptions extends Model
 
     function grant($customerId, $planId, $startsAt, $endsAt, $source = 'manual', $grantedBy = 0, $note = '')
     {
+        if (!$this->tableExists()) return 0;
         $customerId = (int)$customerId;
         $planId = (int)$planId;
         $start = strtotime((string)$startsAt);
@@ -74,6 +86,7 @@ class EditorialSubscriptions extends Model
 
     function revoke($id)
     {
+        if (!$this->tableExists()) return 0;
         $id = (int)$id;
         if ($id < 1) return 0;
         return $this->update(
@@ -84,6 +97,7 @@ class EditorialSubscriptions extends Model
 
     function getAdminItems($status = -1, $limit = 100)
     {
+        if (!$this->tableExists()) return array();
         $status = (int)$status;
         $limit = max(1, min(200, (int)$limit));
         $condition = 's.store_id = ' . $this->store_id;

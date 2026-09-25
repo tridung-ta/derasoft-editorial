@@ -9,6 +9,7 @@ class EditorialMembershipPlans extends Model
     var $table;
     var $_db;
     var $store_id;
+    var $table_available = null;
 
     function __construct($store_id = 1, $database = '')
     {
@@ -22,8 +23,18 @@ class EditorialMembershipPlans extends Model
         $this->store_id = max(1, (int)$store_id);
     }
 
+    function tableExists()
+    {
+        if ($this->table_available !== null) return $this->table_available;
+        $result = $this->_db->query("SHOW TABLES LIKE '" . addslashes($this->table) . "'");
+        $this->table_available = $result && $this->_db->numRows($result) > 0;
+        if ($result) $this->_db->freeResult($result);
+        return $this->table_available;
+    }
+
     function getById($id)
     {
+        if (!$this->tableExists()) return 0;
         $id = (int)$id;
         if ($id < 1) return 0;
         $rows = $this->select('*', '`store_id` = ' . $this->store_id . ' AND `id` = ' . $id, array(), 0, 1);
@@ -32,6 +43,7 @@ class EditorialMembershipPlans extends Model
 
     function getActivePlans()
     {
+        if (!$this->tableExists()) return array();
         return $this->select(
             '*',
             '`store_id` = ' . $this->store_id . ' AND `status` = ' . self::STATUS_ACTIVE,
@@ -41,11 +53,13 @@ class EditorialMembershipPlans extends Model
 
     function getAdminItems()
     {
+        if (!$this->tableExists()) return array();
         return $this->select('*', '`store_id` = ' . $this->store_id, array('position' => 'ASC', 'id' => 'ASC')) ?: array();
     }
 
     function savePlan($id, $fields)
     {
+        if (!$this->tableExists()) return 0;
         $id = (int)$id;
         $code = strtolower(trim((string)($fields['code'] ?? '')));
         $code = preg_replace('/[^a-z0-9_-]/', '', $code);
@@ -75,6 +89,7 @@ class EditorialMembershipPlans extends Model
 
     function changeStatus($id, $status)
     {
+        if (!$this->tableExists()) return 0;
         $id = (int)$id;
         $status = (int)$status;
         if ($id < 1 || !in_array($status, array(self::STATUS_DISABLED, self::STATUS_ACTIVE), true)) return 0;
