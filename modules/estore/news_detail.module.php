@@ -55,6 +55,16 @@ switch ($lang) {
 $objectInfo = $articles->getObject($slug, $slugField);
 $template->assign('objectInfo', $objectInfo);
 
+// A stale or malformed article URL must render the normal 404 page instead
+// of calling methods on an empty DAO result.
+if (!$objectInfo || !is_object($objectInfo) || !method_exists($objectInfo, 'getId')) {
+    $templateFile = '404.tpl.html';
+    $template->assign('pageTitle', '404 | ' . $estore->getName());
+    $template->assign('titlePage', '404');
+    $template->assign('pageDescription', 'Article not found');
+    return;
+}
+
 $customerId = !empty($_SESSION['store_customerId']) ? (int)$_SESSION['store_customerId'] : 0;
 $isPremiumArticle = $editorialEntitlement->isPremiumArticle($objectInfo);
 $activeSubscription = $isPremiumArticle && $customerId > 0 ? $editorialEntitlement->getActiveSubscription($customerId) : 0;
@@ -124,7 +134,9 @@ if ($userInfo && $userInfo->isEnabled()) {
 $template->assign('articleAuthor', $articleAuthor);
 
 $articleTagIds = array_filter(array_map('intval', explode(',', (string)$objectInfo->getArticleGroupIds())));
-$articleTagObjects = $articleGroups->getActiveObjectsByIds($articleTagIds);
+$articleTagObjects = method_exists($articleGroups, 'getActiveObjectsByIds')
+    ? $articleGroups->getActiveObjectsByIds($articleTagIds)
+    : array();
 $articleTags = array();
 foreach ($articleTagObjects as $articleTagObject) {
     $tagSlug = trim((string)$articleTagObject->getSlug());
@@ -230,8 +242,10 @@ $recentCaseStudies = $articles->getObjects(1, "a.`status` = '1' AND a.`id` != '"
 $template->assign('recentCaseStudies', $recentCaseStudies);
 
 // Keep member ratings isolated from legacy product/comment rating data.
-$editorialRatingSummary = $editorialRatings->getSummary($objectInfo->getId());
-$editorialMemberRating = !empty($_SESSION['store_customerId'])
+$editorialRatingSummary = method_exists($editorialRatings, 'getSummary')
+    ? $editorialRatings->getSummary($objectInfo->getId())
+    : array('average' => 0, 'count' => 0);
+$editorialMemberRating = !empty($_SESSION['store_customerId']) && method_exists($editorialRatings, 'getMemberRating')
     ? $editorialRatings->getMemberRating($objectInfo->getId(), (int)$_SESSION['store_customerId'])
     : 0;
 $template->assign('editorialRatingSummary', $editorialRatingSummary);
