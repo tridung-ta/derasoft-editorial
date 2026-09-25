@@ -1,0 +1,5 @@
+# Environment-specific configuration and secrets.
+/includes/config.inc.php
+
+# Local deployment archives.
+/production-*.zip
