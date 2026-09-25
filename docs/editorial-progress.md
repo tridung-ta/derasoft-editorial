@@ -246,6 +246,24 @@ Commits:
 - `7b75cd5` — `feat(payments): add VNPay checkout return and IPN routes`
 - `e3ddff9` — `style(membership): add responsive VNPay checkout interface`
 
+### Đa ngôn ngữ nội dung
+
+- [x] Audit cơ chế ngôn ngữ, slug và dữ liệu bài viết hiện có
+- [x] Tái sử dụng `properties`, không tạo bảng hoặc cột database mới
+- [x] Thêm trình soạn thảo English/中文 vào form tạo và sửa bài
+- [x] Lưu tiêu đề, từ khóa, mô tả và nội dung theo từng ngôn ngữ
+- [x] Chỉ công khai ngôn ngữ đã chọn khi slug và nội dung bắt buộc hợp lệ
+- [x] Luôn giữ Tiếng Việt làm nội dung gốc và fallback an toàn
+- [x] Kiểm tra PHP syntax, Smarty Admin, fallback và template public VI/EN/中文
+- [ ] Kiểm tra trực quan thao tác tạo/sửa bản dịch trên production
+
+Không thay đổi database.
+
+Commits:
+
+- `5b16347` — `feat(admin): add multilingual article editor`
+- `b656415` — `fix(article): validate translated article availability`
+
 ## Quy tắc commit
 
 - Một chức năng hoàn chỉnh = test + một commit riêng.
