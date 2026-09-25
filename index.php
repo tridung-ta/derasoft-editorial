@@ -92,7 +92,7 @@ $userTemplate = 'standard';
 $templateFile = 'index.tpl.html';
 
 # HTTP Request manager
-$editorialRouterVersion = '20260922-stable-routes';
+$editorialRouterVersion = '20260925-dynamic-articles';
 if (!headers_sent()) header('X-Dera-Editorial-Router: '.$editorialRouterVersion);
 $publicPath = '/' . trim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH), '/');
 $editorialRoutes = [
@@ -157,6 +157,11 @@ if (isset($editorialRoutes[$routeWithoutLang])) {
 } elseif (preg_match('#^/(?:chu-de|(?:en|zh)/tag)/([a-z0-9][a-z0-9-]{0,190})$#', $publicPath, $tagRouteMatch)) {
 	$_GET['act'] = 'editorialtag';
 	$_GET['slug'] = $tagRouteMatch[1];
+} elseif (preg_match('#^/(?:en/|zh/)?([a-z0-9][a-z0-9-]{0,190})$#', $publicPath, $articleRouteMatch)) {
+	// Article slugs are created dynamically by the CMS and must not require
+	// a hard-coded route entry for every newly published story.
+	$_GET['act'] = 'news_detail';
+	$_GET['slug'] = $articleRouteMatch[1];
 }
 $request = new Request;
 $op = $request->element('op'); 
@@ -170,6 +175,9 @@ if (isset($editorialRoutes[$routeWithoutLang])) {
 } elseif (isset($tagRouteMatch)) {
 	$op = 'estore';
 	$act = 'editorialtag';
+} elseif (isset($articleRouteMatch)) {
+	$op = 'estore';
+	$act = 'news_detail';
 }
 
 # Bootstrap
