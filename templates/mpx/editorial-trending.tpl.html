@@ -7,6 +7,7 @@
                 <h2>{if $lang == 'en'}Most-read stories{elseif $lang == 'zh'}热门文章{else}Bài viết được đọc nhiều{/if}</h2>
                 <p>{if $lang == 'en'}Stories attracting readers over the past seven days.{elseif $lang == 'zh'}过去七天最受读者关注的内容。{else}Những nội dung thu hút độc giả trong 7 ngày gần nhất.{/if}</p>
             </div>
+            <span class="ed-trending__period">{if $lang == 'en'}Last 7 days{elseif $lang == 'zh'}&#36807;&#21435; 7 &#22825;{else}7 ng&#224;y g&#7847;n &#273;&#226;y{/if}</span>
         </header>
         <div class="ed-home-grid ed-trending__grid">
             {foreach from=$homeTrending item=article name=trendingArticles}
