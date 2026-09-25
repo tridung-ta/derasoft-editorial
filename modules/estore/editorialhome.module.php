@@ -2,7 +2,6 @@
 include_once(ROOT_PATH . 'classes/dao/uploads.class.php');
 include_once(ROOT_PATH . 'classes/dao/articles.class.php');
 include_once(ROOT_PATH . 'classes/dao/articlecategories.class.php');
-include_once(ROOT_PATH . 'includes/editorial_category_scope.inc.php');
 
 $uploads = new Uploads($storeId);
 $articles = new Articles($storeId);
@@ -15,11 +14,35 @@ $categoryRows = $db->query(
     "ORDER BY position ASC, id ASC"
 ) ?: array();
 
-$editorialCategoryIds = editorialCollectCategoryIds(
-    $categoryRows,
-    array('van-tho', 'nghe-thuat', 'tin-tuc-moi', 'tin-tuc', 'video'),
-    array('tho', 'van-xuoi', 'am-nhac', 'my-thuat', 'san-khau-nghe-thuat', 'van-hoa')
-);
+$byParent = array();
+$bySlug = array();
+foreach ($categoryRows as $category) {
+    $categoryId = isset($category['id']) ? (int)$category['id'] : 0;
+    if ($categoryId <= 0) continue;
+    $parentId = isset($category['parent_id']) ? (int)$category['parent_id'] : 0;
+    $categorySlug = isset($category['slug']) ? (string)$category['slug'] : '';
+    $byParent[$parentId][] = $categoryId;
+    if ($categorySlug !== '') $bySlug[$categorySlug] = $categoryId;
+}
+
+$editorialCategoryIds = array();
+$visitedCategoryIds = array();
+$pendingCategoryIds = array();
+foreach (array('van-tho', 'nghe-thuat', 'tin-tuc-moi', 'tin-tuc', 'video') as $rootSlug) {
+    if (isset($bySlug[$rootSlug])) $pendingCategoryIds[] = $bySlug[$rootSlug];
+}
+foreach (array('tho', 'van-xuoi', 'am-nhac', 'my-thuat', 'san-khau-nghe-thuat', 'van-hoa') as $fallbackSlug) {
+    if (isset($bySlug[$fallbackSlug])) $pendingCategoryIds[] = $bySlug[$fallbackSlug];
+}
+while ($pendingCategoryIds) {
+    $categoryId = (int)array_shift($pendingCategoryIds);
+    if ($categoryId <= 0 || isset($visitedCategoryIds[$categoryId])) continue;
+    $visitedCategoryIds[$categoryId] = true;
+    $editorialCategoryIds[] = $categoryId;
+    if (!empty($byParent[$categoryId])) {
+        foreach ($byParent[$categoryId] as $childId) $pendingCategoryIds[] = (int)$childId;
+    }
+}
 $condition = $editorialCategoryIds
     ? 'a.status = 1 AND a.category_id IN (' . implode(',', $editorialCategoryIds) . ')'
     : '1 = 0';
