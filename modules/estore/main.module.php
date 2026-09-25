@@ -48,6 +48,31 @@ $template->assign('messages', $messages);
 /* ===================== CUSTOMER ===================== */
 $CustomerId = $_SESSION["store_customerId"] ?? 0;
 $template->assign('CustomerId', $CustomerId);
+
+// Resolve CMS-generated article slugs before authentication and before any
+// legacy module can fall back to the MPX index template. A one-segment route
+// that is not owned by the editorial application is an article candidate;
+// news_detail will render the normal 404 page when no article exists.
+$editorialDispatchVersion = '20260925-force-article';
+if (!headers_sent()) header('X-Dera-Editorial-Dispatcher: ' . $editorialDispatchVersion);
+$dispatchPath = '/' . trim((string)parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH), '/');
+$dispatchReservedPaths = array(
+    '/', '/dang-nhap', '/dang-ky', '/login', '/register', '/verify-user',
+    '/logout', '/huy-dang-ky', '/unsubscribe', '/khong-gian-doc',
+    '/reading-space', '/van-tho', '/nghe-thuat', '/tin-tuc', '/video',
+    '/tim-kiem'
+);
+$dispatchPathWithoutLang = preg_replace('#^/(en|zh)(?=/|$)#', '', $dispatchPath);
+if (
+    !in_array($dispatchPathWithoutLang, $dispatchReservedPaths, true)
+    && preg_match('#^/([a-z0-9][a-z0-9-]{0,190})$#', $dispatchPathWithoutLang, $dispatchArticleMatch)
+) {
+    $act = 'news_detail';
+    $_GET['act'] = $act;
+    $_GET['slug'] = $dispatchArticleMatch[1];
+    $_REQUEST['act'] = $act;
+    $_REQUEST['slug'] = $dispatchArticleMatch[1];
+}
 /* Member gateway: public editorial content requires a signed-in customer. */
 $memberPublicActs = array('login', 'signin', 'logout', 'verifyuser', 'forgotpassword', 'resetpassword', 'newsletterunsubscribe', 'vnpayipn');
 if (!$CustomerId && !in_array(strtolower((string)$act), $memberPublicActs, true)) {
@@ -186,20 +211,6 @@ $isProductCate = false;
 $template->assign('isProductCate', $isProductCate);
 $isProduct = false;
 $template->assign('isProduct', $isProduct);
-
-// Legacy request/bootstrap code can occasionally leave a clean editorial
-// article URL on the default `index` action. Resolve it once more at the
-// final dispatch boundary so it cannot fall through to the old MPX home.
-if (strtolower((string)$act) === 'index') {
-    $dispatchPath = '/' . trim((string)parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH), '/');
-    if (preg_match('#^/(?:en/|zh/)?([a-z0-9][a-z0-9-]{0,190})$#', $dispatchPath, $dispatchArticleMatch)) {
-        $act = 'news_detail';
-        $_GET['act'] = $act;
-        $_GET['slug'] = $dispatchArticleMatch[1];
-        $_REQUEST['act'] = $act;
-        $_REQUEST['slug'] = $dispatchArticleMatch[1];
-    }
-}
 
 /* ===================== STATUS MODULE ===================== */
 if ($act) {
