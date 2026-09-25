@@ -17,7 +17,10 @@ function decodeLibraryRows($rows,$withResume=false){foreach($rows as &$row){$dat
 $template->assign('savedItems',decodeLibraryRows($library->getItems($_SESSION['store_customerId'],'saved',100)));
 $template->assign('historyItems',decodeLibraryRows($library->getItems($_SESSION['store_customerId'],'history',100),true));
 $template->assign('watchLaterItems',decodeLibraryRows($library->getItems($_SESSION['store_customerId'],'watch_later',100)));
-$template->assign('personalRecommendations',$recommendationService->getForCustomer($_SESSION['store_customerId'],$lang,6));
+$personalRecommendations = method_exists($recommendationService, 'getForCustomer')
+    ? $recommendationService->getForCustomer($_SESSION['store_customerId'], $lang, 6)
+    : array();
+$template->assign('personalRecommendations', $personalRecommendations);
 $template->assign('membershipPlans',$membershipPlans->getActivePlans());
 $template->assign('activeSubscription',$membershipSubscriptions->getActiveForCustomer($_SESSION['store_customerId']));
 $template->assign('vnpayConfigured',$vnpayGateway->isConfigured());
