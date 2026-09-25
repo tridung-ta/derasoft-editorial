@@ -25,6 +25,11 @@
     <meta name="description" content="{$metaDescription}">
     <meta name="keywords" content="{$metaKeywords}">
     <meta name="robots" content="index,follow,max-image-preview:large">
+    <meta name="theme-color" content="#2b1d19">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Văn hóa Việt">
     {if $currentUrlx1}<link rel="canonical" href="{$currentUrlx1|escape:'html'}">{/if}
 
     <meta property="og:type" content="{$typeweb|default:'website'}">
@@ -35,6 +40,8 @@
     <meta property="og:site_name" content="{if $lang == 'en'}Literature &amp; Arts{elseif $lang == 'zh'}文学与艺术{else}Văn học &amp; Nghệ thuật{/if}">
 
     <link rel="icon" type="image/png" href="/{$templatePath}/{$userTemplate}/img/logo/favicon.png">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/{$templatePath}/{$userTemplate}/img/logo/favicon.png">
     {literal}<script>(function(){try{var theme=localStorage.getItem('editorial-theme');if(!theme&&window.matchMedia('(prefers-color-scheme: dark)').matches)theme='dark';document.documentElement.setAttribute('data-theme',theme==='dark'?'dark':'light');}catch(error){}})();</script>{/literal}
     <link rel="stylesheet" href="/{$templatePath}/{$userTemplate}/css/base.css">
     <link rel="stylesheet" href="/{$templatePath}/{$userTemplate}/css/editorial-design-tokens.css?v=20260923-2">
