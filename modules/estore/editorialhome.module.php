@@ -56,7 +56,7 @@ if ($lang === 'zh') $condition .= " AND a.slug_zh <> '' AND a.lang LIKE '%zh%'";
 $orderedArticles = $articles->getObjects(
     1,
     $condition,
-    array('COALESCE(a.`publish_at`, a.`date_created`)' => 'DESC', 'a.id' => 'DESC'),
+    array('a.id' => 'DESC', 'COALESCE(a.`publish_at`, a.`date_created`)' => 'DESC'),
     13
 ) ?: array();
 

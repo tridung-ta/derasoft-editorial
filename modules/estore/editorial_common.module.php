@@ -52,7 +52,7 @@ $queryIds=($selectedCategory&&$rootCategory&&$selectedCategory['id']!==$rootCate
 $condition=$queryIds?'a.status = 1 AND a.category_id IN ('.implode(',',array_unique($queryIds)).')':'1 = 0';
 if($lang==='en')$condition.=" AND a.slug_en <> '' AND a.lang LIKE '%en%'";
 if($lang==='zh')$condition.=" AND a.slug_zh <> '' AND a.lang LIKE '%zh%'";
-$result=paginate($request,$articles,$condition,$condition,array('COALESCE(a.`publish_at`, a.`date_created`)'=>'DESC','a.id'=>'DESC'),12);
+$result=paginate($request,$articles,$condition,$condition,array('a.id'=>'DESC','COALESCE(a.`publish_at`, a.`date_created`)'=>'DESC'),12);
 $templateFile=isset($editorialTemplateFile)?$editorialTemplateFile:'editorial-list.tpl.html';$slugActive=$editorialCategorySlug;
 $editorialTitle=isset($labels[$editorialCategorySlug][$lang])?$labels[$editorialCategorySlug][$lang]:$editorialTitle;
 $editorialIntro=isset($intros[$editorialCategorySlug][$lang])?$intros[$editorialCategorySlug][$lang]:$editorialIntro;
