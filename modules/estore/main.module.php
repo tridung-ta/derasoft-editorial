@@ -187,6 +187,19 @@ $template->assign('isProductCate', $isProductCate);
 $isProduct = false;
 $template->assign('isProduct', $isProduct);
 
+// Legacy request/bootstrap code can occasionally leave a clean editorial
+// article URL on the default `index` action. Resolve it once more at the
+// final dispatch boundary so it cannot fall through to the old MPX home.
+if (strtolower((string)$act) === 'index') {
+    $dispatchPath = '/' . trim((string)parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH), '/');
+    if (preg_match('#^/(?:en/|zh/)?([a-z0-9][a-z0-9-]{0,190})$#', $dispatchPath, $dispatchArticleMatch)) {
+        $act = 'news_detail';
+        $_GET['act'] = $act;
+        $_GET['slug'] = $dispatchArticleMatch[1];
+        $_REQUEST['act'] = $act;
+        $_REQUEST['slug'] = $dispatchArticleMatch[1];
+    }
+}
 
 /* ===================== STATUS MODULE ===================== */
 if ($act) {
